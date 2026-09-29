@@ -1,6 +1,7 @@
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
 import * as dotenv from "dotenv";
+import * as schema from "./schema";
 
 dotenv.config();
 
@@ -16,7 +17,7 @@ export const client = postgres(connectionString, {
   connect_timeout: 10,
 });
 
-export const db = drizzle(client);
+export const db = drizzle(client, { schema });
 
 export async function testConnection(): Promise<boolean> {
   try {
