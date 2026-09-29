@@ -68,6 +68,10 @@ O projeto consiste em um aplicativo móvel construído em React Native Expo com 
   - `src/shared/tests/`: Testes de helpers e funções utilitárias puras compartilhadas.
 - **Motivação:** A co-locação de testes reforça o princípio da arquitetura orientada a features: máxima coesão e baixo acoplamento. Quando uma feature é movida, refatorada ou excluída, seus testes acompanham o ciclo de vida naturalmente.
 
+### 7. Estratégia de Testes com Dados Mockados (Simulação de Banco de Dados)
+- **Escolha:** Todos os testes unitários e de regras de negócio que interagem com persistência utilizarão dados mockados (mocks da camada de `repositories` / cliente Drizzle).
+- **Motivação:** Isolar completamente a validação de regras de negócio de dependências de infraestrutura externa (PostgreSQL). Isso assegura testes rápidos (executados em milissegundos), determinísticos e independentes de estado prévio do banco, permitindo execução contínua tanto no ambiente local quanto na pipeline de CI (GitHub Actions) sem a necessidade de manter serviços de banco de dados ativos durante o `pnpm check`. A integridade do esquema físico do banco é validada separadamente via migrações do Drizzle (`drizzle-kit migrate`).
+
 ## Risks / Trade-offs
 
 - **[Risco] Acesso do App Mobile ao Backend Local (`localhost`):**
