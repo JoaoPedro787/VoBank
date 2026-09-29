@@ -39,3 +39,4 @@ Este projeto cria o núcleo do aplicativo mobile de finanças com React Native E
 - **Código e Estrutura:** Criação da estrutura base `src/app/`, `src/[feat]/`, `src/shared/` e `src/server/`.
 - **Dependências:** Adição do Expo SDK, Expo Router, Drizzle ORM, `pg` / `postgres`, NativeWind v4, React Native Reusables, Zod, `expo-secure-store` e `expo-notifications`.
 - **Infraestrutura:** Requer PostgreSQL em execução localmente (ex: localhost:5432).
+- **Estratégia de Testes:** Testes automatizados executam de forma isolada utilizando dados mockados para simular a persistência, permitindo validação rápida das regras de negócio sem acoplamento a instâncias de banco no CI.
