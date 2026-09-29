@@ -10,8 +10,8 @@
 
 ## 2. Modelagem do Banco de Dados & Migrations
 
-- [ ] 2.1 Criar schemas Drizzle para as tabelas `users`, `people`, `credit_cards`, `purchases`, `installments` e `installment_splits` com validações Zod e verificar tipagens exportadas.
-- [ ] 2.2 Gerar e executar migrações iniciais via `drizzle-kit generate` e `drizzle-kit migrate`, verificando a criação de todas as tabelas no banco de dados local.
+- [x] 2.1 Criar schemas Drizzle para as tabelas `users`, `people`, `credit_cards`, `purchases`, `installments` e `installment_splits` com validações Zod e verificar tipagens exportadas.
+- [x] 2.2 Gerar e executar migrações iniciais via `drizzle-kit generate` e `drizzle-kit migrate`, verificando a criação de todas as tabelas no banco de dados local.
 
 ## 3. Autenticação e Gestão de Sessão (TDD)
 
