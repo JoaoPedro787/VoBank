@@ -2,11 +2,11 @@
 
 ## 1. Setup, Qualidade & Configuração Inicial
 
-- [ ] 1.1 Inicializar o projeto React Native Expo com TypeScript e Expo Router utilizando exclusivamente `pnpm` como gerenciador de pacotes e verificar que a inicialização ocorre sem erros.
-- [ ] 1.2 Configurar ESLint com regras para TypeScript/React e Prettier para padronização de código, validando execução sem erros de `pnpm lint` e `pnpm format:check`.
-- [ ] 1.3 Configurar o runner de testes (Jest / Vitest com `jest-expo`) e criar o script unificado de validação no `package.json` (`"check": "prettier --check . && eslint . && jest --passWithNoTests"`), testando sua execução com `pnpm check`.
-- [ ] 1.4 Configurar NativeWind v4, Tailwind CSS e base dos componentes React Native Reusables (Shadcn style) com suporte a Dark/Light Mode e verificar compilação dos estilos.
-- [ ] 1.5 Configurar Drizzle ORM (`drizzle-orm`, `drizzle-kit`, `postgres`) e criar o cliente de conexão em `src/server/shared/db.ts` testando a conexão com o PostgreSQL local.
+- [x] 1.1 Inicializar o projeto React Native Expo com TypeScript e Expo Router utilizando exclusivamente `pnpm` como gerenciador de pacotes e verificar que a inicialização ocorre sem erros.
+- [x] 1.2 Configurar ESLint com regras para TypeScript/React e Prettier para padronização de código, validando execução sem erros de `pnpm lint` e `pnpm format:check`.
+- [x] 1.3 Configurar o runner de testes (Jest / Vitest com `jest-expo`) e criar o script unificado de validação no `package.json` (`"check": "prettier --check . && eslint . && jest --passWithNoTests"`), testando sua execução com `pnpm check`.
+- [x] 1.4 Configurar NativeWind v4, Tailwind CSS e base dos componentes React Native Reusables (Shadcn style) com suporte a Dark/Light Mode e verificar compilação dos estilos.
+- [x] 1.5 Configurar Drizzle ORM (`drizzle-orm`, `drizzle-kit`, `postgres`) e criar o cliente de conexão em `src/server/shared/db.ts` testando a conexão com o PostgreSQL local.
 
 ## 2. Modelagem do Banco de Dados & Migrations
 

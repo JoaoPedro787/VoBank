@@ -1,0 +1,11 @@
+node_modules
+.expo
+dist
+web-build
+coverage
+pnpm-lock.yaml
+drizzle
+.agents
+openspec
+assets
+scratch
