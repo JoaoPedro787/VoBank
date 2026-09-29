@@ -15,27 +15,27 @@
 
 ## 3. Autenticação e Gestão de Sessão (TDD)
 
-- [ ] 3.1 Escrever testes unitários (TDD) para validações de payload de autenticação com Zod e funções utilitárias de hash e JWT, implementando o código até que todos os testes passem.
+- [ ] 3.1 Escrever testes unitários (TDD) para validações de payload de autenticação com Zod, funções utilitárias de hash e JWT e services com persistência mockada, implementando o código até que todos os testes passem.
 - [ ] 3.2 Criar Expo API Routes para registro, login e perfil (`/api/auth/register`, `/api/auth/login`, `/api/auth/me`), incluindo middleware de validação JWT, e testar respostas HTTP.
 - [ ] 3.3 Construir telas de autenticação (`src/app/(auth)/login.tsx` e `register.tsx`), integrando persistência de token com `expo-secure-store` e verificar fluxo de login e logout.
 
 ## 4. Gestão de Pessoas e Cartões de Crédito
 
-- [ ] 4.1 Implementar serviços de backend e API Routes para CRUD de pessoas (`/api/people`) e validar cadastro de nomes com cores hexadecimais.
-- [ ] 4.2 Implementar serviços de backend e API Routes para CRUD de cartões (`/api/cards`) validando dia de fechamento e dia de vencimento.
+- [ ] 4.1 Implementar serviços de backend (com testes unitários utilizando banco mockado) e API Routes para CRUD de pessoas (`/api/people`) e validar cadastro de nomes com cores hexadecimais.
+- [ ] 4.2 Implementar serviços de backend (com testes unitários utilizando banco mockado) e API Routes para CRUD de cartões (`/api/cards`) validando dia de fechamento e dia de vencimento.
 - [ ] 4.3 Desenvolver componentes e telas da interface para gerenciar Pessoas e Cartões no padrão Shadcn UI e testar adição e edição no app.
 
 ## 5. Motor de Compras, Faturas e Divisão (Rachar com TDD)
 
 - [ ] 5.1 Escrever suíte de testes unitários (TDD - Red) cobrindo todos os cenários de cálculo do ciclo de fatura (compras antes/depois do fechamento, meses de 28, 30 e 31 dias e anos bissextos) e implementar o helper de faturas até que todos os testes passem (Green).
 - [ ] 5.2 Escrever testes unitários (TDD) para a lógica matemática de divisão de compras (*split* por porcentagem e por valor fixo) e geração de parcelas individuais, implementando a função em seguida.
-- [ ] 5.3 Implementar endpoint de cadastro de compras (`/api/purchases`) com suporte a compras à vista, débito e crédito, persistindo compras, parcelas e splits.
+- [ ] 5.3 Implementar endpoint e service de cadastro de compras (`/api/purchases`) com suporte a compras à vista, débito e crédito, persistindo compras, parcelas e splits (com testes unitários mockando o banco).
 - [ ] 5.4 Implementar endpoint para alternar status de pagamento de uma parcela de pessoa (`/api/installments/:id/toggle-paid`).
 - [ ] 5.5 Desenvolver modal "Nova Compra" no app com seletor de método de pagamento, seletor de cartão, visualização de parcelas calculadas e controle de divisão de percentual/valor entre pessoas.
 
 ## 6. Mini Dashboard e Resumo por Pessoa
 
-- [ ] 6.1 Implementar endpoint ou service de consolidação de faturas (`/api/dashboard`), agrupando totais do mês, valores já pagos, valores pendentes e vencidos por pessoa.
+- [ ] 6.1 Implementar endpoint ou service de consolidação de faturas (`/api/dashboard`), agrupando totais do mês, valores já pagos, valores pendentes e vencidos por pessoa (com testes unitários usando dados mockados).
 - [ ] 6.2 Construir telas principais do dashboard (`src/app/(tabs)/index.tsx`) com cartões coloridos por pessoa, filtros mensais e badges de status de parcelas.
 
 ## 7. Notificações Locais, Polimento e Validação Final
