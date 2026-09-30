@@ -15,9 +15,9 @@
 
 ## 3. Autenticação e Gestão de Sessão (TDD)
 
-- [ ] 3.1 Escrever testes unitários (TDD) para validações de payload de autenticação com Zod, funções utilitárias de hash e JWT e services com persistência mockada, implementando o código até que todos os testes passem.
-- [ ] 3.2 Criar Expo API Routes para registro, login e perfil (`/api/auth/register`, `/api/auth/login`, `/api/auth/me`), incluindo middleware de validação JWT, e testar respostas HTTP.
-- [ ] 3.3 Construir telas de autenticação (`src/app/(auth)/login.tsx` e `register.tsx`), integrando persistência de token com `expo-secure-store` e verificar fluxo de login e logout.
+- [x] 3.1 Escrever testes unitários (TDD) para validações de payload de autenticação com Zod, funções utilitárias de hash e JWT e services com persistência mockada, implementando o código até que todos os testes passem.
+- [x] 3.2 Criar Expo API Routes para registro, login e perfil (`/api/auth/register`, `/api/auth/login`, `/api/auth/me`), incluindo middleware de validação JWT, e testar respostas HTTP.
+- [x] 3.3 Construir telas de autenticação (`src/app/(auth)/login.tsx` e `register.tsx`), integrando persistência de token com `expo-secure-store` e verificar fluxo de login e logout.
 
 ## 4. Gestão de Pessoas e Cartões de Crédito
 
