@@ -7,19 +7,28 @@ dotenv.config();
 
 const connectionString = process.env.DATABASE_URL;
 
-if (!connectionString) {
-  throw new Error("DATABASE_URL environment variable is not defined");
-}
+export const client = connectionString
+  ? postgres(connectionString, {
+      max: 10,
+      idle_timeout: 20,
+      connect_timeout: 10,
+    })
+  : (null as unknown as ReturnType<typeof postgres>);
 
-export const client = postgres(connectionString, {
-  max: 10,
-  idle_timeout: 20,
-  connect_timeout: 10,
-});
-
-export const db = drizzle(client, { schema });
+export const db = client
+  ? drizzle(client, { schema })
+  : new Proxy({} as ReturnType<typeof drizzle<typeof schema>>, {
+      get(_target, prop) {
+        throw new Error(
+          `DATABASE_URL environment variable is not defined. Cannot access db.${String(prop)}`,
+        );
+      },
+    });
 
 export async function testConnection(): Promise<boolean> {
+  if (!client) {
+    return false;
+  }
   try {
     const result = await client`SELECT 1 as connected`;
     return result.length > 0 && result[0].connected === 1;

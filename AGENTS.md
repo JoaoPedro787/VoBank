@@ -23,6 +23,7 @@ O projeto segue estritamente uma arquitetura baseada em features tanto no client
 
 - **Linter & Formatação:** ESLint configurado para capturar erros ocultos e Prettier para formatação padrão.
 - **Testes (TDD):** Implementação orientada a testes (TDD) para validar regras de negócio críticas. Os testes devem ficar organizados dentro da pasta `tests/` de cada feature (`src/[feat]/tests/`, `src/server/[feat]/tests/` e `src/shared/tests/`), evitando pastas globais soltas.
+- **Testes Isolados e In-Memory (Sem .env/DB em CI):** Testes unitários/automatizados (executados em CI/GitHub Actions via `pnpm check`) **NUNCA** devem depender de variáveis de ambiente de banco de dados (`.env`, `DATABASE_URL`) nem de conexão ativa com banco de dados real. Não teste as rotas finais (`src/app/api/...`) diretamente caso elas importem a conexão com o banco de dados; em vez disso, teste os componentes isolados da rota em memória (services com repositórios in-memory/mocks, middlewares de autenticação, schemas Zod e utilitários de resposta HTTP).
 - **Script Unificado de Validação:** Deve existir um script no `package.json` (ex: `pnpm check` ou `pnpm validate`) que executa em sequência:
   1. Verificação do Prettier (`prettier --check .`)
   2. Linter ESLint (`eslint .`)
