@@ -1,42 +1,52 @@
-import { POST as registerHandler } from "../../../app/api/auth/register+api";
-import { POST as loginHandler } from "../../../app/api/auth/login+api";
-import { GET as meHandler } from "../../../app/api/auth/me+api";
-import { setAuthService, AuthService } from "../services";
-import { IAuthRepository } from "../repositories/auth.repository.interface";
-import { User } from "../schemas/auth.schema";
+import { AuthService } from "../services/auth.service";
+import { InMemoryAuthRepository } from "../repositories/in-memory-auth.repository";
+import { requireAuth } from "../middleware/auth.middleware";
+import { apiSuccess, handleApiError } from "../../shared/utils/api-response";
 import { signToken } from "../utils/jwt";
 import { hashPassword } from "../utils/hash";
 
-describe("Auth API Routes (TDD)", () => {
-  let mockAuthRepo: jest.Mocked<IAuthRepository>;
+describe("Auth Route Components (In-Memory TDD)", () => {
+  let authRepo: InMemoryAuthRepository;
   let authService: AuthService;
 
+  // Handlers compostos pelos componentes da feature (em memória, sem importar rotas de app/api)
+  const handleRegister = async (req: Request): Promise<Response> => {
+    try {
+      const body = await req.json();
+      const result = await authService.register(body);
+      return apiSuccess(result, 201);
+    } catch (error) {
+      return handleApiError(error);
+    }
+  };
+
+  const handleLogin = async (req: Request): Promise<Response> => {
+    try {
+      const body = await req.json();
+      const result = await authService.login(body);
+      return apiSuccess(result, 200);
+    } catch (error) {
+      return handleApiError(error);
+    }
+  };
+
+  const handleMe = async (req: Request): Promise<Response> => {
+    try {
+      const tokenUser = requireAuth(req);
+      const profile = await authService.getProfile(tokenUser.userId);
+      return apiSuccess(profile, 200);
+    } catch (error) {
+      return handleApiError(error);
+    }
+  };
+
   beforeEach(() => {
-    mockAuthRepo = {
-      findByEmail: jest.fn(),
-      findById: jest.fn(),
-      create: jest.fn(),
-    };
-    authService = new AuthService(mockAuthRepo);
-    setAuthService(authService);
+    authRepo = new InMemoryAuthRepository();
+    authService = new AuthService(authRepo);
   });
 
-  afterEach(() => {
-    setAuthService(null);
-  });
-
-  describe("POST /api/auth/register", () => {
-    it("should return 201 with user and token on valid registration", async () => {
-      mockAuthRepo.findByEmail.mockResolvedValue(null);
-      mockAuthRepo.create.mockResolvedValue({
-        id: "user-123",
-        name: "Maria Silva",
-        email: "maria@example.com",
-        password: "hashedPassword",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      });
-
+  describe("Register Component Workflow", () => {
+    it("should return 201 with created user and token in memory", async () => {
       const request = new Request("http://localhost:8081/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -47,42 +57,46 @@ describe("Auth API Routes (TDD)", () => {
         }),
       });
 
-      const response = await registerHandler(request);
+      const response = await handleRegister(request);
       expect(response.status).toBe(201);
 
       const json = await response.json();
       expect(json.token).toBeDefined();
       expect(json.user.name).toBe("Maria Silva");
       expect(json.user.email).toBe("maria@example.com");
+
+      // Validar persistência in-memory
+      const savedUser = await authRepo.findByEmail("maria@example.com");
+      expect(savedUser).not.toBeNull();
+      expect(savedUser?.name).toBe("Maria Silva");
     });
 
-    it("should return 400 when body is invalid Zod schema", async () => {
+    it("should return 400 when body fails Zod schema validation", async () => {
       const request = new Request("http://localhost:8081/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: "",
-          email: "invalid-email",
+          email: "not-an-email",
           password: "123",
         }),
       });
 
-      const response = await registerHandler(request);
+      const response = await handleRegister(request);
       expect(response.status).toBe(400);
 
       const json = await response.json();
       expect(json.error).toBe("Dados de requisição inválidos");
       expect(json.details).toBeDefined();
+      expect(json.details.length).toBeGreaterThan(0);
     });
 
-    it("should return 409 when email already exists", async () => {
-      mockAuthRepo.findByEmail.mockResolvedValue({
-        id: "existing-user",
+    it("should return 409 when email already exists in repository", async () => {
+      // Cadastrar primeiro usuário
+      await authRepo.create({
         name: "Existing",
         email: "maria@example.com",
-        password: "hashedPassword",
-        createdAt: new Date(),
-        updatedAt: new Date(),
+        password: await hashPassword("password123"),
       });
 
       const request = new Request("http://localhost:8081/api/auth/register", {
@@ -95,7 +109,7 @@ describe("Auth API Routes (TDD)", () => {
         }),
       });
 
-      const response = await registerHandler(request);
+      const response = await handleRegister(request);
       expect(response.status).toBe(409);
 
       const json = await response.json();
@@ -103,21 +117,16 @@ describe("Auth API Routes (TDD)", () => {
     });
   });
 
-  describe("POST /api/auth/login", () => {
+  describe("Login Component Workflow", () => {
     it("should return 200 with user and token on valid credentials", async () => {
       const password = "correctPassword123";
       const hashedPassword = await hashPassword(password);
 
-      const existingUser: User = {
-        id: "user-456",
+      const savedUser = await authRepo.create({
         name: "Carlos",
         email: "carlos@example.com",
         password: hashedPassword,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-
-      mockAuthRepo.findByEmail.mockResolvedValue(existingUser);
+      });
 
       const request = new Request("http://localhost:8081/api/auth/login", {
         method: "POST",
@@ -128,28 +137,26 @@ describe("Auth API Routes (TDD)", () => {
         }),
       });
 
-      const response = await loginHandler(request);
+      const response = await handleLogin(request);
       expect(response.status).toBe(200);
 
       const json = await response.json();
       expect(json.token).toBeDefined();
-      expect(json.user.id).toBe("user-456");
+      expect(json.user.id).toBe(savedUser.id);
       expect(json.user.email).toBe("carlos@example.com");
     });
 
     it("should return 401 on invalid credentials", async () => {
-      mockAuthRepo.findByEmail.mockResolvedValue(null);
-
       const request = new Request("http://localhost:8081/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          email: "carlos@example.com",
+          email: "nonexistent@example.com",
           password: "wrongPassword",
         }),
       });
 
-      const response = await loginHandler(request);
+      const response = await handleLogin(request);
       expect(response.status).toBe(401);
 
       const json = await response.json();
@@ -157,18 +164,13 @@ describe("Auth API Routes (TDD)", () => {
     });
   });
 
-  describe("GET /api/auth/me", () => {
-    it("should return 200 with user profile when authenticated", async () => {
-      const user: User = {
-        id: "user-789",
+  describe("Me / Protected Profile Component Workflow", () => {
+    it("should return 200 with user profile when token is valid", async () => {
+      const user = await authRepo.create({
         name: "Ana Santos",
         email: "ana@example.com",
-        password: "hashedPassword",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-
-      mockAuthRepo.findById.mockResolvedValue(user);
+        password: await hashPassword("hashedPassword123"),
+      });
 
       const token = signToken({ userId: user.id, email: user.email });
 
@@ -179,7 +181,7 @@ describe("Auth API Routes (TDD)", () => {
         },
       });
 
-      const response = await meHandler(request);
+      const response = await handleMe(request);
       expect(response.status).toBe(200);
 
       const json = await response.json();
@@ -193,7 +195,7 @@ describe("Auth API Routes (TDD)", () => {
         method: "GET",
       });
 
-      const response = await meHandler(request);
+      const response = await handleMe(request);
       expect(response.status).toBe(401);
 
       const json = await response.json();

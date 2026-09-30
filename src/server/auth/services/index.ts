@@ -15,3 +15,4 @@ export function setAuthService(service: AuthService | null): void {
 }
 
 export * from "./auth.service";
+export { InMemoryAuthRepository } from "../repositories/in-memory-auth.repository";
