@@ -21,9 +21,9 @@
 
 ## 4. Gestão de Pessoas e Cartões de Crédito
 
-- [ ] 4.1 Implementar serviços de backend (com testes unitários utilizando banco mockado) e API Routes para CRUD de pessoas (`/api/people`) e validar cadastro de nomes com cores hexadecimais.
-- [ ] 4.2 Implementar serviços de backend (com testes unitários utilizando banco mockado) e API Routes para CRUD de cartões (`/api/cards`) validando dia de fechamento e dia de vencimento.
-- [ ] 4.3 Desenvolver componentes e telas da interface para gerenciar Pessoas e Cartões no padrão Shadcn UI e testar adição e edição no app.
+- [x] 4.1 Implementar serviços de backend (com testes unitários utilizando banco mockado) e API Routes para CRUD de pessoas (`/api/people`) e validar cadastro de nomes com cores hexadecimais.
+- [x] 4.2 Implementar serviços de backend (com testes unitários utilizando banco mockado) e API Routes para CRUD de cartões (`/api/cards`) validando dia de fechamento e dia de vencimento.
+- [x] 4.3 Desenvolver componentes e telas da interface para gerenciar Pessoas e Cartões no padrão Shadcn UI e testar adição e edição no app.
 
 ## 5. Motor de Compras, Faturas e Divisão (Rachar com TDD)
 

@@ -67,6 +67,6 @@ export const creditCardResponseSchema = z.object({
 // Inferred TypeScript Types
 export type CreditCard = typeof creditCards.$inferSelect;
 export type NewCreditCard = typeof creditCards.$inferInsert;
-export type CreateCreditCardInput = z.infer<typeof createCreditCardSchema>;
-export type UpdateCreditCardInput = z.infer<typeof updateCreditCardSchema>;
+export type CreateCreditCardInput = z.input<typeof createCreditCardSchema>;
+export type UpdateCreditCardInput = z.input<typeof updateCreditCardSchema>;
 export type CreditCardResponse = z.infer<typeof creditCardResponseSchema>;
