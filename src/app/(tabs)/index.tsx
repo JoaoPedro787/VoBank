@@ -1,22 +1,56 @@
 import * as React from "react";
-import { View, Text, FlatList, Pressable, RefreshControl, ActivityIndicator } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  Pressable,
+  RefreshControl,
+  ActivityIndicator,
+  ScrollView,
+} from "react-native";
 import { router } from "expo-router";
-import { Plus, ShoppingBag, CheckCircle2, Clock, LogOut } from "lucide-react-native";
+import {
+  Plus,
+  ShoppingBag,
+  CheckCircle2,
+  Clock,
+  LogOut,
+  AlertTriangle,
+  Users,
+} from "lucide-react-native";
 import { useAuth } from "@/auth/hooks/use-auth";
+import { useDashboard } from "@/dashboard/hooks/use-dashboard";
 import { usePurchases } from "@/purchases/hooks/use-purchases";
 import { useCreditCards } from "@/credit-cards/hooks/use-credit-cards";
 import { usePeople } from "@/people/hooks/use-people";
 import { NewPurchaseModal } from "@/purchases/components/NewPurchaseModal";
-import { CreatePurchaseData, PurchaseClient } from "@/purchases/types/purchases.types";
+import { CreatePurchaseData } from "@/purchases/types/purchases.types";
+import { DashboardSplitItemClient } from "@/dashboard/types/dashboard.types";
+import { MonthSelector } from "@/dashboard/components/MonthSelector";
+import { MonthlyMetricsCard } from "@/dashboard/components/MonthlyMetricsCard";
+import { PersonSummaryCard } from "@/dashboard/components/PersonSummaryCard";
 import { Button } from "@/shared/components/Button";
 import { Badge } from "@/shared/components/Badge";
 
 export default function HomeScreen() {
   const { user, logout } = useAuth();
-  const { purchases, isLoading, error, fetchPurchases, createPurchase, toggleSplitPaid } =
-    usePurchases();
+  const {
+    month,
+    year,
+    data,
+    isLoading,
+    error,
+    selectedPersonId,
+    setSelectedPersonId,
+    fetchDashboard,
+    nextMonth,
+    prevMonth,
+    toggleSplitPaid,
+  } = useDashboard();
+
   const { cards } = useCreditCards();
   const { people } = usePeople();
+  const { createPurchase } = usePurchases();
 
   const [modalVisible, setModalVisible] = React.useState(false);
 
@@ -25,26 +59,63 @@ export default function HomeScreen() {
     router.replace("/(auth)/login");
   };
 
-  const handleSavePurchase = async (data: CreatePurchaseData) => {
-    await createPurchase(data);
+  const handleSavePurchase = async (purchaseData: CreatePurchaseData) => {
+    await createPurchase(purchaseData);
+    await fetchDashboard(month, year);
   };
 
-  const handleToggleSplit = async (splitId: string, currentPaid: boolean) => {
-    await toggleSplitPaid(splitId, !currentPaid);
-  };
+  // Coleta as parcelas filtradas com base na pessoa selecionada
+  const activeSplits = React.useMemo(() => {
+    if (!data) return [];
+
+    if (selectedPersonId === "all") {
+      // Todas as parcelas do mês
+      const all: Array<
+        DashboardSplitItemClient & {
+          personName: string;
+          personColor: string;
+          isUser: boolean;
+        }
+      > = [];
+
+      for (const p of data.byPerson) {
+        for (const s of p.splits) {
+          all.push({
+            ...s,
+            personName: p.name,
+            personColor: p.color,
+            isUser: p.isUser,
+          });
+        }
+      }
+
+      return all.sort((a, b) => new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime());
+    }
+
+    const selectedPerson = data.byPerson.find(
+      (p) => (selectedPersonId === "user" && p.isUser) || p.personId === selectedPersonId,
+    );
+
+    if (!selectedPerson) return [];
+
+    return selectedPerson.splits.map((s) => ({
+      ...s,
+      personName: selectedPerson.name,
+      personColor: selectedPerson.color,
+      isUser: selectedPerson.isUser,
+    }));
+  }, [data, selectedPersonId]);
 
   return (
     <View className="flex-1 bg-background">
-      {/* Header */}
+      {/* Header Fixo */}
       <View className="border-b border-border bg-card px-6 pt-14 pb-4">
         <View className="flex-row items-center justify-between">
           <View>
             <Text className="text-sm font-medium text-muted-foreground">
               Olá, {user?.name || "Usuário"}
             </Text>
-            <Text className="text-2xl font-bold tracking-tight text-foreground">
-              Minhas Finanças
-            </Text>
+            <Text className="text-2xl font-bold tracking-tight text-foreground">Dashboard</Text>
           </View>
 
           <View className="flex-row items-center gap-2">
@@ -60,6 +131,7 @@ export default function HomeScreen() {
             <Pressable
               onPress={handleLogout}
               className="h-9 w-9 items-center justify-center rounded-xl bg-muted active:opacity-70"
+              accessibilityLabel="Sair"
             >
               <LogOut size={16} color="#71717a" />
             </Pressable>
@@ -67,62 +139,159 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      {/* Error state */}
+      {/* Erro */}
       {error ? (
         <View className="m-4 rounded-xl bg-destructive/10 p-3 flex-row items-center justify-between">
           <Text className="text-xs text-destructive flex-1 font-medium">{error}</Text>
-          <Button variant="ghost" size="sm" label="Tentar de novo" onPress={fetchPurchases} />
+          <Button
+            variant="ghost"
+            size="sm"
+            label="Tentar de novo"
+            onPress={() => fetchDashboard(month, year)}
+          />
         </View>
       ) : null}
 
-      {/* Purchases List */}
-      {isLoading && purchases.length === 0 ? (
+      {/* Conteúdo Principal */}
+      {isLoading && !data ? (
         <View className="flex-1 items-center justify-center">
           <ActivityIndicator size="large" color="#3B82F6" />
         </View>
       ) : (
         <FlatList
-          data={purchases}
+          data={activeSplits}
           keyExtractor={(item) => item.id}
           contentContainerStyle={{
             padding: 16,
             gap: 12,
-            flexGrow: purchases.length === 0 ? 1 : undefined,
+            flexGrow: 1,
           }}
           refreshControl={
-            <RefreshControl refreshing={isLoading} onRefresh={fetchPurchases} tintColor="#3B82F6" />
+            <RefreshControl
+              refreshing={isLoading}
+              onRefresh={() => fetchDashboard(month, year)}
+              tintColor="#3B82F6"
+            />
           }
           ListHeaderComponent={
-            purchases.length > 0 ? (
-              <View className="flex-row items-center justify-between mb-2">
-                <Text className="text-sm font-semibold text-muted-foreground">
-                  Lançamentos Recentes ({purchases.length})
+            <View className="gap-5 mb-3">
+              {/* Seletor Mensal */}
+              <MonthSelector
+                month={month}
+                year={year}
+                onPrevMonth={prevMonth}
+                onNextMonth={nextMonth}
+              />
+
+              {/* Métricas Gerais Consolidadas */}
+              {data ? <MonthlyMetricsCard data={data} /> : null}
+
+              {/* Seletor de Pessoas (Mini Dashboard por Pessoa) */}
+              {data && data.byPerson.length > 0 ? (
+                <View className="gap-2.5">
+                  <View className="flex-row items-center justify-between">
+                    <Text className="text-sm font-bold text-foreground">Resumo por Pessoa</Text>
+                    {selectedPersonId !== "all" ? (
+                      <Pressable
+                        onPress={() => setSelectedPersonId("all")}
+                        className="active:opacity-60"
+                      >
+                        <Text className="text-xs font-semibold text-primary">Ver Todos</Text>
+                      </Pressable>
+                    ) : null}
+                  </View>
+
+                  <ScrollView
+                    horizontal
+                    showsHorizontalScrollIndicator={false}
+                    contentContainerStyle={{ gap: 10, paddingVertical: 4 }}
+                  >
+                    {/* Botão "Todos" */}
+                    <Pressable
+                      onPress={() => setSelectedPersonId("all")}
+                      className={`h-auto w-32 justify-between rounded-2xl border p-3.5 shadow-sm active:opacity-80 ${
+                        selectedPersonId === "all"
+                          ? "border-primary bg-primary/10"
+                          : "border-border bg-card"
+                      }`}
+                    >
+                      <View className="flex-row items-center gap-1.5">
+                        <Users
+                          size={14}
+                          color={selectedPersonId === "all" ? "#3B82F6" : "#71717a"}
+                        />
+                        <Text
+                          className={`text-xs font-bold ${
+                            selectedPersonId === "all" ? "text-primary" : "text-foreground"
+                          }`}
+                        >
+                          Geral
+                        </Text>
+                      </View>
+                      <View className="mt-3">
+                        <Text className="text-[10px] text-muted-foreground">Total</Text>
+                        <Text className="text-sm font-bold text-foreground">
+                          R$ {data.totalCommitted.toFixed(2)}
+                        </Text>
+                      </View>
+                    </Pressable>
+
+                    {/* Cards de cada pessoa */}
+                    {data.byPerson.map((p) => {
+                      const cardKey = p.isUser ? "user" : p.personId || "user";
+                      return (
+                        <PersonSummaryCard
+                          key={cardKey}
+                          person={p}
+                          isSelected={selectedPersonId === cardKey}
+                          onPress={() => setSelectedPersonId(cardKey)}
+                        />
+                      );
+                    })}
+                  </ScrollView>
+                </View>
+              ) : null}
+
+              {/* Título da Lista de Parcelas */}
+              <View className="flex-row items-center justify-between pt-2 border-t border-border/40">
+                <Text className="text-sm font-bold text-foreground">
+                  {selectedPersonId === "all"
+                    ? "Compromissos do Mês"
+                    : `Parcelas de ${
+                        data?.byPerson.find(
+                          (p) =>
+                            (selectedPersonId === "user" && p.isUser) ||
+                            p.personId === selectedPersonId,
+                        )?.name || ""
+                      }`}
+                  {` (${activeSplits.length})`}
                 </Text>
               </View>
-            ) : null
-          }
-          ListEmptyComponent={
-            <View className="flex-1 items-center justify-center px-6 py-16">
-              <View className="h-16 w-16 rounded-full bg-accent/60 items-center justify-center mb-4">
-                <ShoppingBag size={32} color="#71717a" />
-              </View>
-              <Text className="text-lg font-bold text-foreground text-center">
-                Nenhuma compra registrada
-              </Text>
-              <Text className="text-sm text-muted-foreground text-center mt-1 mb-6">
-                Cadastre suas compras à vista ou parceladas no cartão e divida valores com seus
-                amigos.
-              </Text>
-              <Button label="Registrar Primeira Compra" onPress={() => setModalVisible(true)} />
             </View>
           }
-          renderItem={({ item }: { item: PurchaseClient }) => {
-            const isCredit = item.paymentMethod === "credit";
-            const dateStr = new Date(item.purchaseDate).toLocaleDateString("pt-BR", {
+          ListEmptyComponent={
+            <View className="flex-1 items-center justify-center px-6 py-12">
+              <View className="h-14 w-14 rounded-full bg-accent/60 items-center justify-center mb-3">
+                <ShoppingBag size={28} color="#71717a" />
+              </View>
+              <Text className="text-base font-bold text-foreground text-center">
+                Nenhuma parcela neste mês
+              </Text>
+              <Text className="text-xs text-muted-foreground text-center mt-1 mb-5">
+                Não há faturas ou lançamentos programados para este período.
+              </Text>
+              <Button
+                size="sm"
+                label="Registrar Nova Compra"
+                onPress={() => setModalVisible(true)}
+              />
+            </View>
+          }
+          renderItem={({ item }) => {
+            const dueDateFormatted = new Date(item.dueDate).toLocaleDateString("pt-BR", {
               timeZone: "UTC",
               day: "2-digit",
               month: "2-digit",
-              year: "numeric",
             });
 
             return (
@@ -130,111 +299,67 @@ export default function HomeScreen() {
                 <View className="flex-row items-start justify-between">
                   <View className="flex-1 pr-2">
                     <View className="flex-row items-center gap-2">
-                      <Text className="text-base font-bold text-foreground">
-                        {item.description}
+                      <Text
+                        numberOfLines={1}
+                        className="text-base font-bold text-foreground flex-1"
+                      >
+                        {item.purchaseDescription}
                       </Text>
                       <Badge
-                        variant={isCredit ? "default" : "secondary"}
-                        label={isCredit ? `${item.totalInstallments}x` : item.paymentMethod}
+                        variant="secondary"
+                        label={`Parc. ${item.installmentNumber}/${item.totalInstallments}`}
                       />
                     </View>
-                    <Text className="text-xs text-muted-foreground mt-0.5">
-                      {dateStr}
-                      {item.creditCard ? ` • ${item.creditCard.name}` : ""}
-                    </Text>
+
+                    <View className="flex-row items-center gap-1.5 mt-1">
+                      <View
+                        className="h-2 w-2 rounded-full"
+                        style={{ backgroundColor: item.personColor }}
+                      />
+                      <Text className="text-xs text-muted-foreground">
+                        {item.personName}
+                        {item.creditCardName ? ` • ${item.creditCardName}` : ""}
+                      </Text>
+                    </View>
                   </View>
 
                   <Text className="text-base font-bold text-foreground">
-                    R$ {parseFloat(item.totalAmount).toFixed(2)}
+                    R$ {item.amount.toFixed(2)}
                   </Text>
                 </View>
 
-                {/* Parcelas e Splits */}
-                {item.installments && item.installments.length > 0 ? (
-                  <View className="gap-2 pt-2 border-t border-border/50">
-                    {item.installments.map((inst) => {
-                      const instDueDate = new Date(inst.dueDate).toLocaleDateString("pt-BR", {
-                        timeZone: "UTC",
-                        day: "2-digit",
-                        month: "2-digit",
-                      });
+                {/* Linha de status e ação */}
+                <View className="flex-row items-center justify-between pt-2 border-t border-border/40">
+                  <Text className="text-xs text-muted-foreground">
+                    Vencimento: {dueDateFormatted}
+                  </Text>
 
-                      return (
-                        <View key={inst.id} className="rounded-xl bg-muted/40 p-2.5 gap-2">
-                          <View className="flex-row items-center justify-between">
-                            <Text className="text-xs font-semibold text-foreground">
-                              Parcela {inst.installmentNumber}/{item.totalInstallments} • Venc.{" "}
-                              {instDueDate}
-                            </Text>
-                            <Text className="text-xs font-bold text-foreground">
-                              R$ {parseFloat(inst.amount).toFixed(2)}
-                            </Text>
-                          </View>
-
-                          {/* Splits por pessoa */}
-                          {inst.splits && inst.splits.length > 0 ? (
-                            <View className="gap-1.5 pt-1 border-t border-border/30">
-                              {inst.splits.map((split) => {
-                                const isUser = !split.personId;
-                                const personName = isUser
-                                  ? "Você (Titular)"
-                                  : split.person?.name || "Amigo";
-                                const personColor = isUser
-                                  ? "#3b82f6"
-                                  : split.person?.color || "#71717a";
-
-                                return (
-                                  <Pressable
-                                    key={split.id}
-                                    onPress={() => handleToggleSplit(split.id, split.isPaid)}
-                                    className="flex-row items-center justify-between py-0.5"
-                                  >
-                                    <View className="flex-row items-center gap-1.5 flex-1">
-                                      <View
-                                        className="h-2.5 w-2.5 rounded-full"
-                                        style={{ backgroundColor: personColor }}
-                                      />
-                                      <Text className="text-xs text-muted-foreground">
-                                        {personName}
-                                      </Text>
-                                    </View>
-
-                                    <View className="flex-row items-center gap-2">
-                                      <Text className="text-xs font-medium text-foreground">
-                                        R$ {parseFloat(split.amount).toFixed(2)}
-                                      </Text>
-
-                                      <View
-                                        className={`flex-row items-center gap-1 px-2 py-0.5 rounded-full ${
-                                          split.isPaid
-                                            ? "bg-green-500/10 text-green-600"
-                                            : "bg-amber-500/10 text-amber-600"
-                                        }`}
-                                      >
-                                        {split.isPaid ? (
-                                          <CheckCircle2 size={12} color="#16a34a" />
-                                        ) : (
-                                          <Clock size={12} color="#d97706" />
-                                        )}
-                                        <Text
-                                          className={`text-[10px] font-bold ${
-                                            split.isPaid ? "text-green-600" : "text-amber-600"
-                                          }`}
-                                        >
-                                          {split.isPaid ? "Pago" : "Pendente"}
-                                        </Text>
-                                      </View>
-                                    </View>
-                                  </Pressable>
-                                );
-                              })}
-                            </View>
-                          ) : null}
-                        </View>
-                      );
-                    })}
-                  </View>
-                ) : null}
+                  <Pressable
+                    onPress={() => toggleSplitPaid(item.id, item.isPaid)}
+                    className="active:opacity-70"
+                  >
+                    {item.isPaid ? (
+                      <View className="flex-row items-center gap-1 rounded-full bg-emerald-500/15 px-2.5 py-1">
+                        <CheckCircle2 size={12} color="#10B981" />
+                        <Text className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                          Pago
+                        </Text>
+                      </View>
+                    ) : item.isOverdue ? (
+                      <View className="flex-row items-center gap-1 rounded-full bg-destructive/15 px-2.5 py-1">
+                        <AlertTriangle size={12} color="#ef4444" />
+                        <Text className="text-xs font-bold text-destructive">Vencido</Text>
+                      </View>
+                    ) : (
+                      <View className="flex-row items-center gap-1 rounded-full bg-amber-500/15 px-2.5 py-1">
+                        <Clock size={12} color="#F59E0B" />
+                        <Text className="text-xs font-bold text-amber-600 dark:text-amber-400">
+                          Pendente
+                        </Text>
+                      </View>
+                    )}
+                  </Pressable>
+                </View>
               </View>
             );
           }}

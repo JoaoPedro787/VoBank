@@ -35,8 +35,8 @@
 
 ## 6. Mini Dashboard e Resumo por Pessoa
 
-- [ ] 6.1 Implementar endpoint ou service de consolidação de faturas (`/api/dashboard`), agrupando totais do mês, valores já pagos, valores pendentes e vencidos por pessoa (com testes unitários usando dados mockados).
-- [ ] 6.2 Construir telas principais do dashboard (`src/app/(tabs)/index.tsx`) com cartões coloridos por pessoa, filtros mensais e badges de status de parcelas.
+- [x] 6.1 Implementar endpoint ou service de consolidação de faturas (`/api/dashboard`), agrupando totais do mês, valores já pagos, valores pendentes e vencidos por pessoa (com testes unitários usando dados mockados).
+- [x] 6.2 Construir telas principais do dashboard (`src/app/(tabs)/index.tsx`) com cartões coloridos por pessoa, filtros mensais e badges de status de parcelas.
 
 ## 7. Notificações Locais, Polimento e Validação Final
 
