@@ -187,7 +187,7 @@ export type InstallmentSplit = typeof installmentSplits.$inferSelect;
 export type NewInstallmentSplit = typeof installmentSplits.$inferInsert;
 
 export type CreateSplitInput = z.infer<typeof splitInputSchema>;
-export type CreatePurchaseInput = z.infer<typeof createPurchaseSchema>;
+export type CreatePurchaseInput = z.input<typeof createPurchaseSchema>;
 export type ToggleInstallmentSplitPaidInput = z.infer<typeof toggleInstallmentSplitPaidSchema>;
 export type PurchaseResponse = z.infer<typeof purchaseResponseSchema>;
 export type InstallmentResponse = z.infer<typeof installmentResponseSchema>;

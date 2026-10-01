@@ -27,11 +27,11 @@
 
 ## 5. Motor de Compras, Faturas e Divisão (Rachar com TDD)
 
-- [ ] 5.1 Escrever suíte de testes unitários (TDD - Red) cobrindo todos os cenários de cálculo do ciclo de fatura (compras antes/depois do fechamento, meses de 28, 30 e 31 dias e anos bissextos) e implementar o helper de faturas até que todos os testes passem (Green).
-- [ ] 5.2 Escrever testes unitários (TDD) para a lógica matemática de divisão de compras (*split* por porcentagem e por valor fixo) e geração de parcelas individuais, implementando a função em seguida.
-- [ ] 5.3 Implementar endpoint e service de cadastro de compras (`/api/purchases`) com suporte a compras à vista, débito e crédito, persistindo compras, parcelas e splits (com testes unitários mockando o banco).
-- [ ] 5.4 Implementar endpoint para alternar status de pagamento de uma parcela de pessoa (`/api/installments/:id/toggle-paid`).
-- [ ] 5.5 Desenvolver modal "Nova Compra" no app com seletor de método de pagamento, seletor de cartão, visualização de parcelas calculadas e controle de divisão de percentual/valor entre pessoas.
+- [x] 5.1 Escrever suíte de testes unitários (TDD - Red) cobrindo todos os cenários de cálculo do ciclo de fatura (compras antes/depois do fechamento, meses de 28, 30 e 31 dias e anos bissextos) e implementar o helper de faturas até que todos os testes passem (Green).
+- [x] 5.2 Escrever testes unitários (TDD) para a lógica matemática de divisão de compras (*split* por porcentagem e por valor fixo) e geração de parcelas individuais, implementando a função em seguida.
+- [x] 5.3 Implementar endpoint e service de cadastro de compras (`/api/purchases`) com suporte a compras à vista, débito e crédito, persistindo compras, parcelas e splits (com testes unitários mockando o banco).
+- [x] 5.4 Implementar endpoint para alternar status de pagamento de uma parcela de pessoa (`/api/installments/:id/toggle-paid`).
+- [x] 5.5 Desenvolver modal "Nova Compra" no app com seletor de método de pagamento, seletor de cartão, visualização de parcelas calculadas e controle de divisão de percentual/valor entre pessoas.
 
 ## 6. Mini Dashboard e Resumo por Pessoa
 
