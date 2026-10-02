@@ -17,8 +17,11 @@ import {
   LogOut,
   AlertTriangle,
   Users,
+  Sun,
+  Moon,
 } from "lucide-react-native";
 import { useAuth } from "@/auth/hooks/use-auth";
+import { useTheme } from "@/shared/hooks/useTheme";
 import { useDashboard } from "@/dashboard/hooks/use-dashboard";
 import { usePurchases } from "@/purchases/hooks/use-purchases";
 import { useCreditCards } from "@/credit-cards/hooks/use-credit-cards";
@@ -31,9 +34,11 @@ import { MonthlyMetricsCard } from "@/dashboard/components/MonthlyMetricsCard";
 import { PersonSummaryCard } from "@/dashboard/components/PersonSummaryCard";
 import { Button } from "@/shared/components/Button";
 import { Badge } from "@/shared/components/Badge";
+import { AnimatedScaleFade } from "@/shared/components/AnimatedScaleFade";
 
 export default function HomeScreen() {
   const { user, logout } = useAuth();
+  const { isDark, toggleColorScheme } = useTheme();
   const {
     month,
     year,
@@ -127,6 +132,14 @@ export default function HomeScreen() {
               <Plus size={16} color="#ffffff" />
               <Text className="text-sm font-semibold text-primary-foreground">Nova Compra</Text>
             </Button>
+
+            <Pressable
+              onPress={toggleColorScheme}
+              className="h-9 w-9 items-center justify-center rounded-xl bg-muted active:opacity-70"
+              accessibilityLabel={isDark ? "Mudar para modo claro" : "Mudar para modo escuro"}
+            >
+              {isDark ? <Sun size={16} color="#eab308" /> : <Moon size={16} color="#71717a" />}
+            </Pressable>
 
             <Pressable
               onPress={handleLogout}
@@ -295,72 +308,74 @@ export default function HomeScreen() {
             });
 
             return (
-              <View className="rounded-2xl border border-border bg-card p-4 shadow-sm gap-3">
-                <View className="flex-row items-start justify-between">
-                  <View className="flex-1 pr-2">
-                    <View className="flex-row items-center gap-2">
-                      <Text
-                        numberOfLines={1}
-                        className="text-base font-bold text-foreground flex-1"
-                      >
-                        {item.purchaseDescription}
-                      </Text>
-                      <Badge
-                        variant="secondary"
-                        label={`Parc. ${item.installmentNumber}/${item.totalInstallments}`}
-                      />
+              <AnimatedScaleFade duration={180}>
+                <View className="rounded-2xl border border-border bg-card p-4 shadow-sm gap-3">
+                  <View className="flex-row items-start justify-between">
+                    <View className="flex-1 pr-2">
+                      <View className="flex-row items-center gap-2">
+                        <Text
+                          numberOfLines={1}
+                          className="text-base font-bold text-foreground flex-1"
+                        >
+                          {item.purchaseDescription}
+                        </Text>
+                        <Badge
+                          variant="secondary"
+                          label={`Parc. ${item.installmentNumber}/${item.totalInstallments}`}
+                        />
+                      </View>
+
+                      <View className="flex-row items-center gap-1.5 mt-1">
+                        <View
+                          className="h-2 w-2 rounded-full"
+                          style={{ backgroundColor: item.personColor }}
+                        />
+                        <Text className="text-xs text-muted-foreground">
+                          {item.personName}
+                          {item.creditCardName ? ` • ${item.creditCardName}` : ""}
+                        </Text>
+                      </View>
                     </View>
 
-                    <View className="flex-row items-center gap-1.5 mt-1">
-                      <View
-                        className="h-2 w-2 rounded-full"
-                        style={{ backgroundColor: item.personColor }}
-                      />
-                      <Text className="text-xs text-muted-foreground">
-                        {item.personName}
-                        {item.creditCardName ? ` • ${item.creditCardName}` : ""}
-                      </Text>
-                    </View>
+                    <Text className="text-base font-bold text-foreground">
+                      R$ {item.amount.toFixed(2)}
+                    </Text>
                   </View>
 
-                  <Text className="text-base font-bold text-foreground">
-                    R$ {item.amount.toFixed(2)}
-                  </Text>
-                </View>
+                  {/* Linha de status e ação */}
+                  <View className="flex-row items-center justify-between pt-2 border-t border-border/40">
+                    <Text className="text-xs text-muted-foreground">
+                      Vencimento: {dueDateFormatted}
+                    </Text>
 
-                {/* Linha de status e ação */}
-                <View className="flex-row items-center justify-between pt-2 border-t border-border/40">
-                  <Text className="text-xs text-muted-foreground">
-                    Vencimento: {dueDateFormatted}
-                  </Text>
-
-                  <Pressable
-                    onPress={() => toggleSplitPaid(item.id, item.isPaid)}
-                    className="active:opacity-70"
-                  >
-                    {item.isPaid ? (
-                      <View className="flex-row items-center gap-1 rounded-full bg-emerald-500/15 px-2.5 py-1">
-                        <CheckCircle2 size={12} color="#10B981" />
-                        <Text className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                          Pago
-                        </Text>
-                      </View>
-                    ) : item.isOverdue ? (
-                      <View className="flex-row items-center gap-1 rounded-full bg-destructive/15 px-2.5 py-1">
-                        <AlertTriangle size={12} color="#ef4444" />
-                        <Text className="text-xs font-bold text-destructive">Vencido</Text>
-                      </View>
-                    ) : (
-                      <View className="flex-row items-center gap-1 rounded-full bg-amber-500/15 px-2.5 py-1">
-                        <Clock size={12} color="#F59E0B" />
-                        <Text className="text-xs font-bold text-amber-600 dark:text-amber-400">
-                          Pendente
-                        </Text>
-                      </View>
-                    )}
-                  </Pressable>
+                    <Pressable
+                      onPress={() => toggleSplitPaid(item.id, item.isPaid)}
+                      className="active:opacity-70"
+                    >
+                      {item.isPaid ? (
+                        <View className="flex-row items-center gap-1 rounded-full bg-emerald-500/15 px-2.5 py-1">
+                          <CheckCircle2 size={12} color="#10B981" />
+                          <Text className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
+                            Pago
+                          </Text>
+                        </View>
+                      ) : item.isOverdue ? (
+                        <View className="flex-row items-center gap-1 rounded-full bg-destructive/15 px-2.5 py-1">
+                          <AlertTriangle size={12} color="#ef4444" />
+                          <Text className="text-xs font-bold text-destructive">Vencido</Text>
+                        </View>
+                      ) : (
+                        <View className="flex-row items-center gap-1 rounded-full bg-amber-500/15 px-2.5 py-1">
+                          <Clock size={12} color="#F59E0B" />
+                          <Text className="text-xs font-bold text-amber-600 dark:text-amber-400">
+                            Pendente
+                          </Text>
+                        </View>
+                      )}
+                    </Pressable>
+                  </View>
                 </View>
-              </View>
+              </AnimatedScaleFade>
             );
           }}
         />

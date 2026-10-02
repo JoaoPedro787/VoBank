@@ -2,6 +2,7 @@ import * as React from "react";
 import { useAuth } from "@/auth/hooks/use-auth";
 import { dashboardApiService } from "../services/dashboard-api.service";
 import { purchasesApiService } from "@/purchases/services/purchases-api.service";
+import { notificationService } from "@/notifications/services/notification.service";
 import { DashboardResponseClient } from "../types/dashboard.types";
 
 export function useDashboard() {
@@ -62,7 +63,13 @@ export function useDashboard() {
   const toggleSplitPaid = async (splitId: string, currentPaid: boolean) => {
     if (!token) return;
     try {
-      await purchasesApiService.toggleSplitPaid(token, splitId, !currentPaid);
+      const willBePaid = !currentPaid;
+      await purchasesApiService.toggleSplitPaid(token, splitId, willBePaid);
+
+      if (willBePaid) {
+        await notificationService.cancelSplitNotifications(splitId);
+      }
+
       // Recarregar dados consolidados
       await fetchDashboard(month, year);
     } catch (err: unknown) {

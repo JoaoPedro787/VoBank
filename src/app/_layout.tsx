@@ -5,10 +5,15 @@ import { StatusBar } from "expo-status-bar";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { useColorScheme } from "nativewind";
 import { AuthProvider } from "@/auth/hooks/use-auth";
+import { notificationService } from "@/notifications/services/notification.service";
 
 export default function RootLayout() {
   const { colorScheme } = useColorScheme();
   const isDark = colorScheme === "dark";
+
+  React.useEffect(() => {
+    notificationService.initNotifications();
+  }, []);
 
   return (
     <SafeAreaProvider>

@@ -6,6 +6,7 @@ import {
   CreatePurchaseData,
   InstallmentSplitClient,
 } from "../types/purchases.types";
+import { notificationService } from "@/notifications/services/notification.service";
 
 export function usePurchases() {
   const { token } = useAuth();
@@ -38,6 +39,10 @@ export function usePurchases() {
       setError(null);
       const created = await purchasesApiService.create(token, data);
       setPurchases((prev) => [created, ...prev]);
+
+      // Agendar notificações locais para parcelas/splits pendentes
+      await notificationService.schedulePurchaseNotifications(created);
+
       return created;
     },
     [token],
@@ -76,6 +81,10 @@ export function usePurchases() {
           })),
         })),
       );
+
+      if (updatedSplit.isPaid) {
+        await notificationService.cancelSplitNotifications(splitId);
+      }
 
       return updatedSplit;
     },

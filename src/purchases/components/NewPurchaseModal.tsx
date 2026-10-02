@@ -21,6 +21,7 @@ import { Input } from "@/shared/components/Input";
 import { Button } from "@/shared/components/Button";
 import { Badge } from "@/shared/components/Badge";
 import { Card, CardHeader, CardTitle, CardFooter } from "@/shared/components/Card";
+import { AnimatedScaleFade } from "@/shared/components/AnimatedScaleFade";
 import { CreditCard } from "@/credit-cards/types/credit-cards.types";
 import { Person } from "@/people/types/people.types";
 import { CreatePurchaseData, PaymentMethod, CreateSplitData } from "../types/purchases.types";
@@ -242,339 +243,345 @@ export function NewPurchaseModal({
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         className="flex-1 bg-black/60 justify-center p-4"
       >
-        <Card className="max-h-[92%] w-full bg-card shadow-2xl border-border">
-          <CardHeader className="border-b border-border pb-3 flex-row items-center justify-between">
-            <View>
-              <CardTitle className="text-xl">Nova Compra</CardTitle>
-              <Text className="text-xs text-muted-foreground mt-0.5">
-                Cadastre despesas à vista ou parcele no cartão
-              </Text>
-            </View>
-            <Pressable
-              onPress={onClose}
-              className="h-8 w-8 items-center justify-center rounded-full bg-muted active:opacity-70"
+        <AnimatedScaleFade className="w-full">
+          <Card className="max-h-[92%] w-full bg-card shadow-2xl border-border">
+            <CardHeader className="border-b border-border pb-3 flex-row items-center justify-between">
+              <View>
+                <CardTitle className="text-xl">Nova Compra</CardTitle>
+                <Text className="text-xs text-muted-foreground mt-0.5">
+                  Cadastre despesas à vista ou parcele no cartão
+                </Text>
+              </View>
+              <Pressable
+                onPress={onClose}
+                className="h-8 w-8 items-center justify-center rounded-full bg-muted active:opacity-70"
+              >
+                <X size={16} color="#71717a" />
+              </Pressable>
+            </CardHeader>
+
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ padding: 16, gap: 16 }}
             >
-              <X size={16} color="#71717a" />
-            </Pressable>
-          </CardHeader>
-
-          <ScrollView
-            showsVerticalScrollIndicator={false}
-            contentContainerStyle={{ padding: 16, gap: 16 }}
-          >
-            {error ? (
-              <View className="rounded-xl bg-destructive/10 p-3">
-                <Text className="text-xs font-medium text-destructive">{error}</Text>
-              </View>
-            ) : null}
-
-            {/* Descrição e Valor */}
-            <Input
-              label="Descrição da Compra"
-              placeholder="Ex: Supermercado, Cinema, Notebook..."
-              value={description}
-              onChangeText={setDescription}
-            />
-
-            <Input
-              label="Valor Total (R$)"
-              placeholder="0,00"
-              keyboardType="decimal-pad"
-              value={amountStr}
-              onChangeText={setAmountStr}
-            />
-
-            {/* Método de Pagamento */}
-            <View className="gap-2">
-              <Text className="text-sm font-medium text-foreground">Forma de Pagamento</Text>
-              <View className="flex-row gap-2">
-                <Pressable
-                  onPress={() => setPaymentMethod("credit")}
-                  className={`flex-1 flex-row items-center justify-center gap-2 py-2.5 rounded-xl border ${
-                    paymentMethod === "credit"
-                      ? "border-primary bg-primary/10"
-                      : "border-border bg-muted/40"
-                  }`}
-                >
-                  <CardIcon size={16} color={paymentMethod === "credit" ? "#3b82f6" : "#71717a"} />
-                  <Text
-                    className={`text-sm font-semibold ${
-                      paymentMethod === "credit" ? "text-primary" : "text-muted-foreground"
-                    }`}
-                  >
-                    Crédito
-                  </Text>
-                </Pressable>
-
-                <Pressable
-                  onPress={() => {
-                    setPaymentMethod("debit");
-                    setInstallmentsCount(1);
-                  }}
-                  className={`flex-1 flex-row items-center justify-center gap-2 py-2.5 rounded-xl border ${
-                    paymentMethod === "debit"
-                      ? "border-primary bg-primary/10"
-                      : "border-border bg-muted/40"
-                  }`}
-                >
-                  <Wallet size={16} color={paymentMethod === "debit" ? "#3b82f6" : "#71717a"} />
-                  <Text
-                    className={`text-sm font-semibold ${
-                      paymentMethod === "debit" ? "text-primary" : "text-muted-foreground"
-                    }`}
-                  >
-                    Débito
-                  </Text>
-                </Pressable>
-
-                <Pressable
-                  onPress={() => {
-                    setPaymentMethod("cash");
-                    setInstallmentsCount(1);
-                  }}
-                  className={`flex-1 flex-row items-center justify-center gap-2 py-2.5 rounded-xl border ${
-                    paymentMethod === "cash"
-                      ? "border-primary bg-primary/10"
-                      : "border-border bg-muted/40"
-                  }`}
-                >
-                  <Banknote size={16} color={paymentMethod === "cash" ? "#3b82f6" : "#71717a"} />
-                  <Text
-                    className={`text-sm font-semibold ${
-                      paymentMethod === "cash" ? "text-primary" : "text-muted-foreground"
-                    }`}
-                  >
-                    À Vista
-                  </Text>
-                </Pressable>
-              </View>
-            </View>
-
-            {/* Se for Crédito: Seletor de Cartão e Parcelas */}
-            {paymentMethod === "credit" ? (
-              <View className="gap-3 rounded-2xl bg-muted/30 p-3.5 border border-border">
-                <Text className="text-sm font-medium text-foreground">Cartão de Crédito</Text>
-                {cards.length === 0 ? (
-                  <Text className="text-xs text-destructive">
-                    Nenhum cartão cadastrado. Cadastre um cartão na aba Cartões antes de registrar
-                    compras no crédito.
-                  </Text>
-                ) : (
-                  <ScrollView horizontal showsHorizontalScrollIndicator={false} className="gap-2">
-                    {cards.map((c) => {
-                      const isSelected = c.id === selectedCardId;
-                      return (
-                        <Pressable
-                          key={c.id}
-                          onPress={() => setSelectedCardId(c.id)}
-                          className={`mr-2 flex-row items-center gap-2.5 px-3 py-2 rounded-xl border ${
-                            isSelected ? "border-primary bg-card" : "border-border bg-muted/50"
-                          }`}
-                        >
-                          <View
-                            className="h-4 w-4 rounded-full"
-                            style={{ backgroundColor: c.color }}
-                          />
-                          <View>
-                            <Text
-                              className={`text-xs font-bold ${
-                                isSelected ? "text-foreground" : "text-muted-foreground"
-                              }`}
-                            >
-                              {c.name}
-                            </Text>
-                            <Text className="text-[10px] text-muted-foreground">
-                              Fecha dia {c.closingDay} / Vence dia {c.dueDay}
-                            </Text>
-                          </View>
-                        </Pressable>
-                      );
-                    })}
-                  </ScrollView>
-                )}
-
-                {/* Quantidade de Parcelas */}
-                <View className="flex-row items-center justify-between pt-2 border-t border-border/60">
-                  <Text className="text-sm font-medium text-foreground">Número de Parcelas</Text>
-                  <View className="flex-row items-center gap-3">
-                    <Pressable
-                      onPress={handleDecrementInstallment}
-                      className="h-8 w-8 items-center justify-center rounded-lg bg-muted active:opacity-70"
-                    >
-                      <Minus size={16} color="#71717a" />
-                    </Pressable>
-                    <Text className="text-base font-bold text-foreground w-8 text-center">
-                      {installmentsCount}x
-                    </Text>
-                    <Pressable
-                      onPress={handleIncrementInstallment}
-                      className="h-8 w-8 items-center justify-center rounded-lg bg-muted active:opacity-70"
-                    >
-                      <Plus size={16} color="#71717a" />
-                    </Pressable>
-                  </View>
-                </View>
-              </View>
-            ) : null}
-
-            {/* Rachar Compras */}
-            <View className="gap-3 rounded-2xl bg-muted/20 p-3.5 border border-border">
-              <View className="flex-row items-center justify-between">
-                <View className="flex-row items-center gap-2">
-                  <Users size={18} color="#3b82f6" />
-                  <Text className="text-sm font-semibold text-foreground">
-                    Rachar com Outras Pessoas
-                  </Text>
-                </View>
-                <Pressable
-                  onPress={() => setIsSplitting(!isSplitting)}
-                  className={`px-3 py-1 rounded-full ${
-                    isSplitting ? "bg-primary text-white" : "bg-muted text-foreground"
-                  }`}
-                >
-                  <Text
-                    className={`text-xs font-bold ${
-                      isSplitting ? "text-primary-foreground" : "text-muted-foreground"
-                    }`}
-                  >
-                    {isSplitting ? "Ativo" : "Não dividir"}
-                  </Text>
-                </Pressable>
-              </View>
-
-              {isSplitting ? (
-                <View className="gap-3 pt-2">
-                  {/* Seletor de Modo: % ou R$ */}
-                  <View className="flex-row gap-2">
-                    <Pressable
-                      onPress={() => setSplitMode("percentage")}
-                      className={`flex-1 py-1.5 rounded-lg items-center border ${
-                        splitMode === "percentage"
-                          ? "border-primary bg-primary/10"
-                          : "border-border bg-card"
-                      }`}
-                    >
-                      <Text
-                        className={`text-xs font-semibold ${
-                          splitMode === "percentage" ? "text-primary" : "text-muted-foreground"
-                        }`}
-                      >
-                        Porcentagem (%)
-                      </Text>
-                    </Pressable>
-
-                    <Pressable
-                      onPress={() => setSplitMode("amount")}
-                      className={`flex-1 py-1.5 rounded-lg items-center border ${
-                        splitMode === "amount"
-                          ? "border-primary bg-primary/10"
-                          : "border-border bg-card"
-                      }`}
-                    >
-                      <Text
-                        className={`text-xs font-semibold ${
-                          splitMode === "amount" ? "text-primary" : "text-muted-foreground"
-                        }`}
-                      >
-                        Valor Fixo (R$)
-                      </Text>
-                    </Pressable>
-                  </View>
-
-                  {/* Lista de Pessoas */}
-                  {people.length === 0 ? (
-                    <Text className="text-xs text-muted-foreground italic py-1">
-                      Nenhuma pessoa cadastrada. Cadastre amigos na aba Pessoas para rachar compras.
-                    </Text>
-                  ) : (
-                    people.map((p) => (
-                      <View key={p.id} className="flex-row items-center justify-between gap-3">
-                        <View className="flex-row items-center gap-2 flex-1">
-                          <View
-                            className="h-3.5 w-3.5 rounded-full"
-                            style={{ backgroundColor: p.color }}
-                          />
-                          <Text className="text-xs font-medium text-foreground">{p.name}</Text>
-                        </View>
-                        <View className="w-24">
-                          <Input
-                            placeholder={splitMode === "percentage" ? "%" : "R$"}
-                            keyboardType="decimal-pad"
-                            value={personSplits[p.id] || ""}
-                            onChangeText={(val) => handlePersonSplitChange(p.id, val)}
-                          />
-                        </View>
-                      </View>
-                    ))
-                  )}
+              {error ? (
+                <View className="rounded-xl bg-destructive/10 p-3">
+                  <Text className="text-xs font-medium text-destructive">{error}</Text>
                 </View>
               ) : null}
-            </View>
 
-            {/* Pré-visualização do Ciclo de Parcelas */}
-            {previewInstallments.length > 0 ? (
-              <View className="gap-2 rounded-2xl bg-card p-3 border border-border">
-                <View className="flex-row items-center justify-between pb-1 border-b border-border/40">
-                  <Text className="text-xs font-bold text-foreground">
-                    Resumo do Ciclo de Faturas ({previewInstallments.length}x)
-                  </Text>
-                  <Text className="text-xs font-bold text-primary">
-                    Total: R$ {numericTotalAmount.toFixed(2)}
-                  </Text>
+              {/* Descrição e Valor */}
+              <Input
+                label="Descrição da Compra"
+                placeholder="Ex: Supermercado, Cinema, Notebook..."
+                value={description}
+                onChangeText={setDescription}
+              />
+
+              <Input
+                label="Valor Total (R$)"
+                placeholder="0,00"
+                keyboardType="decimal-pad"
+                value={amountStr}
+                onChangeText={setAmountStr}
+              />
+
+              {/* Método de Pagamento */}
+              <View className="gap-2">
+                <Text className="text-sm font-medium text-foreground">Forma de Pagamento</Text>
+                <View className="flex-row gap-2">
+                  <Pressable
+                    onPress={() => setPaymentMethod("credit")}
+                    className={`flex-1 flex-row items-center justify-center gap-2 py-2.5 rounded-xl border ${
+                      paymentMethod === "credit"
+                        ? "border-primary bg-primary/10"
+                        : "border-border bg-muted/40"
+                    }`}
+                  >
+                    <CardIcon
+                      size={16}
+                      color={paymentMethod === "credit" ? "#3b82f6" : "#71717a"}
+                    />
+                    <Text
+                      className={`text-sm font-semibold ${
+                        paymentMethod === "credit" ? "text-primary" : "text-muted-foreground"
+                      }`}
+                    >
+                      Crédito
+                    </Text>
+                  </Pressable>
+
+                  <Pressable
+                    onPress={() => {
+                      setPaymentMethod("debit");
+                      setInstallmentsCount(1);
+                    }}
+                    className={`flex-1 flex-row items-center justify-center gap-2 py-2.5 rounded-xl border ${
+                      paymentMethod === "debit"
+                        ? "border-primary bg-primary/10"
+                        : "border-border bg-muted/40"
+                    }`}
+                  >
+                    <Wallet size={16} color={paymentMethod === "debit" ? "#3b82f6" : "#71717a"} />
+                    <Text
+                      className={`text-sm font-semibold ${
+                        paymentMethod === "debit" ? "text-primary" : "text-muted-foreground"
+                      }`}
+                    >
+                      Débito
+                    </Text>
+                  </Pressable>
+
+                  <Pressable
+                    onPress={() => {
+                      setPaymentMethod("cash");
+                      setInstallmentsCount(1);
+                    }}
+                    className={`flex-1 flex-row items-center justify-center gap-2 py-2.5 rounded-xl border ${
+                      paymentMethod === "cash"
+                        ? "border-primary bg-primary/10"
+                        : "border-border bg-muted/40"
+                    }`}
+                  >
+                    <Banknote size={16} color={paymentMethod === "cash" ? "#3b82f6" : "#71717a"} />
+                    <Text
+                      className={`text-sm font-semibold ${
+                        paymentMethod === "cash" ? "text-primary" : "text-muted-foreground"
+                      }`}
+                    >
+                      À Vista
+                    </Text>
+                  </Pressable>
+                </View>
+              </View>
+
+              {/* Se for Crédito: Seletor de Cartão e Parcelas */}
+              {paymentMethod === "credit" ? (
+                <View className="gap-3 rounded-2xl bg-muted/30 p-3.5 border border-border">
+                  <Text className="text-sm font-medium text-foreground">Cartão de Crédito</Text>
+                  {cards.length === 0 ? (
+                    <Text className="text-xs text-destructive">
+                      Nenhum cartão cadastrado. Cadastre um cartão na aba Cartões antes de registrar
+                      compras no crédito.
+                    </Text>
+                  ) : (
+                    <ScrollView horizontal showsHorizontalScrollIndicator={false} className="gap-2">
+                      {cards.map((c) => {
+                        const isSelected = c.id === selectedCardId;
+                        return (
+                          <Pressable
+                            key={c.id}
+                            onPress={() => setSelectedCardId(c.id)}
+                            className={`mr-2 flex-row items-center gap-2.5 px-3 py-2 rounded-xl border ${
+                              isSelected ? "border-primary bg-card" : "border-border bg-muted/50"
+                            }`}
+                          >
+                            <View
+                              className="h-4 w-4 rounded-full"
+                              style={{ backgroundColor: c.color }}
+                            />
+                            <View>
+                              <Text
+                                className={`text-xs font-bold ${
+                                  isSelected ? "text-foreground" : "text-muted-foreground"
+                                }`}
+                              >
+                                {c.name}
+                              </Text>
+                              <Text className="text-[10px] text-muted-foreground">
+                                Fecha dia {c.closingDay} / Vence dia {c.dueDay}
+                              </Text>
+                            </View>
+                          </Pressable>
+                        );
+                      })}
+                    </ScrollView>
+                  )}
+
+                  {/* Quantidade de Parcelas */}
+                  <View className="flex-row items-center justify-between pt-2 border-t border-border/60">
+                    <Text className="text-sm font-medium text-foreground">Número de Parcelas</Text>
+                    <View className="flex-row items-center gap-3">
+                      <Pressable
+                        onPress={handleDecrementInstallment}
+                        className="h-8 w-8 items-center justify-center rounded-lg bg-muted active:opacity-70"
+                      >
+                        <Minus size={16} color="#71717a" />
+                      </Pressable>
+                      <Text className="text-base font-bold text-foreground w-8 text-center">
+                        {installmentsCount}x
+                      </Text>
+                      <Pressable
+                        onPress={handleIncrementInstallment}
+                        className="h-8 w-8 items-center justify-center rounded-lg bg-muted active:opacity-70"
+                      >
+                        <Plus size={16} color="#71717a" />
+                      </Pressable>
+                    </View>
+                  </View>
+                </View>
+              ) : null}
+
+              {/* Rachar Compras */}
+              <View className="gap-3 rounded-2xl bg-muted/20 p-3.5 border border-border">
+                <View className="flex-row items-center justify-between">
+                  <View className="flex-row items-center gap-2">
+                    <Users size={18} color="#3b82f6" />
+                    <Text className="text-sm font-semibold text-foreground">
+                      Rachar com Outras Pessoas
+                    </Text>
+                  </View>
+                  <Pressable
+                    onPress={() => setIsSplitting(!isSplitting)}
+                    className={`px-3 py-1 rounded-full ${
+                      isSplitting ? "bg-primary text-white" : "bg-muted text-foreground"
+                    }`}
+                  >
+                    <Text
+                      className={`text-xs font-bold ${
+                        isSplitting ? "text-primary-foreground" : "text-muted-foreground"
+                      }`}
+                    >
+                      {isSplitting ? "Ativo" : "Não dividir"}
+                    </Text>
+                  </Pressable>
                 </View>
 
-                {previewInstallments.slice(0, 3).map((inst) => {
-                  const dateStr = inst.dueDate.toLocaleDateString("pt-BR", {
-                    timeZone: "UTC",
-                    day: "2-digit",
-                    month: "2-digit",
-                    year: "numeric",
-                  });
+                {isSplitting ? (
+                  <View className="gap-3 pt-2">
+                    {/* Seletor de Modo: % ou R$ */}
+                    <View className="flex-row gap-2">
+                      <Pressable
+                        onPress={() => setSplitMode("percentage")}
+                        className={`flex-1 py-1.5 rounded-lg items-center border ${
+                          splitMode === "percentage"
+                            ? "border-primary bg-primary/10"
+                            : "border-border bg-card"
+                        }`}
+                      >
+                        <Text
+                          className={`text-xs font-semibold ${
+                            splitMode === "percentage" ? "text-primary" : "text-muted-foreground"
+                          }`}
+                        >
+                          Porcentagem (%)
+                        </Text>
+                      </Pressable>
 
-                  return (
-                    <View
-                      key={inst.installmentNumber}
-                      className="flex-row items-center justify-between py-1"
-                    >
-                      <View className="flex-row items-center gap-1.5">
-                        <Badge
-                          variant="secondary"
-                          label={`${inst.installmentNumber}/${previewInstallments.length}`}
-                        />
-                        <Text className="text-xs text-muted-foreground">Venc: {dateStr}</Text>
-                      </View>
-                      <Text className="text-xs font-bold text-foreground">
-                        R$ {inst.amount.toFixed(2)}
-                      </Text>
+                      <Pressable
+                        onPress={() => setSplitMode("amount")}
+                        className={`flex-1 py-1.5 rounded-lg items-center border ${
+                          splitMode === "amount"
+                            ? "border-primary bg-primary/10"
+                            : "border-border bg-card"
+                        }`}
+                      >
+                        <Text
+                          className={`text-xs font-semibold ${
+                            splitMode === "amount" ? "text-primary" : "text-muted-foreground"
+                          }`}
+                        >
+                          Valor Fixo (R$)
+                        </Text>
+                      </Pressable>
                     </View>
-                  );
-                })}
 
-                {previewInstallments.length > 3 ? (
-                  <Text className="text-[11px] text-muted-foreground text-center italic">
-                    + {previewInstallments.length - 3} parcelas subsequentes
-                  </Text>
+                    {/* Lista de Pessoas */}
+                    {people.length === 0 ? (
+                      <Text className="text-xs text-muted-foreground italic py-1">
+                        Nenhuma pessoa cadastrada. Cadastre amigos na aba Pessoas para rachar
+                        compras.
+                      </Text>
+                    ) : (
+                      people.map((p) => (
+                        <View key={p.id} className="flex-row items-center justify-between gap-3">
+                          <View className="flex-row items-center gap-2 flex-1">
+                            <View
+                              className="h-3.5 w-3.5 rounded-full"
+                              style={{ backgroundColor: p.color }}
+                            />
+                            <Text className="text-xs font-medium text-foreground">{p.name}</Text>
+                          </View>
+                          <View className="w-24">
+                            <Input
+                              placeholder={splitMode === "percentage" ? "%" : "R$"}
+                              keyboardType="decimal-pad"
+                              value={personSplits[p.id] || ""}
+                              onChangeText={(val) => handlePersonSplitChange(p.id, val)}
+                            />
+                          </View>
+                        </View>
+                      ))
+                    )}
+                  </View>
                 ) : null}
               </View>
-            ) : null}
-          </ScrollView>
 
-          <CardFooter className="border-t border-border p-4 gap-2 flex-row">
-            <Button
-              variant="outline"
-              label="Cancelar"
-              className="flex-1"
-              onPress={onClose}
-              disabled={isSubmitting}
-            />
-            <Button
-              label={isSubmitting ? "Salvando..." : "Salvar Compra"}
-              className="flex-1"
-              onPress={handleSubmit}
-              disabled={isSubmitting}
-            />
-          </CardFooter>
-        </Card>
+              {/* Pré-visualização do Ciclo de Parcelas */}
+              {previewInstallments.length > 0 ? (
+                <View className="gap-2 rounded-2xl bg-card p-3 border border-border">
+                  <View className="flex-row items-center justify-between pb-1 border-b border-border/40">
+                    <Text className="text-xs font-bold text-foreground">
+                      Resumo do Ciclo de Faturas ({previewInstallments.length}x)
+                    </Text>
+                    <Text className="text-xs font-bold text-primary">
+                      Total: R$ {numericTotalAmount.toFixed(2)}
+                    </Text>
+                  </View>
+
+                  {previewInstallments.slice(0, 3).map((inst) => {
+                    const dateStr = inst.dueDate.toLocaleDateString("pt-BR", {
+                      timeZone: "UTC",
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    });
+
+                    return (
+                      <View
+                        key={inst.installmentNumber}
+                        className="flex-row items-center justify-between py-1"
+                      >
+                        <View className="flex-row items-center gap-1.5">
+                          <Badge
+                            variant="secondary"
+                            label={`${inst.installmentNumber}/${previewInstallments.length}`}
+                          />
+                          <Text className="text-xs text-muted-foreground">Venc: {dateStr}</Text>
+                        </View>
+                        <Text className="text-xs font-bold text-foreground">
+                          R$ {inst.amount.toFixed(2)}
+                        </Text>
+                      </View>
+                    );
+                  })}
+
+                  {previewInstallments.length > 3 ? (
+                    <Text className="text-[11px] text-muted-foreground text-center italic">
+                      + {previewInstallments.length - 3} parcelas subsequentes
+                    </Text>
+                  ) : null}
+                </View>
+              ) : null}
+            </ScrollView>
+
+            <CardFooter className="border-t border-border p-4 gap-2 flex-row">
+              <Button
+                variant="outline"
+                label="Cancelar"
+                className="flex-1"
+                onPress={onClose}
+                disabled={isSubmitting}
+              />
+              <Button
+                label={isSubmitting ? "Salvando..." : "Salvar Compra"}
+                className="flex-1"
+                onPress={handleSubmit}
+                disabled={isSubmitting}
+              />
+            </CardFooter>
+          </Card>
+        </AnimatedScaleFade>
       </KeyboardAvoidingView>
     </Modal>
   );
