@@ -40,6 +40,6 @@
 
 ## 7. Notificações Locais, Polimento e Validação Final
 
-- [ ] 7.1 Configurar `expo-notifications` para agendar alertas locais para 1 dia antes e no dia de vencimento de parcelas pendentes, além de cancelamento automático ao pagar.
-- [ ] 7.2 Adicionar micro-animações (fade, scale-up em modais e cards) e validar alternância de tema Claro/Escuro pelo sistema e manual.
-- [ ] 7.3 Executar o script unificado `pnpm check` e verificar que linter ESLint, Prettier e 100% dos testes unitários executam com sucesso sem nenhum erro ou aviso.
+- [x] 7.1 Configurar `expo-notifications` para agendar alertas locais para 1 dia antes e no dia de vencimento de parcelas pendentes, além de cancelamento automático ao pagar.
+- [x] 7.2 Adicionar micro-animações (fade, scale-up em modais e cards) e validar alternância de tema Claro/Escuro pelo sistema e manual.
+- [x] 7.3 Executar o script unificado `pnpm check` e verificar que linter ESLint, Prettier e 100% dos testes unitários executam com sucesso sem nenhum erro ou aviso.

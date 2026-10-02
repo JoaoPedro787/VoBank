@@ -14,6 +14,7 @@ import { CreditCardModal } from "@/credit-cards/components/CreditCardModal";
 import { CreditCard, CreateCreditCardData } from "@/credit-cards/types/credit-cards.types";
 import { Button } from "@/shared/components/Button";
 import { Badge } from "@/shared/components/Badge";
+import { AnimatedScaleFade } from "@/shared/components/AnimatedScaleFade";
 
 export default function CardsScreen() {
   const { cards, isLoading, error, fetchCards, createCard, updateCard, deleteCard } =
@@ -115,56 +116,60 @@ export default function CardsScreen() {
             </View>
           }
           renderItem={({ item }) => (
-            <View
-              className="rounded-3xl p-5 shadow-sm justify-between gap-5"
-              style={{ backgroundColor: item.color }}
-            >
-              <View className="flex-row items-start justify-between">
-                <View className="flex-1 pr-2">
-                  <Text className="text-xl font-bold text-white tracking-wide">{item.name}</Text>
-                  <Text className="text-xs font-semibold text-white/80 uppercase tracking-widest mt-0.5">
-                    {item.flag}
-                  </Text>
-                </View>
-
-                <View className="flex-row items-center gap-1.5 bg-black/20 rounded-full px-2 py-1">
-                  <Pressable
-                    onPress={() => handleOpenEdit(item)}
-                    className="h-8 w-8 items-center justify-center rounded-full active:bg-white/20"
-                  >
-                    <Pencil size={16} color="#ffffff" />
-                  </Pressable>
-                  <Pressable
-                    onPress={() => handleDelete(item)}
-                    className="h-8 w-8 items-center justify-center rounded-full active:bg-white/20"
-                  >
-                    <Trash2 size={16} color="#fca5a5" />
-                  </Pressable>
-                </View>
-              </View>
-
-              <View className="flex-row items-center justify-between border-t border-white/15 pt-3">
-                <View className="flex-row items-center gap-2">
-                  <Calendar size={18} color="#ffffff" />
-                  <View>
-                    <Text className="text-[11px] text-white/70">Fechamento / Vencimento</Text>
-                    <Text className="text-sm font-bold text-white">
-                      Dia {item.closingDay} / Dia {item.dueDay}
+            <AnimatedScaleFade duration={180}>
+              <View
+                className="rounded-3xl p-5 shadow-sm justify-between gap-5"
+                style={{ backgroundColor: item.color }}
+              >
+                <View className="flex-row items-start justify-between">
+                  <View className="flex-1 pr-2">
+                    <Text className="text-xl font-bold text-white tracking-wide">{item.name}</Text>
+                    <Text className="text-xs font-semibold text-white/80 uppercase tracking-widest mt-0.5">
+                      {item.flag}
                     </Text>
+                  </View>
+
+                  <View className="flex-row items-center gap-1.5 bg-black/20 rounded-full px-2 py-1">
+                    <Pressable
+                      onPress={() => handleOpenEdit(item)}
+                      className="h-8 w-8 items-center justify-center rounded-full active:bg-white/20"
+                    >
+                      <Pencil size={16} color="#ffffff" />
+                    </Pressable>
+                    <Pressable
+                      onPress={() => handleDelete(item)}
+                      className="h-8 w-8 items-center justify-center rounded-full active:bg-white/20"
+                    >
+                      <Trash2 size={16} color="#fca5a5" />
+                    </Pressable>
                   </View>
                 </View>
 
-                {item.limit ? (
-                  <View className="items-end">
-                    <Text className="text-[11px] text-white/70">Limite Total</Text>
-                    <Text className="text-sm font-bold text-white">
-                      R${" "}
-                      {parseFloat(item.limit).toLocaleString("pt-BR", { minimumFractionDigits: 2 })}
-                    </Text>
+                <View className="flex-row items-center justify-between border-t border-white/15 pt-3">
+                  <View className="flex-row items-center gap-2">
+                    <Calendar size={18} color="#ffffff" />
+                    <View>
+                      <Text className="text-[11px] text-white/70">Fechamento / Vencimento</Text>
+                      <Text className="text-sm font-bold text-white">
+                        Dia {item.closingDay} / Dia {item.dueDay}
+                      </Text>
+                    </View>
                   </View>
-                ) : null}
+
+                  {item.limit ? (
+                    <View className="items-end">
+                      <Text className="text-[11px] text-white/70">Limite Total</Text>
+                      <Text className="text-sm font-bold text-white">
+                        R${" "}
+                        {parseFloat(item.limit).toLocaleString("pt-BR", {
+                          minimumFractionDigits: 2,
+                        })}
+                      </Text>
+                    </View>
+                  ) : null}
+                </View>
               </View>
-            </View>
+            </AnimatedScaleFade>
           )}
         />
       )}

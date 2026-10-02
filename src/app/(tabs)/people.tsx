@@ -115,7 +115,7 @@ export default function PeopleScreen() {
             </View>
           }
           renderItem={({ item }) => (
-            <Card className="flex-row items-center justify-between p-4">
+            <Card animated className="flex-row items-center justify-between p-4">
               <View className="flex-row items-center gap-3 flex-1">
                 <View
                   className="h-12 w-12 rounded-full items-center justify-center shadow-sm"
