@@ -16,6 +16,7 @@ import {
   X,
   Plus,
   Minus,
+  Calendar,
 } from "lucide-react-native";
 import { Input } from "@/shared/components/Input";
 import { Button } from "@/shared/components/Button";
@@ -30,8 +31,9 @@ import {
   calculatePurchaseSplitsAndInstallments,
   CalculatedInstallment,
 } from "@/shared/utils/purchase-split";
+import { maskDateBR, parseDateBR, getTodayBR, getYesterdayBR } from "../utils/purchase-date";
 
-interface NewPurchaseModalProps {
+export interface NewPurchaseModalProps {
   visible: boolean;
   onClose: () => void;
   onSave: (data: CreatePurchaseData) => Promise<void>;
@@ -48,6 +50,7 @@ export function NewPurchaseModal({
 }: NewPurchaseModalProps) {
   const [description, setDescription] = React.useState("");
   const [amountStr, setAmountStr] = React.useState("");
+  const [purchaseDateStr, setPurchaseDateStr] = React.useState("");
   const [paymentMethod, setPaymentMethod] = React.useState<PaymentMethod>("credit");
   const [selectedCardId, setSelectedCardId] = React.useState<string | null>(null);
   const [installmentsCount, setInstallmentsCount] = React.useState(1);
@@ -73,6 +76,7 @@ export function NewPurchaseModal({
     if (visible) {
       setDescription("");
       setAmountStr("");
+      setPurchaseDateStr("");
       setPaymentMethod("credit");
       if (cards.length > 0) setSelectedCardId(cards[0].id);
       setInstallmentsCount(1);
@@ -93,13 +97,19 @@ export function NewPurchaseModal({
     return cards.find((c) => c.id === selectedCardId) || null;
   }, [cards, selectedCardId]);
 
+  const effectivePurchaseDate = React.useMemo(() => {
+    if (!purchaseDateStr.trim()) return new Date();
+    const parsed = parseDateBR(purchaseDateStr);
+    return parsed ?? new Date();
+  }, [purchaseDateStr]);
+
   // Cálculo ao vivo do preview de parcelas e divisão
   const previewInstallments = React.useMemo<CalculatedInstallment[]>(() => {
     if (numericTotalAmount <= 0) return [];
 
     try {
       const dates = calculateInstallmentDates({
-        purchaseDate: new Date(),
+        purchaseDate: effectivePurchaseDate,
         paymentMethod,
         totalInstallments: installmentsCount,
         card:
@@ -138,6 +148,7 @@ export function NewPurchaseModal({
     }
   }, [
     numericTotalAmount,
+    effectivePurchaseDate,
     paymentMethod,
     installmentsCount,
     selectedCard,
@@ -214,6 +225,16 @@ export function NewPurchaseModal({
       }
     }
 
+    let finalPurchaseDate: Date | undefined;
+    if (purchaseDateStr.trim()) {
+      const parsed = parseDateBR(purchaseDateStr);
+      if (!parsed) {
+        setError("Data da compra inválida. Use o formato DD/MM/AAAA");
+        return;
+      }
+      finalPurchaseDate = parsed;
+    }
+
     setIsSubmitting(true);
     setError(null);
 
@@ -221,7 +242,7 @@ export function NewPurchaseModal({
       await onSave({
         description: description.trim(),
         totalAmount: numericTotalAmount,
-        purchaseDate: new Date(),
+        purchaseDate: finalPurchaseDate,
         paymentMethod,
         creditCardId: paymentMethod === "credit" ? selectedCardId : null,
         totalInstallments: paymentMethod === "credit" ? installmentsCount : 1,
@@ -285,6 +306,40 @@ export function NewPurchaseModal({
                 value={amountStr}
                 onChangeText={setAmountStr}
               />
+
+              {/* Data da Compra (Opcional) */}
+              <View className="gap-1.5">
+                <View className="flex-row items-center justify-between">
+                  <View className="flex-row items-center gap-1.5">
+                    <Calendar size={14} color="#71717a" />
+                    <Text className="text-sm font-medium text-foreground">
+                      Data da Compra{" "}
+                      <Text className="text-xs text-muted-foreground font-normal">(Opcional)</Text>
+                    </Text>
+                  </View>
+                  <View className="flex-row gap-1.5">
+                    <Pressable
+                      onPress={() => setPurchaseDateStr(getTodayBR())}
+                      className="px-2.5 py-1 rounded-lg bg-muted border border-border active:opacity-70"
+                    >
+                      <Text className="text-xs font-medium text-foreground">Hoje</Text>
+                    </Pressable>
+                    <Pressable
+                      onPress={() => setPurchaseDateStr(getYesterdayBR())}
+                      className="px-2.5 py-1 rounded-lg bg-muted border border-border active:opacity-70"
+                    >
+                      <Text className="text-xs font-medium text-foreground">Ontem</Text>
+                    </Pressable>
+                  </View>
+                </View>
+                <Input
+                  placeholder="DD/MM/AAAA (padrão: hoje)"
+                  keyboardType="number-pad"
+                  maxLength={10}
+                  value={purchaseDateStr}
+                  onChangeText={(val) => setPurchaseDateStr(maskDateBR(val))}
+                />
+              </View>
 
               {/* Método de Pagamento */}
               <View className="gap-2">

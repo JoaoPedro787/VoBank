@@ -15,9 +15,9 @@
 
 ## 3. Componentes de Modais e Seleção de Data
 
-- [ ] 3.1 Atualizar `src/purchases/components/NewPurchaseModal.tsx` com campo opcional de seleção de data da compra (com atalhos rápidos "Hoje" e "Ontem" e máscara DD/MM/AAAA), recalculando o ciclo do cartão em tempo real ao selecionar a data.
-- [ ] 3.2 Criar o componente `src/purchases/components/EditPurchaseModal.tsx` com edição restrita a descrição, data de compra e splits, exibindo método de pagamento, cartão, valor total e número de parcelas como campos desabilitados/somente leitura e botão de exclusão com confirmação.
-- [ ] 3.3 Adicionar testes unitários/componente para a lógica de formulário de edição e criação com data opcional em `src/purchases/tests/purchases-modal.test.ts`.
+- [x] 3.1 Atualizar `src/purchases/components/NewPurchaseModal.tsx` com campo opcional de seleção de data da compra (com atalhos rápidos "Hoje" e "Ontem" e máscara DD/MM/AAAA), recalculando o ciclo do cartão em tempo real ao selecionar a data.
+- [x] 3.2 Criar o componente `src/purchases/components/EditPurchaseModal.tsx` com edição restrita a descrição, data de compra e splits, exibindo método de pagamento, cartão, valor total e número de parcelas como campos desabilitados/somente leitura e botão de exclusão com confirmação.
+- [x] 3.3 Adicionar testes unitários/componente para a lógica de formulário de edição e criação com data opcional em `src/purchases/tests/purchases-modal.test.ts`.
 
 ## 4. Nova Tela de Compras e Filtros Cruzados
 
