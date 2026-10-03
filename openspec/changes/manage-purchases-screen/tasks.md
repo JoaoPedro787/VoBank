@@ -27,4 +27,4 @@
 
 ## 5. Validação Unificada e Qualidade
 
-- [ ] 5.1 Executar a suíte unificada de validação do projeto (`pnpm check`: Prettier, ESLint e Jest) e corrigir eventuais inconsistências ou avisos.
+- [x] 5.1 Executar a suíte unificada de validação do projeto (`pnpm check`: Prettier, ESLint e Jest) e corrigir eventuais inconsistências ou avisos.
