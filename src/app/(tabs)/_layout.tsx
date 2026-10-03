@@ -1,6 +1,6 @@
 import { Tabs } from "expo-router";
 import { useColorScheme } from "nativewind";
-import { Home, Users, CreditCard } from "lucide-react-native";
+import { Home, ShoppingBag, CreditCard, Users } from "lucide-react-native";
 
 export default function TabsLayout() {
   const { colorScheme } = useColorScheme();
@@ -29,10 +29,10 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
-        name="people"
+        name="purchases"
         options={{
-          title: "Pessoas",
-          tabBarIcon: ({ color, size }) => <Users size={size ?? 22} color={color} />,
+          title: "Compras",
+          tabBarIcon: ({ color, size }) => <ShoppingBag size={size ?? 22} color={color} />,
         }}
       />
       <Tabs.Screen
@@ -40,6 +40,13 @@ export default function TabsLayout() {
         options={{
           title: "Cartões",
           tabBarIcon: ({ color, size }) => <CreditCard size={size ?? 22} color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="people"
+        options={{
+          title: "Pessoas",
+          tabBarIcon: ({ color, size }) => <Users size={size ?? 22} color={color} />,
         }}
       />
     </Tabs>

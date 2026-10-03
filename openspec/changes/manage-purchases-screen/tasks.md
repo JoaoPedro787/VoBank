@@ -21,9 +21,9 @@
 
 ## 4. Nova Tela de Compras e Filtros Cruzados
 
-- [ ] 4.1 Criar o componente `PurchaseCard.tsx` em `src/purchases/components/` com visual moderno, badges de cartão e participantes, valor, data formatada, status de pagamento e gatilho de edição.
-- [ ] 4.2 Criar a tela `src/app/(tabs)/purchases.tsx` contendo cabeçalho com métricas (gasto acumulado e quantidade), barra de busca textual, seletor de mês/ano com opção "Todos os períodos", chips de cartão e chips de pessoa.
-- [ ] 4.3 Integrar a aba "Compras" em `src/app/(tabs)/_layout.tsx` com o ícone `ShoppingBag` e navegação fluida.
+- [x] 4.1 Criar o componente `PurchaseCard.tsx` em `src/purchases/components/` com visual moderno, badges de cartão e participantes, valor, data formatada, status de pagamento e gatilho de edição.
+- [x] 4.2 Criar a tela `src/app/(tabs)/purchases.tsx` contendo cabeçalho com métricas (gasto acumulado e quantidade), barra de busca textual, seletor de mês/ano com opção "Todos os períodos", chips de cartão e chips de pessoa.
+- [x] 4.3 Integrar a aba "Compras" em `src/app/(tabs)/_layout.tsx` com o ícone `ShoppingBag` e navegação fluida.
 
 ## 5. Validação Unificada e Qualidade
 
