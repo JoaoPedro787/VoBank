@@ -2,10 +2,10 @@
 
 ## 1. Backend: Schemas, Serviços e Persistência de Compras
 
-- [ ] 1.1 Atualizar `createPurchaseSchema` em `src/server/purchases/schemas/purchases.schema.ts` para tornar `purchaseDate` opcional com default para a data atual, e criar `updatePurchaseSchema` validando a invariância de `paymentMethod`, `creditCardId`, `totalAmount` e `totalInstallments`. Verificar com testes unitários em `src/server/purchases/tests/purchases.schema.test.ts`.
-- [ ] 1.2 Implementar método `updatePurchase` na interface `IPurchasesRepository` e nos repositórios `InMemoryPurchasesRepository` e `DrizzlePurchasesRepository` com execução transacional e preservação de status `isPaid` com suporte a abono.
-- [ ] 1.3 Adicionar método `updatePurchase` em `PurchasesService` em `src/server/purchases/services/purchases.service.ts` implementando a regra de abono (preservar parcelas pagas como quitadas e atribuir as parcelas restantes para a nova pessoa) e bloqueando mutações estruturais.
-- [ ] 1.4 Escrever testes unitários em memória para `PurchasesService.updatePurchase` cobrindo sucesso, abono de parcelas já quitadas, atribuição das parcelas restantes para a nova pessoa e bloqueio de alteração no total de parcelas, método de pagamento e valor total em `src/server/purchases/tests/purchases.service.test.ts`.
+- [x] 1.1 Atualizar `createPurchaseSchema` em `src/server/purchases/schemas/purchases.schema.ts` para tornar `purchaseDate` opcional com default para a data atual, e criar `updatePurchaseSchema` validando a invariância de `paymentMethod`, `creditCardId`, `totalAmount` e `totalInstallments`. Verificar com testes unitários em `src/server/purchases/tests/purchases.schema.test.ts`.
+- [x] 1.2 Implementar método `updatePurchase` na interface `IPurchasesRepository` e nos repositórios `InMemoryPurchasesRepository` e `DrizzlePurchasesRepository` com execução transacional e preservação de status `isPaid` com suporte a abono.
+- [x] 1.3 Adicionar método `updatePurchase` em `PurchasesService` em `src/server/purchases/services/purchases.service.ts` implementando a regra de abono (preservar parcelas pagas como quitadas e atribuir as parcelas restantes para a nova pessoa) e bloqueando mutações estruturais.
+- [x] 1.4 Escrever testes unitários em memória para `PurchasesService.updatePurchase` cobrindo sucesso, abono de parcelas já quitadas, atribuição das parcelas restantes para a nova pessoa e bloqueio de alteração no total de parcelas, método de pagamento e valor total em `src/server/purchases/tests/purchases.service.test.ts`.
 
 ## 2. API Routes e Camada de Serviço Client-Side
 

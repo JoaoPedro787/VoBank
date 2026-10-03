@@ -11,6 +11,7 @@ import {
 import {
   IPurchasesRepository,
   CreatePurchaseParams,
+  UpdatePurchaseParams,
   PurchaseWithRelations,
 } from "./purchases.repository.interface";
 
@@ -70,6 +71,116 @@ export class DrizzlePurchasesRepository implements IPurchasesRepository {
       });
 
       return fullPurchase as unknown as PurchaseWithRelations;
+    });
+  }
+
+  async updatePurchase(params: UpdatePurchaseParams): Promise<PurchaseWithRelations | null> {
+    return await db.transaction(async (tx) => {
+      // 1. Atualizar Purchase mestre
+      const updateData: {
+        updatedAt: Date;
+        description?: string;
+        purchaseDate?: Date;
+      } = {
+        updatedAt: new Date(),
+      };
+      if (params.purchase.description !== undefined) {
+        updateData.description = params.purchase.description;
+      }
+      if (params.purchase.purchaseDate !== undefined) {
+        updateData.purchaseDate = params.purchase.purchaseDate;
+      }
+
+      const [updatedPurchase] = await tx
+        .update(purchases)
+        .set(updateData)
+        .where(and(eq(purchases.id, params.id), eq(purchases.userId, params.userId)))
+        .returning();
+
+      if (!updatedPurchase) {
+        return null;
+      }
+
+      // 2. Se parcelas forem fornecidas, atualizar parcelas e splits
+      if (params.installments && params.installments.length > 0) {
+        const existingInsts = await tx
+          .select()
+          .from(installments)
+          .where(eq(installments.purchaseId, updatedPurchase.id));
+
+        for (const instData of params.installments) {
+          const existingInst = existingInsts.find(
+            (i) => i.installmentNumber === instData.installmentNumber,
+          );
+
+          let installmentId: string;
+          if (existingInst) {
+            installmentId = existingInst.id;
+            await tx
+              .update(installments)
+              .set({
+                amount: String(instData.amount),
+                dueDate: instData.dueDate,
+                billingMonth: instData.billingMonth,
+                billingYear: instData.billingYear,
+                updatedAt: new Date(),
+              })
+              .where(eq(installments.id, installmentId));
+
+            // Deletar splits antigos dessa parcela
+            await tx
+              .delete(installmentSplits)
+              .where(eq(installmentSplits.installmentId, installmentId));
+          } else {
+            const [createdInst] = await tx
+              .insert(installments)
+              .values({
+                purchaseId: updatedPurchase.id,
+                installmentNumber: instData.installmentNumber,
+                amount: String(instData.amount),
+                dueDate: instData.dueDate,
+                billingMonth: instData.billingMonth,
+                billingYear: instData.billingYear,
+              })
+              .returning();
+            installmentId = createdInst.id;
+          }
+
+          // Inserir os novos splits dessa parcela
+          if (instData.splits && instData.splits.length > 0) {
+            await tx.insert(installmentSplits).values(
+              instData.splits.map((s) => ({
+                installmentId,
+                personId: s.personId || null,
+                amount: String(s.amount),
+                percentage: s.percentage != null ? String(s.percentage) : null,
+                isPaid: s.isPaid ?? false,
+                paidAt: s.paidAt ?? null,
+              })),
+            );
+          }
+        }
+      }
+
+      // 3. Carregar compra completa com relações
+      const fullPurchase = await tx.query.purchases.findFirst({
+        where: eq(purchases.id, updatedPurchase.id),
+        with: {
+          creditCard: true,
+          installments: {
+            orderBy: (inst, { asc }) => [asc(inst.installmentNumber)],
+            with: {
+              splits: {
+                with: {
+                  person: true,
+                },
+              },
+            },
+          },
+        },
+      });
+
+      return (fullPurchase as unknown as PurchaseWithRelations) || null;
     });
   }
 

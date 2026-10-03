@@ -2,6 +2,7 @@ import { Purchase, Installment, InstallmentSplit } from "../schemas/purchases.sc
 import {
   IPurchasesRepository,
   CreatePurchaseParams,
+  UpdatePurchaseParams,
   PurchaseWithRelations,
   InstallmentWithSplits,
 } from "./purchases.repository.interface";
@@ -122,6 +123,81 @@ export class InMemoryPurchasesRepository implements IPurchasesRepository {
         : null,
       installments: createdInstallmentsWithSplits,
     };
+  }
+
+  async updatePurchase(params: UpdatePurchaseParams): Promise<PurchaseWithRelations | null> {
+    const pIndex = this.purchases.findIndex(
+      (p) => p.id === params.id && p.userId === params.userId,
+    );
+    if (pIndex === -1) return null;
+
+    const now = new Date();
+    const currentPurchase = this.purchases[pIndex];
+
+    const updatedPurchase: Purchase = {
+      ...currentPurchase,
+      description: params.purchase.description ?? currentPurchase.description,
+      purchaseDate: params.purchase.purchaseDate ?? currentPurchase.purchaseDate,
+      updatedAt: now,
+    };
+    this.purchases[pIndex] = updatedPurchase;
+
+    if (params.installments && params.installments.length > 0) {
+      for (const instData of params.installments) {
+        const inst = this.installments.find(
+          (i) =>
+            i.purchaseId === updatedPurchase.id &&
+            i.installmentNumber === instData.installmentNumber,
+        );
+
+        let installmentId: string;
+        if (inst) {
+          installmentId = inst.id;
+          inst.amount = String(instData.amount);
+          inst.dueDate = instData.dueDate;
+          inst.billingMonth = instData.billingMonth;
+          inst.billingYear = instData.billingYear;
+          inst.updatedAt = now;
+
+          // Remover splits existentes dessa parcela
+          this.installmentSplits = this.installmentSplits.filter(
+            (s) => s.installmentId !== installmentId,
+          );
+        } else {
+          installmentId = instData.id || generateId("inst");
+          const newInst: Installment = {
+            id: installmentId,
+            purchaseId: updatedPurchase.id,
+            installmentNumber: instData.installmentNumber,
+            amount: String(instData.amount),
+            dueDate: instData.dueDate,
+            billingMonth: instData.billingMonth,
+            billingYear: instData.billingYear,
+            createdAt: now,
+            updatedAt: now,
+          };
+          this.installments.push(newInst);
+        }
+
+        for (const s of instData.splits) {
+          const splitId = s.id || generateId("split");
+          const newSplit: InstallmentSplit = {
+            id: splitId,
+            installmentId,
+            personId: s.personId || null,
+            amount: String(s.amount),
+            percentage: s.percentage != null ? String(s.percentage) : null,
+            isPaid: s.isPaid ?? false,
+            paidAt: s.paidAt ?? null,
+            createdAt: now,
+            updatedAt: now,
+          };
+          this.installmentSplits.push(newSplit);
+        }
+      }
+    }
+
+    return await this.findById(params.id, params.userId);
   }
 
   async findByUserId(userId: string): Promise<PurchaseWithRelations[]> {

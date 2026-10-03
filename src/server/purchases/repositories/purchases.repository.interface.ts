@@ -35,8 +35,34 @@ export interface CreatePurchaseParams {
   }>;
 }
 
+export interface UpdatePurchaseParams {
+  id: string;
+  userId: string;
+  purchase: {
+    description?: string;
+    purchaseDate?: Date;
+  };
+  installments?: Array<{
+    id?: string;
+    installmentNumber: number;
+    amount: string;
+    dueDate: Date;
+    billingMonth: number;
+    billingYear: number;
+    splits: Array<{
+      id?: string;
+      personId: string | null;
+      amount: string;
+      percentage: string | null;
+      isPaid: boolean;
+      paidAt?: Date | null;
+    }>;
+  }>;
+}
+
 export interface IPurchasesRepository {
   createPurchaseWithInstallments(params: CreatePurchaseParams): Promise<PurchaseWithRelations>;
+  updatePurchase(params: UpdatePurchaseParams): Promise<PurchaseWithRelations | null>;
   findByUserId(userId: string): Promise<PurchaseWithRelations[]>;
   findById(id: string, userId: string): Promise<PurchaseWithRelations | null>;
   findSplitById(
