@@ -66,6 +66,39 @@ describe("purchasesApiService", () => {
     expect(result).toEqual(mockCreated);
   });
 
+  it("should update a purchase successfully", async () => {
+    const mockUpdated = {
+      id: "p1",
+      description: "Notebook Gamer",
+      totalAmount: "3000",
+      purchaseDate: "2025-05-15T12:00:00Z",
+      paymentMethod: "credit",
+      totalInstallments: 10,
+    };
+
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => mockUpdated,
+    } as Response);
+
+    const result = await purchasesApiService.update("fake-token", "p1", {
+      description: "Notebook Gamer",
+      purchaseDate: new Date("2025-05-15T12:00:00Z"),
+    });
+
+    expect(result).toEqual(mockUpdated);
+    expect(global.fetch).toHaveBeenCalledWith(
+      expect.stringContaining("/api/purchases/p1"),
+      expect.objectContaining({
+        method: "PUT",
+        headers: {
+          Authorization: "Bearer fake-token",
+          "Content-Type": "application/json",
+        },
+      }),
+    );
+  });
+
   it("should toggle installment split paid successfully", async () => {
     const mockUpdatedSplit = {
       id: "s1",

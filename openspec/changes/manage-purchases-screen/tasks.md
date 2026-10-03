@@ -9,9 +9,9 @@
 
 ## 2. API Routes e Camada de Serviço Client-Side
 
-- [ ] 2.1 Adicionar manipulador `PUT` em `src/app/api/purchases/[id]+api.ts` autenticado com `requireAuth` para processar atualizações de compra e retornar o registro atualizado.
-- [ ] 2.2 Criar testes unitários para a rota `PUT` em `src/server/purchases/tests/purchases.routes.test.ts`.
-- [ ] 2.3 Atualizar `src/purchases/services/purchases-api.service.ts` e `src/purchases/hooks/use-purchases.ts` adicionando método `update(id, data)` e tipos TypeScript correspondentes.
+- [x] 2.1 Adicionar manipulador `PUT` em `src/app/api/purchases/[id]+api.ts` autenticado com `requireAuth` para processar atualizações de compra e retornar o registro atualizado.
+- [x] 2.2 Criar testes unitários para a rota `PUT` em `src/server/purchases/tests/purchases.routes.test.ts`.
+- [x] 2.3 Atualizar `src/purchases/services/purchases-api.service.ts` e `src/purchases/hooks/use-purchases.ts` adicionando método `update(id, data)` e tipos TypeScript correspondentes.
 
 ## 3. Componentes de Modais e Seleção de Data
 

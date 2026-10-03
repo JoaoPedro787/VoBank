@@ -9,9 +9,19 @@ export interface CreateSplitData {
 export interface CreatePurchaseData {
   description: string;
   totalAmount: number;
-  purchaseDate: string | Date;
+  purchaseDate?: string | Date;
   paymentMethod: PaymentMethod;
   creditCardId?: string | null;
+  totalInstallments?: number;
+  splits?: CreateSplitData[];
+}
+
+export interface UpdatePurchaseData {
+  description?: string;
+  purchaseDate?: string | Date;
+  paymentMethod?: PaymentMethod;
+  creditCardId?: string | null;
+  totalAmount?: number;
   totalInstallments?: number;
   splits?: CreateSplitData[];
 }

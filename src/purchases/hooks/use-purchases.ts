@@ -4,6 +4,7 @@ import { purchasesApiService } from "../services/purchases-api.service";
 import {
   PurchaseClient,
   CreatePurchaseData,
+  UpdatePurchaseData,
   InstallmentSplitClient,
 } from "../types/purchases.types";
 import { notificationService } from "@/notifications/services/notification.service";
@@ -44,6 +45,21 @@ export function usePurchases() {
       await notificationService.schedulePurchaseNotifications(created);
 
       return created;
+    },
+    [token],
+  );
+
+  const updatePurchase = React.useCallback(
+    async (id: string, data: UpdatePurchaseData): Promise<PurchaseClient> => {
+      if (!token) throw new Error("Usuário não autenticado");
+      setError(null);
+      const updated = await purchasesApiService.update(token, id, data);
+      setPurchases((prev) => prev.map((p) => (p.id === id ? updated : p)));
+
+      // Reagendar notificações para parcelas atualizadas
+      await notificationService.schedulePurchaseNotifications(updated);
+
+      return updated;
     },
     [token],
   );
@@ -97,6 +113,7 @@ export function usePurchases() {
     error,
     fetchPurchases,
     createPurchase,
+    updatePurchase,
     deletePurchase,
     toggleSplitPaid,
   };

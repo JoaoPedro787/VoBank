@@ -2,6 +2,7 @@ import { getBaseApiUrl } from "@/shared/lib/api-config";
 import {
   PurchaseClient,
   CreatePurchaseData,
+  UpdatePurchaseData,
   InstallmentSplitClient,
 } from "../types/purchases.types";
 
@@ -54,6 +55,25 @@ export const purchasesApiService = {
     const result = await response.json();
     if (!response.ok) {
       throw new Error(result.error || "Erro ao registrar compra");
+    }
+
+    return result as PurchaseClient;
+  },
+
+  async update(token: string, id: string, data: UpdatePurchaseData): Promise<PurchaseClient> {
+    const baseUrl = getBaseApiUrl();
+    const response = await fetch(`${baseUrl}/api/purchases/${id}`, {
+      method: "PUT",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.error || "Erro ao atualizar compra");
     }
 
     return result as PurchaseClient;

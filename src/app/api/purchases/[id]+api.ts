@@ -31,6 +31,20 @@ export async function GET(request: Request, contextOrParams?: RouteContext): Pro
   }
 }
 
+export async function PUT(request: Request, contextOrParams?: RouteContext): Promise<Response> {
+  try {
+    const authUser = requireAuth(request);
+    const id = extractId(request, contextOrParams);
+    const body = await request.json();
+    const purchasesService = getPurchasesService();
+    const updated = await purchasesService.updatePurchase(id, authUser.userId, body);
+
+    return apiSuccess(updated, 200);
+  } catch (error) {
+    return handleApiError(error);
+  }
+}
+
 export async function DELETE(request: Request, contextOrParams?: RouteContext): Promise<Response> {
   try {
     const authUser = requireAuth(request);
