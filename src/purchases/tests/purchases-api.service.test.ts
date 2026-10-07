@@ -39,6 +39,30 @@ describe("purchasesApiService", () => {
     );
   });
 
+  it("should list purchases with query filter parameters", async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      ok: true,
+      json: async () => [],
+    } as Response);
+
+    await purchasesApiService.list("fake-token", {
+      month: 3,
+      year: 2026,
+      creditCardId: "c1",
+      personId: "p1",
+      search: "mercado",
+    });
+
+    expect(global.fetch).toHaveBeenCalledWith(
+      expect.stringMatching(
+        /\/api\/purchases\?month=3&year=2026&creditCardId=c1&personId=p1&search=mercado/,
+      ),
+      expect.objectContaining({
+        headers: { Authorization: "Bearer fake-token" },
+      }),
+    );
+  });
+
   it("should create a purchase successfully", async () => {
     const mockCreated = {
       id: "p1",

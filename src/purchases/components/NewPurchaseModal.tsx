@@ -22,6 +22,7 @@ import { Input } from "@/shared/components/Input";
 import { Button } from "@/shared/components/Button";
 import { Badge } from "@/shared/components/Badge";
 import { Card, CardHeader, CardTitle, CardFooter } from "@/shared/components/Card";
+import { ModalGrabHandle } from "@/shared/components/ModalGrabHandle";
 import { AnimatedScaleFade } from "@/shared/components/AnimatedScaleFade";
 import { CreditCard } from "@/credit-cards/types/credit-cards.types";
 import { Person } from "@/people/types/people.types";
@@ -265,8 +266,9 @@ export function NewPurchaseModal({
         className="flex-1 bg-black/60 justify-center p-4"
       >
         <AnimatedScaleFade className="w-full">
-          <Card className="max-h-[92%] w-full bg-card shadow-2xl border-border">
-            <CardHeader className="border-b border-border pb-3 flex-row items-center justify-between">
+          <Card className="max-h-[92%] w-full bg-card shadow-2xl border-border pt-1">
+            <ModalGrabHandle />
+            <CardHeader className="border-b border-border pb-3 pt-0 flex-row items-center justify-between">
               <View>
                 <CardTitle className="text-xl">Nova Compra</CardTitle>
                 <Text className="text-xs text-muted-foreground mt-0.5">

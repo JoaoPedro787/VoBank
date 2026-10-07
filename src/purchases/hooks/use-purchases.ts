@@ -6,29 +6,35 @@ import {
   CreatePurchaseData,
   UpdatePurchaseData,
   InstallmentSplitClient,
+  ListPurchasesFilters,
 } from "../types/purchases.types";
 import { notificationService } from "@/notifications/services/notification.service";
 
-export function usePurchases() {
+export function usePurchases(initialFilters?: ListPurchasesFilters) {
   const { token } = useAuth();
   const [purchases, setPurchases] = React.useState<PurchaseClient[]>([]);
   const [isLoading, setIsLoading] = React.useState(false);
   const [error, setError] = React.useState<string | null>(null);
+  const [filters, setFilters] = React.useState<ListPurchasesFilters | undefined>(initialFilters);
 
-  const fetchPurchases = React.useCallback(async () => {
-    if (!token) return;
-    setIsLoading(true);
-    setError(null);
-    try {
-      const data = await purchasesApiService.list(token);
-      setPurchases(data);
-    } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : "Erro ao carregar compras";
-      setError(message);
-    } finally {
-      setIsLoading(false);
-    }
-  }, [token]);
+  const fetchPurchases = React.useCallback(
+    async (overrideFilters?: ListPurchasesFilters) => {
+      if (!token) return;
+      setIsLoading(true);
+      setError(null);
+      try {
+        const activeFilters = overrideFilters !== undefined ? overrideFilters : filters;
+        const data = await purchasesApiService.list(token, activeFilters);
+        setPurchases(data);
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Erro ao carregar compras";
+        setError(message);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [token, filters],
+  );
 
   React.useEffect(() => {
     fetchPurchases();
@@ -111,6 +117,8 @@ export function usePurchases() {
     purchases,
     isLoading,
     error,
+    filters,
+    setFilters,
     fetchPurchases,
     createPurchase,
     updatePurchase,

@@ -1,5 +1,13 @@
 export type PaymentMethod = "cash" | "debit" | "credit";
 
+export interface ListPurchasesFilters {
+  month?: number;
+  year?: number;
+  creditCardId?: string;
+  personId?: string;
+  search?: string;
+}
+
 export interface CreateSplitData {
   personId?: string | null;
   amount?: number;

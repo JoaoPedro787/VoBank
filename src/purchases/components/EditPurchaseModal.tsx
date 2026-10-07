@@ -24,6 +24,7 @@ import { Input } from "@/shared/components/Input";
 import { Button } from "@/shared/components/Button";
 import { Badge } from "@/shared/components/Badge";
 import { Card, CardHeader, CardTitle, CardFooter } from "@/shared/components/Card";
+import { ModalGrabHandle } from "@/shared/components/ModalGrabHandle";
 import { AnimatedScaleFade } from "@/shared/components/AnimatedScaleFade";
 import { Person } from "@/people/types/people.types";
 import { CreditCard } from "@/credit-cards/types/credit-cards.types";
@@ -224,8 +225,9 @@ export function EditPurchaseModal({
         className="flex-1 bg-black/60 justify-center p-4"
       >
         <AnimatedScaleFade className="w-full">
-          <Card className="max-h-[92%] w-full bg-card shadow-2xl border-border">
-            <CardHeader className="border-b border-border pb-3 flex-row items-center justify-between">
+          <Card className="max-h-[92%] w-full bg-card shadow-2xl border-border pt-1">
+            <ModalGrabHandle />
+            <CardHeader className="border-b border-border pb-3 pt-0 flex-row items-center justify-between">
               <View>
                 <CardTitle className="text-xl">Editar Compra</CardTitle>
                 <Text className="text-xs text-muted-foreground mt-0.5">
@@ -288,7 +290,7 @@ export function EditPurchaseModal({
                     <Text className="text-[11px] text-muted-foreground font-medium">
                       Valor Total
                     </Text>
-                    <Text className="text-sm font-bold text-primary mt-0.5">
+                    <Text className="text-sm font-bold text-primary mt-0.5 tabular-nums">
                       R$ {numericTotalAmount.toFixed(2).replace(".", ",")}
                     </Text>
                   </View>
@@ -314,7 +316,7 @@ export function EditPurchaseModal({
                     <Text className="text-[11px] text-muted-foreground font-medium">
                       Parcelamento
                     </Text>
-                    <Text className="text-xs font-bold text-foreground mt-0.5">
+                    <Text className="text-xs font-bold text-foreground mt-0.5 tabular-nums">
                       {purchase.totalInstallments}x de R${" "}
                       {(numericTotalAmount / purchase.totalInstallments)
                         .toFixed(2)

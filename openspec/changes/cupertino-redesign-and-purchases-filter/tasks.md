@@ -19,10 +19,10 @@
 
 ## 3. Integração Client-Side de Compras & Agrupamento por Dia
 
-- [ ] 3.1 Atualizar `src/purchases/services/purchases-api.service.ts` e `src/purchases/hooks/use-purchases.ts` com suporte aos parâmetros de filtro na API.
-- [ ] 3.2 Criar utilitário `groupPurchasesByDay` em `src/purchases/utils/purchases-group.ts` com testes unitários em `src/purchases/tests/purchases-group.test.ts`.
-- [ ] 3.3 Refatorar `src/purchases/components/PurchaseCard.tsx`, `NewPurchaseModal.tsx` e `EditPurchaseModal.tsx` para o visual Cupertino Balance com `ModalGrabHandle`.
-- [ ] 3.4 Refatorar a tela `src/app/(tabs)/purchases.tsx` com a listagem agrupada por dia ("Compras - Agrupado por Dia") e filtros padronizados com o `shared`.
+- [x] 3.1 Atualizar `src/purchases/services/purchases-api.service.ts` e `src/purchases/hooks/use-purchases.ts` com suporte aos parâmetros de filtro na API.
+- [x] 3.2 Criar utilitário `groupPurchasesByDay` em `src/purchases/utils/purchases-group.ts` com testes unitários em `src/purchases/tests/purchases-group.test.ts`.
+- [x] 3.3 Refatorar `src/purchases/components/PurchaseCard.tsx`, `NewPurchaseModal.tsx` e `EditPurchaseModal.tsx` para o visual Cupertino Balance com `ModalGrabHandle`.
+- [x] 3.4 Refatorar a tela `src/app/(tabs)/purchases.tsx` com a listagem agrupada por dia ("Compras - Agrupado por Dia") e filtros padronizados com o `shared`.
 
 ## 4. Redesign das Telas Restantes (Dashboard, Cartões, Pessoas e Auth)
 

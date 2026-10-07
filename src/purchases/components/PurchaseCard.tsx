@@ -148,7 +148,7 @@ export function PurchaseCard({ purchase, onPressEdit }: PurchaseCardProps) {
 
               <Text className="text-xs text-muted-foreground/60">•</Text>
 
-              <Text className="text-xs font-semibold text-muted-foreground">
+              <Text className="text-xs font-semibold text-muted-foreground tabular-nums">
                 {installmentsCount > 1
                   ? `${installmentsCount}x de R$ ${installmentValue.toFixed(2).replace(".", ",")}`
                   : "À vista"}
@@ -158,14 +158,14 @@ export function PurchaseCard({ purchase, onPressEdit }: PurchaseCardProps) {
 
           {/* Valor Total e Botão Editar */}
           <View className="items-end gap-1.5">
-            <Text className="text-base font-bold text-foreground">
+            <Text className="text-base font-bold text-foreground tabular-nums tracking-tight">
               R$ {numericTotal.toFixed(2).replace(".", ",")}
             </Text>
 
             <Pressable
               onPress={() => onPressEdit?.(purchase)}
               hitSlop={8}
-              className="h-7 w-7 rounded-full bg-muted items-center justify-center active:opacity-60"
+              className="h-7 w-7 rounded-full bg-muted items-center justify-center active:scale-95 active:opacity-60"
               accessibilityLabel="Editar compra"
             >
               <Pencil size={13} color="#71717a" />
