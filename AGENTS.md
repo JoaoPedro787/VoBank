@@ -50,7 +50,7 @@ O projeto segue estritamente uma arquitetura baseada em features tanto no client
 
 ## 2. Sugestão Obrigatória de Commits
 
-Ao final de cada etapa, tarefa implementada ou arquivo significativo criado/alterado, o assistente deve **sempre sugerir ideias de mensagens de commit** formatadas no padrão **Conventional Commits**:
+Deve ser **sempre 1 commit único após terminar uma task** (agrupando todas as alterações e arquivos pertencentes àquela tarefa), formatado no padrão **Conventional Commits**:
 
 - `feat(...)`: Novas funcionalidades.
 - `fix(...)`: Correção de bugs.
@@ -64,4 +64,4 @@ Ao final de cada etapa, tarefa implementada ou arquivo significativo criado/alte
 
 - **Execução por Grupo Principal:** O assistente deve implementar as tarefas agrupadas pelo seu número principal (ex: concluir todas as subtasks do grupo `1` como `1.1`, `1.2`, `1.3`, etc.).
 - **Pausa Obrigatória:** Sempre **parar e aguardar confirmação/validação do usuário** imediatamente após finalizar um grupo completo de tasks (ex: terminou todas as do bloco `1`, pare antes de iniciar o bloco `2`).
-- **Relatório e Commits:** Ao parar no final de cada grupo, apresentar um resumo do que foi entregue, o status das tarefas e a sugestão de commits correspondentes.
+- **Relatório e Commits:** Ao parar no final de cada grupo, apresentar um resumo do que foi entregue, o status das tarefas e a sugestão de commits correspondentes (respeitando a regra de 1 commit único por task finalizada).
