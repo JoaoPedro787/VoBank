@@ -4,6 +4,8 @@ import {
   UpdatePurchaseInput,
   updatePurchaseSchema,
   InstallmentSplit,
+  listPurchasesQuerySchema,
+  ListPurchasesFilters,
 } from "../schemas/purchases.schema";
 import {
   IPurchasesRepository,
@@ -290,8 +292,12 @@ export class PurchasesService {
     return updated;
   }
 
-  async listPurchases(userId: string): Promise<PurchaseWithRelations[]> {
-    return await this.purchasesRepo.findByUserId(userId);
+  async listPurchases(
+    userId: string,
+    filters?: ListPurchasesFilters,
+  ): Promise<PurchaseWithRelations[]> {
+    const validatedFilters = filters ? listPurchasesQuerySchema.parse(filters) : undefined;
+    return await this.purchasesRepo.findByUserId(userId, validatedFilters);
   }
 
   async getPurchase(id: string, userId: string): Promise<PurchaseWithRelations> {

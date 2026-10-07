@@ -5,8 +5,25 @@ import { apiSuccess, handleApiError } from "../../server/shared/utils/api-respon
 export async function GET(request: Request): Promise<Response> {
   try {
     const authUser = requireAuth(request);
+    const url = new URL(request.url);
+    const queryParams: Record<string, string> = {};
+
+    const month = url.searchParams.get("month");
+    if (month) queryParams.month = month;
+    const year = url.searchParams.get("year");
+    if (year) queryParams.year = year;
+    const creditCardId = url.searchParams.get("creditCardId");
+    if (creditCardId) queryParams.creditCardId = creditCardId;
+    const personId = url.searchParams.get("personId");
+    if (personId) queryParams.personId = personId;
+    const search = url.searchParams.get("search");
+    if (search) queryParams.search = search;
+
     const purchasesService = getPurchasesService();
-    const purchases = await purchasesService.listPurchases(authUser.userId);
+    const purchases = await purchasesService.listPurchases(
+      authUser.userId,
+      Object.keys(queryParams).length > 0 ? queryParams : undefined,
+    );
 
     return apiSuccess(purchases, 200);
   } catch (error) {

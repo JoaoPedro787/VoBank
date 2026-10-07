@@ -5,6 +5,7 @@ import {
   UpdatePurchaseParams,
   PurchaseWithRelations,
   InstallmentWithSplits,
+  ListPurchasesFilters,
 } from "./purchases.repository.interface";
 import { CreditCard } from "../../credit-cards/schemas/credit-cards.schema";
 import { Person } from "../../people/schemas/people.schema";
@@ -200,8 +201,66 @@ export class InMemoryPurchasesRepository implements IPurchasesRepository {
     return await this.findById(params.id, params.userId);
   }
 
-  async findByUserId(userId: string): Promise<PurchaseWithRelations[]> {
-    const userPurchases = this.purchases.filter((p) => p.userId === userId);
+  async findByUserId(
+    userId: string,
+    filters?: ListPurchasesFilters,
+  ): Promise<PurchaseWithRelations[]> {
+    let userPurchases = this.purchases.filter((p) => p.userId === userId);
+
+    if (filters) {
+      if (filters.search && filters.search.trim() !== "") {
+        const query = filters.search.trim().toLowerCase();
+        userPurchases = userPurchases.filter((p) => p.description.toLowerCase().includes(query));
+      }
+
+      if (filters.year != null) {
+        userPurchases = userPurchases.filter((p) => {
+          const d = new Date(p.purchaseDate);
+          if (isNaN(d.getTime())) return false;
+          const yearMatches = d.getUTCFullYear() === filters.year;
+          if (filters.month != null) {
+            return yearMatches && d.getUTCMonth() + 1 === filters.month;
+          }
+          return yearMatches;
+        });
+      } else if (filters.month != null) {
+        userPurchases = userPurchases.filter((p) => {
+          const d = new Date(p.purchaseDate);
+          if (isNaN(d.getTime())) return false;
+          return d.getUTCMonth() + 1 === filters.month;
+        });
+      }
+
+      if (filters.creditCardId && filters.creditCardId !== "all") {
+        if (filters.creditCardId === "no-card" || filters.creditCardId === "none") {
+          userPurchases = userPurchases.filter((p) => p.creditCardId == null);
+        } else {
+          userPurchases = userPurchases.filter((p) => p.creditCardId === filters.creditCardId);
+        }
+      }
+
+      if (filters.personId && filters.personId !== "all") {
+        userPurchases = userPurchases.filter((purchase) => {
+          const purchaseInstallments = this.installments.filter(
+            (inst) => inst.purchaseId === purchase.id,
+          );
+          const purchaseSplits = this.installmentSplits.filter((s) =>
+            purchaseInstallments.some((inst) => inst.id === s.installmentId),
+          );
+
+          if (filters.personId === "user") {
+            if (purchaseSplits.length === 0) return true;
+            return purchaseSplits.some((s) => s.personId == null);
+          }
+
+          return purchaseSplits.some((s) => s.personId === filters.personId);
+        });
+      }
+    }
+
+    userPurchases.sort(
+      (a, b) => new Date(b.purchaseDate).getTime() - new Date(a.purchaseDate).getTime(),
+    );
 
     return userPurchases.map((purchase) => {
       const card = purchase.creditCardId

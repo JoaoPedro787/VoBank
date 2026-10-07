@@ -240,6 +240,24 @@ export const toggleInstallmentSplitPaidSchema = z.object({
   isPaid: z.boolean({ required_error: "O status isPaid é obrigatório" }),
 });
 
+export const listPurchasesQuerySchema = z.object({
+  month: z.coerce
+    .number()
+    .int("O mês deve ser um número inteiro")
+    .min(1, "O mês deve estar entre 1 e 12")
+    .max(12, "O mês deve estar entre 1 e 12")
+    .optional(),
+  year: z.coerce
+    .number()
+    .int("O ano deve ser um número inteiro")
+    .min(2000, "O ano deve estar entre 2000 e 2100")
+    .max(2100, "O ano deve estar entre 2000 e 2100")
+    .optional(),
+  creditCardId: z.string().optional(),
+  personId: z.string().optional(),
+  search: z.string().optional(),
+});
+
 export const installmentSplitResponseSchema = z.object({
   id: z.string().uuid(),
   installmentId: z.string().uuid(),
@@ -292,6 +310,8 @@ export type CreatePurchaseInput = z.input<typeof createPurchaseSchema>;
 export type UpdatePurchaseInput = z.input<typeof updatePurchaseSchema>;
 export type UpdatePurchaseOutput = z.infer<typeof updatePurchaseSchema>;
 export type ToggleInstallmentSplitPaidInput = z.infer<typeof toggleInstallmentSplitPaidSchema>;
+export type ListPurchasesQuery = z.infer<typeof listPurchasesQuerySchema>;
+export type ListPurchasesFilters = z.infer<typeof listPurchasesQuerySchema>;
 export type PurchaseResponse = z.infer<typeof purchaseResponseSchema>;
 export type InstallmentResponse = z.infer<typeof installmentResponseSchema>;
 export type InstallmentSplitResponse = z.infer<typeof installmentSplitResponseSchema>;

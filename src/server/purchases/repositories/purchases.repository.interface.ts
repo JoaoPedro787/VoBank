@@ -5,7 +5,10 @@ import {
   NewInstallment,
   InstallmentSplit,
   NewInstallmentSplit,
+  ListPurchasesFilters,
 } from "../schemas/purchases.schema";
+
+export type { ListPurchasesFilters };
 
 export type InstallmentSplitWithPerson = InstallmentSplit & {
   person?: { id: string; name: string; color: string } | null;
@@ -63,7 +66,7 @@ export interface UpdatePurchaseParams {
 export interface IPurchasesRepository {
   createPurchaseWithInstallments(params: CreatePurchaseParams): Promise<PurchaseWithRelations>;
   updatePurchase(params: UpdatePurchaseParams): Promise<PurchaseWithRelations | null>;
-  findByUserId(userId: string): Promise<PurchaseWithRelations[]>;
+  findByUserId(userId: string, filters?: ListPurchasesFilters): Promise<PurchaseWithRelations[]>;
   findById(id: string, userId: string): Promise<PurchaseWithRelations | null>;
   findSplitById(
     splitId: string,

@@ -12,10 +12,10 @@
 
 ## 2. Feature de Filtros na API de Compras (Backend & TDD)
 
-- [ ] 2.1 Criar schema Zod `listPurchasesQuerySchema` em `src/server/purchases/schemas/purchases.schema.ts` e adicionar testes unitários em `src/server/purchases/tests/purchases.schema.test.ts`.
-- [ ] 2.2 Atualizar `IPurchasesRepository` e implementar suporte aos filtros em `InMemoryPurchasesRepository` e `DrizzlePurchasesRepository`.
-- [ ] 2.3 Atualizar `PurchasesService.listPurchases(userId, filters)` com validação e adicionar testes em `src/server/purchases/tests/purchases.service.test.ts`.
-- [ ] 2.4 Atualizar `src/app/api/purchases+api.ts` para processar os query params da requisição e adicionar testes em `src/server/purchases/tests/purchases.routes.test.ts`.
+- [x] 2.1 Criar schema Zod `listPurchasesQuerySchema` em `src/server/purchases/schemas/purchases.schema.ts` e adicionar testes unitários em `src/server/purchases/tests/purchases.schema.test.ts`.
+- [x] 2.2 Atualizar `IPurchasesRepository` e implementar suporte aos filtros em `InMemoryPurchasesRepository` e `DrizzlePurchasesRepository`.
+- [x] 2.3 Atualizar `PurchasesService.listPurchases(userId, filters)` com validação e adicionar testes em `src/server/purchases/tests/purchases.service.test.ts`.
+- [x] 2.4 Atualizar `src/app/api/purchases+api.ts` para processar os query params da requisição e adicionar testes em `src/server/purchases/tests/purchases.routes.test.ts`.
 
 ## 3. Integração Client-Side de Compras & Agrupamento por Dia
 

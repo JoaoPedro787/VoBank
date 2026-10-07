@@ -1,4 +1,4 @@
-import { eq, and } from "drizzle-orm";
+import { eq, and, gte, lt, ilike, isNull, inArray, type SQL } from "drizzle-orm";
 import { db } from "../../shared/db";
 import {
   purchases,
@@ -13,6 +13,7 @@ import {
   CreatePurchaseParams,
   UpdatePurchaseParams,
   PurchaseWithRelations,
+  ListPurchasesFilters,
 } from "./purchases.repository.interface";
 
 export class DrizzlePurchasesRepository implements IPurchasesRepository {
@@ -184,9 +185,70 @@ export class DrizzlePurchasesRepository implements IPurchasesRepository {
     });
   }
 
-  async findByUserId(userId: string): Promise<PurchaseWithRelations[]> {
+  async findByUserId(
+    userId: string,
+    filters?: ListPurchasesFilters,
+  ): Promise<PurchaseWithRelations[]> {
+    const conditions: SQL[] = [eq(purchases.userId, userId)];
+
+    if (filters) {
+      if (filters.search && filters.search.trim() !== "") {
+        conditions.push(ilike(purchases.description, `%${filters.search.trim()}%`));
+      }
+
+      if (filters.year != null) {
+        if (filters.month != null) {
+          const start = new Date(Date.UTC(filters.year, filters.month - 1, 1, 0, 0, 0, 0));
+          const end = new Date(Date.UTC(filters.year, filters.month, 1, 0, 0, 0, 0));
+          conditions.push(gte(purchases.purchaseDate, start));
+          conditions.push(lt(purchases.purchaseDate, end));
+        } else {
+          const start = new Date(Date.UTC(filters.year, 0, 1, 0, 0, 0, 0));
+          const end = new Date(Date.UTC(filters.year + 1, 0, 1, 0, 0, 0, 0));
+          conditions.push(gte(purchases.purchaseDate, start));
+          conditions.push(lt(purchases.purchaseDate, end));
+        }
+      }
+
+      if (filters.creditCardId && filters.creditCardId !== "all") {
+        if (filters.creditCardId === "no-card" || filters.creditCardId === "none") {
+          conditions.push(isNull(purchases.creditCardId));
+        } else {
+          conditions.push(eq(purchases.creditCardId, filters.creditCardId));
+        }
+      }
+
+      if (filters.personId && filters.personId !== "all") {
+        if (filters.personId === "user") {
+          const matchingSplits = await db
+            .selectDistinct({ purchaseId: installments.purchaseId })
+            .from(installmentSplits)
+            .innerJoin(installments, eq(installmentSplits.installmentId, installments.id))
+            .where(isNull(installmentSplits.personId));
+
+          const purchaseIds = matchingSplits.map((s) => s.purchaseId);
+          if (purchaseIds.length === 0) {
+            return [];
+          }
+          conditions.push(inArray(purchases.id, purchaseIds));
+        } else {
+          const matchingSplits = await db
+            .selectDistinct({ purchaseId: installments.purchaseId })
+            .from(installmentSplits)
+            .innerJoin(installments, eq(installmentSplits.installmentId, installments.id))
+            .where(eq(installmentSplits.personId, filters.personId));
+
+          const purchaseIds = matchingSplits.map((s) => s.purchaseId);
+          if (purchaseIds.length === 0) {
+            return [];
+          }
+          conditions.push(inArray(purchases.id, purchaseIds));
+        }
+      }
+    }
+
     const results = await db.query.purchases.findMany({
-      where: eq(purchases.userId, userId),
+      where: and(...conditions),
       orderBy: (p, { desc }) => [desc(p.purchaseDate)],
       with: {
         creditCard: true,
