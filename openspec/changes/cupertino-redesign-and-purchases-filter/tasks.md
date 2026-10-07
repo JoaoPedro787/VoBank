@@ -33,5 +33,5 @@
 
 ## 5. Validação Unificada e Qualidade Final
 
-- [ ] 5.1 Executar a suíte unificada de validação do projeto (`pnpm check`: Prettier, ESLint, TypeScript e Jest).
-- [ ] 5.2 Garantir que todos os testes passem com 100% de sucesso e sem regressões.
+- [x] 5.1 Executar a suíte unificada de validação do projeto (`pnpm check`: Prettier, ESLint, TypeScript e Jest).
+- [x] 5.2 Garantir que todos os testes passem com 100% de sucesso e sem regressões.
