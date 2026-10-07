@@ -2,13 +2,13 @@
 
 ## 1. Design System Foundation & Componentes Base (`src/shared/`)
 
-- [ ] 1.1 Atualizar `tailwind.config.js` e `src/styles/global.css` com as cores do Cupertino Balance (System Blue `#007AFF`, Indigo `#5856D6`, Mint Green `#34C759`, Amber `#FF9500`, Coral Red `#FF3B30`, fundos `#F2F2F7` / `#000000`).
-- [ ] 1.2 Refatorar `src/shared/components/Button.tsx` adicionando micro-interação de escala (`active:scale-[0.97]`), 48px de altura, radius 14px e variantes de cor Cupertino.
-- [ ] 1.3 Refatorar `src/shared/components/Input.tsx` com fundo sutil (`#F2F2F7` / `#2C2C2E`), anel de foco azul de 1.5px e altura 48px.
-- [ ] 1.4 Refatorar `src/shared/components/Badge.tsx` com status pills circulares (`rounded-full`) e cores semânticas exatas do Stitch.
-- [ ] 1.5 Refatorar `src/shared/components/Card.tsx` com cantos `rounded-2xl` e elevação Apple nível 1/2.
-- [ ] 1.6 Criar componente `src/shared/components/ModalGrabHandle.tsx` (pill ergonômico de 36x5px para modais inferiores).
-- [ ] 1.7 Atualizar e validar os testes unitários do `shared` (`src/shared/tests/`).
+- [x] 1.1 Atualizar `tailwind.config.js` e `src/styles/global.css` com as cores do Cupertino Balance (System Blue `#007AFF`, Indigo `#5856D6`, Mint Green `#34C759`, Amber `#FF9500`, Coral Red `#FF3B30`, fundos `#F2F2F7` / `#000000`).
+- [x] 1.2 Refatorar `src/shared/components/Button.tsx` adicionando micro-interação de escala (`active:scale-[0.97]`), 48px de altura, radius 14px e variantes de cor Cupertino.
+- [x] 1.3 Refatorar `src/shared/components/Input.tsx` com fundo sutil (`#F2F2F7` / `#2C2C2E`), anel de foco azul de 1.5px e altura 48px.
+- [x] 1.4 Refatorar `src/shared/components/Badge.tsx` com status pills circulares (`rounded-full`) e cores semânticas exatas do Stitch.
+- [x] 1.5 Refatorar `src/shared/components/Card.tsx` com cantos `rounded-2xl` e elevação Apple nível 1/2.
+- [x] 1.6 Criar componente `src/shared/components/ModalGrabHandle.tsx` (pill ergonômico de 36x5px para modais inferiores).
+- [x] 1.7 Atualizar e validar os testes unitários do `shared` (`src/shared/tests/`).
 
 ## 2. Feature de Filtros na API de Compras (Backend & TDD)
 

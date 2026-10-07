@@ -6,12 +6,14 @@ import { cn } from "@/shared/lib/utils";
 const badgeVariants = cva("flex-row items-center justify-center rounded-full px-2.5 py-0.5", {
   variants: {
     variant: {
-      default: "bg-primary",
-      secondary: "bg-secondary",
-      destructive: "bg-destructive",
+      default: "bg-[#007AFF]/15 border border-[#007AFF]/30",
+      secondary: "bg-[#5856D6]/15 border border-[#5856D6]/30",
+      destructive: "bg-[#FF3B30]/15 border border-[#FF3B30]/30",
       outline: "border border-border bg-transparent",
-      success: "bg-emerald-500/15 border border-emerald-500/30",
-      warning: "bg-amber-500/15 border border-amber-500/30",
+      success: "bg-[#34C759]/15 border border-[#34C759]/30",
+      warning: "bg-[#FF9500]/15 border border-[#FF9500]/30",
+      installment: "bg-[#F2F2F7] border border-border/40 dark:bg-[#2C2C2E]",
+      solid: "bg-primary",
     },
   },
   defaultVariants: {
@@ -22,12 +24,14 @@ const badgeVariants = cva("flex-row items-center justify-center rounded-full px-
 const badgeTextVariants = cva("text-xs font-semibold", {
   variants: {
     variant: {
-      default: "text-primary-foreground",
-      secondary: "text-secondary-foreground",
-      destructive: "text-destructive-foreground",
+      default: "text-[#007AFF] dark:text-[#0A84FF]",
+      secondary: "text-[#5856D6] dark:text-[#5E5CE6]",
+      destructive: "text-[#FF3B30] dark:text-[#FF453A]",
       outline: "text-foreground",
-      success: "text-emerald-600 dark:text-emerald-400",
-      warning: "text-amber-600 dark:text-amber-400",
+      success: "text-[#34C759] dark:text-[#30D158]",
+      warning: "text-[#FF9500] dark:text-[#FF9F0A]",
+      installment: "text-muted-foreground",
+      solid: "text-primary-foreground",
     },
   },
   defaultVariants: {
