@@ -135,15 +135,15 @@ export default function HomeScreen() {
 
             <Pressable
               onPress={toggleColorScheme}
-              className="h-9 w-9 items-center justify-center rounded-xl bg-muted active:opacity-70"
+              className="h-9 w-9 items-center justify-center rounded-xl bg-muted active:scale-95 active:opacity-70"
               accessibilityLabel={isDark ? "Mudar para modo claro" : "Mudar para modo escuro"}
             >
-              {isDark ? <Sun size={16} color="#eab308" /> : <Moon size={16} color="#71717a" />}
+              {isDark ? <Sun size={16} color="#FF9500" /> : <Moon size={16} color="#71717a" />}
             </Pressable>
 
             <Pressable
               onPress={handleLogout}
-              className="h-9 w-9 items-center justify-center rounded-xl bg-muted active:opacity-70"
+              className="h-9 w-9 items-center justify-center rounded-xl bg-muted active:scale-95 active:opacity-70"
               accessibilityLabel="Sair"
             >
               <LogOut size={16} color="#71717a" />
@@ -154,8 +154,8 @@ export default function HomeScreen() {
 
       {/* Erro */}
       {error ? (
-        <View className="m-4 rounded-xl bg-destructive/10 p-3 flex-row items-center justify-between">
-          <Text className="text-xs text-destructive flex-1 font-medium">{error}</Text>
+        <View className="m-4 rounded-xl bg-[#FF3B30]/10 border border-[#FF3B30]/20 p-3 flex-row items-center justify-between">
+          <Text className="text-xs text-[#FF3B30] flex-1 font-medium">{error}</Text>
           <Button
             variant="ghost"
             size="sm"
@@ -168,7 +168,7 @@ export default function HomeScreen() {
       {/* Conteúdo Principal */}
       {isLoading && !data ? (
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#3B82F6" />
+          <ActivityIndicator size="large" color="#007AFF" />
         </View>
       ) : (
         <FlatList
@@ -183,7 +183,7 @@ export default function HomeScreen() {
             <RefreshControl
               refreshing={isLoading}
               onRefresh={() => fetchDashboard(month, year)}
-              tintColor="#3B82F6"
+              tintColor="#007AFF"
             />
           }
           ListHeaderComponent={
@@ -222,16 +222,16 @@ export default function HomeScreen() {
                     {/* Botão "Todos" */}
                     <Pressable
                       onPress={() => setSelectedPersonId("all")}
-                      className={`h-auto w-32 justify-between rounded-2xl border p-3.5 shadow-sm active:opacity-80 ${
+                      className={`h-auto w-32 justify-between rounded-2xl border p-3.5 shadow-sm active:scale-[0.98] active:opacity-80 ${
                         selectedPersonId === "all"
-                          ? "border-primary bg-primary/10"
-                          : "border-border bg-card"
+                          ? "border-primary bg-primary/10 shadow-md"
+                          : "border-border/70 bg-card"
                       }`}
                     >
                       <View className="flex-row items-center gap-1.5">
                         <Users
                           size={14}
-                          color={selectedPersonId === "all" ? "#3B82F6" : "#71717a"}
+                          color={selectedPersonId === "all" ? "#007AFF" : "#71717a"}
                         />
                         <Text
                           className={`text-xs font-bold ${
@@ -242,8 +242,8 @@ export default function HomeScreen() {
                         </Text>
                       </View>
                       <View className="mt-3">
-                        <Text className="text-[10px] text-muted-foreground">Total</Text>
-                        <Text className="text-sm font-bold text-foreground">
+                        <Text className="text-[10px] text-muted-foreground font-medium">Total</Text>
+                        <Text className="text-sm font-bold text-foreground tabular-nums tracking-tight">
                           R$ {data.totalCommitted.toFixed(2)}
                         </Text>
                       </View>
@@ -309,7 +309,7 @@ export default function HomeScreen() {
 
             return (
               <AnimatedScaleFade duration={180}>
-                <View className="rounded-2xl border border-border bg-card p-4 shadow-sm gap-3">
+                <View className="rounded-2xl border border-border/70 bg-card p-4 shadow-sm gap-3">
                   <View className="flex-row items-start justify-between">
                     <View className="flex-1 pr-2">
                       <View className="flex-row items-center gap-2">
@@ -337,39 +337,35 @@ export default function HomeScreen() {
                       </View>
                     </View>
 
-                    <Text className="text-base font-bold text-foreground">
+                    <Text className="text-base font-bold text-foreground tabular-nums tracking-tight">
                       R$ {item.amount.toFixed(2)}
                     </Text>
                   </View>
 
                   {/* Linha de status e ação */}
                   <View className="flex-row items-center justify-between pt-2 border-t border-border/40">
-                    <Text className="text-xs text-muted-foreground">
+                    <Text className="text-xs text-muted-foreground tabular-nums">
                       Vencimento: {dueDateFormatted}
                     </Text>
 
                     <Pressable
                       onPress={() => toggleSplitPaid(item.id, item.isPaid)}
-                      className="active:opacity-70"
+                      className="active:scale-95 active:opacity-70"
                     >
                       {item.isPaid ? (
-                        <View className="flex-row items-center gap-1 rounded-full bg-emerald-500/15 px-2.5 py-1">
-                          <CheckCircle2 size={12} color="#10B981" />
-                          <Text className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
-                            Pago
-                          </Text>
+                        <View className="flex-row items-center gap-1 rounded-full bg-[#34C759]/10 px-2.5 py-1 border border-[#34C759]/20">
+                          <CheckCircle2 size={12} color="#34C759" />
+                          <Text className="text-xs font-bold text-[#34C759]">Pago</Text>
                         </View>
                       ) : item.isOverdue ? (
-                        <View className="flex-row items-center gap-1 rounded-full bg-destructive/15 px-2.5 py-1">
-                          <AlertTriangle size={12} color="#ef4444" />
-                          <Text className="text-xs font-bold text-destructive">Vencido</Text>
+                        <View className="flex-row items-center gap-1 rounded-full bg-[#FF3B30]/10 px-2.5 py-1 border border-[#FF3B30]/20">
+                          <AlertTriangle size={12} color="#FF3B30" />
+                          <Text className="text-xs font-bold text-[#FF3B30]">Vencido</Text>
                         </View>
                       ) : (
-                        <View className="flex-row items-center gap-1 rounded-full bg-amber-500/15 px-2.5 py-1">
-                          <Clock size={12} color="#F59E0B" />
-                          <Text className="text-xs font-bold text-amber-600 dark:text-amber-400">
-                            Pendente
-                          </Text>
+                        <View className="flex-row items-center gap-1 rounded-full bg-[#FF9500]/10 px-2.5 py-1 border border-[#FF9500]/20">
+                          <Clock size={12} color="#FF9500" />
+                          <Text className="text-xs font-bold text-[#FF9500]">Pendente</Text>
                         </View>
                       )}
                     </Pressable>

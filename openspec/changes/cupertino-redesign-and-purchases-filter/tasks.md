@@ -26,10 +26,10 @@
 
 ## 4. Redesign das Telas Restantes (Dashboard, Cartões, Pessoas e Auth)
 
-- [ ] 4.1 Refatorar a tela de Dashboard `src/app/(tabs)/index.tsx` e componentes em `src/dashboard/components/` (tipografia tabular `tabular-nums`, seletor Geral vs Você, cards com visual iOS).
-- [ ] 4.2 Refatorar a tela de Cartões `src/app/(tabs)/cards.tsx` e `src/credit-cards/components/` (cartões estilizados com gradiente, modais iOS).
-- [ ] 4.3 Refatorar a tela de Pessoas `src/app/(tabs)/people.tsx` e `src/people/components/` (avatares com cores de destaque e modais iOS).
-- [ ] 4.4 Refatorar as telas de Autenticação `src/app/(auth)/login.tsx` e `register.tsx` com visual limpo Cupertino.
+- [x] 4.1 Refatorar a tela de Dashboard `src/app/(tabs)/index.tsx` e componentes em `src/dashboard/components/` (tipografia tabular `tabular-nums`, seletor Geral vs Você, cards com visual iOS).
+- [x] 4.2 Refatorar a tela de Cartões `src/app/(tabs)/cards.tsx` e `src/credit-cards/components/` (cartões estilizados com gradiente, modais iOS).
+- [x] 4.3 Refatorar a tela de Pessoas `src/app/(tabs)/people.tsx` e `src/people/components/` (avatares com cores de destaque e modais iOS).
+- [x] 4.4 Refatorar as telas de Autenticação `src/app/(auth)/login.tsx` e `register.tsx` com visual limpo Cupertino.
 
 ## 5. Validação Unificada e Qualidade Final
 

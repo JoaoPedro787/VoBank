@@ -1,13 +1,23 @@
 import * as React from "react";
-import { Modal, View, Text, Pressable, ScrollView } from "react-native";
+import {
+  Modal,
+  View,
+  Text,
+  Pressable,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
+} from "react-native";
+import { X, Calendar } from "lucide-react-native";
 import { Input } from "@/shared/components/Input";
 import { Button } from "@/shared/components/Button";
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/shared/components/Card";
+import { Card, CardHeader, CardTitle, CardFooter } from "@/shared/components/Card";
+import { ModalGrabHandle } from "@/shared/components/ModalGrabHandle";
 import { AnimatedScaleFade } from "@/shared/components/AnimatedScaleFade";
 import { PRESET_COLORS } from "@/shared/constants/colors";
 import { CreditCard, CreateCreditCardData } from "../types/credit-cards.types";
 
-interface CreditCardModalProps {
+export interface CreditCardModalProps {
   visible: boolean;
   onClose: () => void;
   onSave: (data: CreateCreditCardData) => Promise<void>;
@@ -88,159 +98,201 @@ export function CreditCardModal({ visible, onClose, onSave, cardToEdit }: Credit
 
   return (
     <Modal visible={visible} animationType="fade" transparent onRequestClose={onClose}>
-      <View className="flex-1 justify-center bg-black/60 px-4">
-        <ScrollView contentContainerStyle={{ flexGrow: 1, justifyContent: "center" }}>
-          <AnimatedScaleFade>
-            <Card className="w-full max-w-lg bg-card my-6">
-              <CardHeader>
-                <CardTitle>{cardToEdit ? "Editar Cartão" : "Novo Cartão"}</CardTitle>
-              </CardHeader>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        className="flex-1 justify-center bg-black/60 p-4"
+      >
+        <AnimatedScaleFade className="w-full">
+          <Card className="max-h-[92%] w-full bg-card shadow-2xl border-border/80 pt-1">
+            <ModalGrabHandle />
+            <CardHeader className="border-b border-border/60 pb-3 pt-0 flex-row items-center justify-between">
+              <View>
+                <CardTitle className="text-xl">
+                  {cardToEdit ? "Editar Cartão" : "Novo Cartão"}
+                </CardTitle>
+                <Text className="text-xs text-muted-foreground mt-0.5">
+                  Configure datas de fatura e limites
+                </Text>
+              </View>
+              <Pressable
+                onPress={onClose}
+                className="h-8 w-8 items-center justify-center rounded-full bg-muted active:scale-95 active:opacity-70"
+                accessibilityLabel="Fechar"
+              >
+                <X size={16} color="#71717a" />
+              </Pressable>
+            </CardHeader>
 
-              <CardContent className="gap-4">
-                {/* Preview do Cartão */}
-                <View
-                  className="w-full h-36 rounded-2xl p-4 justify-between shadow-md"
-                  style={{ backgroundColor: color }}
-                >
-                  <View className="flex-row justify-between items-center">
-                    <Text className="text-white font-bold text-lg">
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{ padding: 16, gap: 16 }}
+            >
+              {/* Preview do Cartão com visual iOS Wallet */}
+              <View
+                className="w-full h-44 rounded-3xl p-5 justify-between shadow-lg border border-white/20 relative overflow-hidden"
+                style={{ backgroundColor: color }}
+              >
+                {/* Efeito de brilho de luz superior */}
+                <View className="absolute top-0 left-0 right-0 h-20 bg-white/10 rounded-t-3xl" />
+
+                <View className="flex-row justify-between items-start z-10">
+                  <View>
+                    <Text className="text-white font-bold text-lg tracking-wide">
                       {name.trim() || "Nome do Cartão"}
                     </Text>
-                    <Text className="text-white/80 font-medium text-xs uppercase">{flag}</Text>
+                    {/* Chip metálico minimalista */}
+                    <View className="w-9 h-6 rounded-md bg-white/20 border border-white/30 mt-2 justify-center px-1">
+                      <View className="h-[1px] w-full bg-white/30 my-0.5" />
+                      <View className="h-[1px] w-full bg-white/30 my-0.5" />
+                    </View>
                   </View>
+                  <View className="bg-black/25 px-2.5 py-1 rounded-full border border-white/15">
+                    <Text className="text-white font-bold text-xs uppercase tracking-wider">
+                      {flag}
+                    </Text>
+                  </View>
+                </View>
 
-                  <View className="flex-row justify-between items-end">
+                <View className="flex-row justify-between items-end border-t border-white/15 pt-2 z-10">
+                  <View className="flex-row items-center gap-1.5">
+                    <Calendar size={14} color="#ffffff" />
                     <View>
-                      <Text className="text-white/70 text-xs">Fechamento / Vencimento</Text>
-                      <Text className="text-white font-semibold text-sm">
+                      <Text className="text-white/70 text-[10px] font-medium">
+                        Fechamento / Vencimento
+                      </Text>
+                      <Text className="text-white font-bold text-xs">
                         Dia {closingDay || "--"} / Dia {dueDay || "--"}
                       </Text>
                     </View>
-                    {limit ? (
-                      <View className="items-end">
-                        <Text className="text-white/70 text-xs">Limite</Text>
-                        <Text className="text-white font-semibold text-sm">R$ {limit}</Text>
-                      </View>
-                    ) : null}
                   </View>
+                  {limit ? (
+                    <View className="items-end">
+                      <Text className="text-white/70 text-[10px] font-medium">Limite</Text>
+                      <Text className="text-white font-bold text-xs tabular-nums">R$ {limit}</Text>
+                    </View>
+                  ) : null}
                 </View>
+              </View>
 
-                {error ? (
-                  <View className="rounded-lg bg-destructive/10 p-2.5">
-                    <Text className="text-xs text-destructive font-medium">{error}</Text>
-                  </View>
-                ) : null}
+              {error ? (
+                <View className="rounded-xl bg-[#FF3B30]/10 border border-[#FF3B30]/20 p-3">
+                  <Text className="text-xs text-[#FF3B30] font-medium">{error}</Text>
+                </View>
+              ) : null}
 
-                <Input
-                  label="Nome do Cartão"
-                  placeholder="Ex: Nubank, Itaú Click, Inter..."
-                  value={name}
-                  onChangeText={setName}
-                />
+              <Input
+                label="Nome do Cartão"
+                placeholder="Ex: Nubank, Itaú Click, Inter..."
+                value={name}
+                onChangeText={setName}
+              />
 
-                <View className="gap-2">
-                  <Text className="text-sm font-medium text-foreground">
-                    Bandeira / Instituição
-                  </Text>
-                  <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                    <View className="flex-row gap-2">
-                      {FLAGS.map((f) => {
-                        const isSelected = flag === f;
-                        return (
-                          <Pressable
-                            key={f}
-                            onPress={() => setFlag(f)}
-                            className={`rounded-xl px-3.5 py-2 border ${
-                              isSelected ? "bg-primary border-primary" : "bg-muted border-border"
+              <View className="gap-2">
+                <Text className="text-sm font-semibold text-foreground">
+                  Bandeira / Instituição
+                </Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                  <View className="flex-row gap-2 py-0.5">
+                    {FLAGS.map((f) => {
+                      const isSelected = flag === f;
+                      return (
+                        <Pressable
+                          key={f}
+                          onPress={() => setFlag(f)}
+                          className={`rounded-xl px-3.5 py-2 border active:scale-95 ${
+                            isSelected
+                              ? "bg-primary border-primary shadow-sm"
+                              : "bg-muted/70 border-border/80"
+                          }`}
+                        >
+                          <Text
+                            className={`text-xs font-semibold ${
+                              isSelected ? "text-primary-foreground font-bold" : "text-foreground"
                             }`}
                           >
-                            <Text
-                              className={`text-xs font-semibold ${
-                                isSelected ? "text-primary-foreground" : "text-foreground"
-                              }`}
-                            >
-                              {f}
-                            </Text>
-                          </Pressable>
-                        );
-                      })}
-                    </View>
-                  </ScrollView>
-                </View>
-
-                <View className="gap-2">
-                  <Text className="text-sm font-medium text-foreground">Cor do Cartão</Text>
-                  <ScrollView horizontal showsHorizontalScrollIndicator={false} className="py-1">
-                    <View className="flex-row gap-3">
-                      {PRESET_COLORS.map((preset) => {
-                        const isSelected = color.toUpperCase() === preset.toUpperCase();
-                        return (
-                          <Pressable
-                            key={preset}
-                            onPress={() => setColor(preset)}
-                            className={`h-9 w-9 rounded-full items-center justify-center border-2 ${
-                              isSelected ? "border-foreground scale-110" : "border-transparent"
-                            }`}
-                            style={{ backgroundColor: preset }}
-                          >
-                            {isSelected && <View className="h-2.5 w-2.5 rounded-full bg-white" />}
-                          </Pressable>
-                        );
-                      })}
-                    </View>
-                  </ScrollView>
-                </View>
-
-                <View className="flex-row gap-3">
-                  <View className="flex-1">
-                    <Input
-                      label="Dia Fechamento"
-                      placeholder="1 a 31"
-                      keyboardType="numeric"
-                      maxLength={2}
-                      value={closingDay}
-                      onChangeText={setClosingDay}
-                    />
+                            {f}
+                          </Text>
+                        </Pressable>
+                      );
+                    })}
                   </View>
-                  <View className="flex-1">
-                    <Input
-                      label="Dia Vencimento"
-                      placeholder="1 a 31"
-                      keyboardType="numeric"
-                      maxLength={2}
-                      value={dueDay}
-                      onChangeText={setDueDay}
-                    />
+                </ScrollView>
+              </View>
+
+              <View className="gap-2">
+                <Text className="text-sm font-semibold text-foreground">Cor do Cartão</Text>
+                <ScrollView horizontal showsHorizontalScrollIndicator={false} className="py-1">
+                  <View className="flex-row gap-3">
+                    {PRESET_COLORS.map((preset) => {
+                      const isSelected = color.toUpperCase() === preset.toUpperCase();
+                      return (
+                        <Pressable
+                          key={preset}
+                          onPress={() => setColor(preset)}
+                          className={`h-9 w-9 rounded-full items-center justify-center border-2 active:scale-95 ${
+                            isSelected ? "border-primary scale-110 shadow-sm" : "border-transparent"
+                          }`}
+                          style={{ backgroundColor: preset }}
+                        >
+                          {isSelected && (
+                            <View className="h-2.5 w-2.5 rounded-full bg-white shadow-sm" />
+                          )}
+                        </Pressable>
+                      );
+                    })}
                   </View>
+                </ScrollView>
+              </View>
+
+              <View className="flex-row gap-3">
+                <View className="flex-1">
+                  <Input
+                    label="Dia Fechamento"
+                    placeholder="1 a 31"
+                    keyboardType="numeric"
+                    maxLength={2}
+                    value={closingDay}
+                    onChangeText={setClosingDay}
+                  />
                 </View>
+                <View className="flex-1">
+                  <Input
+                    label="Dia Vencimento"
+                    placeholder="1 a 31"
+                    keyboardType="numeric"
+                    maxLength={2}
+                    value={dueDay}
+                    onChangeText={setDueDay}
+                  />
+                </View>
+              </View>
 
-                <Input
-                  label="Limite Total (R$) - Opcional"
-                  placeholder="Ex: 5000,00"
-                  keyboardType="numeric"
-                  value={limit}
-                  onChangeText={setLimit}
-                />
-              </CardContent>
+              <Input
+                label="Limite Total (R$) - Opcional"
+                placeholder="Ex: 5000,00"
+                keyboardType="numeric"
+                value={limit}
+                onChangeText={setLimit}
+              />
+            </ScrollView>
 
-              <CardFooter className="gap-3 justify-end pt-4">
-                <Button
-                  variant="outline"
-                  label="Cancelar"
-                  onPress={onClose}
-                  disabled={isSubmitting}
-                />
-                <Button
-                  variant="default"
-                  label={cardToEdit ? "Salvar Alterações" : "Criar Cartão"}
-                  loading={isSubmitting}
-                  onPress={handleSubmit}
-                />
-              </CardFooter>
-            </Card>
-          </AnimatedScaleFade>
-        </ScrollView>
-      </View>
+            <CardFooter className="border-t border-border/60 gap-3 justify-end pt-3">
+              <Button
+                variant="outline"
+                label="Cancelar"
+                onPress={onClose}
+                disabled={isSubmitting}
+              />
+              <Button
+                variant="default"
+                label={cardToEdit ? "Salvar Alterações" : "Criar Cartão"}
+                loading={isSubmitting}
+                onPress={handleSubmit}
+              />
+            </CardFooter>
+          </Card>
+        </AnimatedScaleFade>
+      </KeyboardAvoidingView>
     </Modal>
   );
 }

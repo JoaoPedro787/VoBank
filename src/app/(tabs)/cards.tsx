@@ -77,8 +77,8 @@ export default function CardsScreen() {
 
       {/* Error state */}
       {error ? (
-        <View className="m-4 rounded-xl bg-destructive/10 p-3 flex-row items-center justify-between">
-          <Text className="text-xs text-destructive flex-1 font-medium">{error}</Text>
+        <View className="m-4 rounded-xl bg-[#FF3B30]/10 border border-[#FF3B30]/20 p-3 flex-row items-center justify-between">
+          <Text className="text-xs text-[#FF3B30] flex-1 font-medium">{error}</Text>
           <Button variant="ghost" size="sm" label="Tentar de novo" onPress={fetchCards} />
         </View>
       ) : null}
@@ -86,7 +86,7 @@ export default function CardsScreen() {
       {/* List */}
       {isLoading && cards.length === 0 ? (
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#3B82F6" />
+          <ActivityIndicator size="large" color="#007AFF" />
         </View>
       ) : (
         <FlatList
@@ -98,7 +98,7 @@ export default function CardsScreen() {
             flexGrow: cards.length === 0 ? 1 : undefined,
           }}
           refreshControl={
-            <RefreshControl refreshing={isLoading} onRefresh={fetchCards} tintColor="#3B82F6" />
+            <RefreshControl refreshing={isLoading} onRefresh={fetchCards} tintColor="#007AFF" />
           }
           ListEmptyComponent={
             <View className="flex-1 items-center justify-center px-6 py-12">
@@ -118,38 +118,55 @@ export default function CardsScreen() {
           renderItem={({ item }) => (
             <AnimatedScaleFade duration={180}>
               <View
-                className="rounded-3xl p-5 shadow-sm justify-between gap-5"
+                className="rounded-3xl p-5 shadow-lg justify-between gap-5 border border-white/20 relative overflow-hidden"
                 style={{ backgroundColor: item.color }}
               >
-                <View className="flex-row items-start justify-between">
+                {/* Efeito de brilho de luz superior */}
+                <View className="absolute top-0 left-0 right-0 h-24 bg-white/10 rounded-t-3xl" />
+
+                <View className="flex-row items-start justify-between z-10">
                   <View className="flex-1 pr-2">
                     <Text className="text-xl font-bold text-white tracking-wide">{item.name}</Text>
-                    <Text className="text-xs font-semibold text-white/80 uppercase tracking-widest mt-0.5">
-                      {item.flag}
-                    </Text>
+                    {/* Chip metálico Apple Wallet */}
+                    <View className="w-10 h-6 rounded-md bg-white/20 border border-white/30 mt-2.5 justify-center px-1">
+                      <View className="h-[1px] w-full bg-white/30 my-0.5" />
+                      <View className="h-[1px] w-full bg-white/30 my-0.5" />
+                    </View>
                   </View>
 
-                  <View className="flex-row items-center gap-1.5 bg-black/20 rounded-full px-2 py-1">
-                    <Pressable
-                      onPress={() => handleOpenEdit(item)}
-                      className="h-8 w-8 items-center justify-center rounded-full active:bg-white/20"
-                    >
-                      <Pencil size={16} color="#ffffff" />
-                    </Pressable>
-                    <Pressable
-                      onPress={() => handleDelete(item)}
-                      className="h-8 w-8 items-center justify-center rounded-full active:bg-white/20"
-                    >
-                      <Trash2 size={16} color="#fca5a5" />
-                    </Pressable>
+                  <View className="flex-row items-center gap-2">
+                    <View className="bg-black/25 px-2.5 py-1 rounded-full border border-white/15">
+                      <Text className="text-xs font-bold text-white uppercase tracking-wider">
+                        {item.flag}
+                      </Text>
+                    </View>
+
+                    <View className="flex-row items-center gap-1 bg-black/25 rounded-full p-0.5 border border-white/15">
+                      <Pressable
+                        onPress={() => handleOpenEdit(item)}
+                        className="h-8 w-8 items-center justify-center rounded-full active:scale-95 active:bg-white/20"
+                        accessibilityLabel="Editar cartão"
+                      >
+                        <Pencil size={15} color="#ffffff" />
+                      </Pressable>
+                      <Pressable
+                        onPress={() => handleDelete(item)}
+                        className="h-8 w-8 items-center justify-center rounded-full active:scale-95 active:bg-white/20"
+                        accessibilityLabel="Excluir cartão"
+                      >
+                        <Trash2 size={15} color="#FF9999" />
+                      </Pressable>
+                    </View>
                   </View>
                 </View>
 
-                <View className="flex-row items-center justify-between border-t border-white/15 pt-3">
+                <View className="flex-row items-center justify-between border-t border-white/15 pt-3 z-10">
                   <View className="flex-row items-center gap-2">
-                    <Calendar size={18} color="#ffffff" />
+                    <Calendar size={16} color="#ffffff" />
                     <View>
-                      <Text className="text-[11px] text-white/70">Fechamento / Vencimento</Text>
+                      <Text className="text-[10px] text-white/70 font-medium">
+                        Fechamento / Vencimento
+                      </Text>
                       <Text className="text-sm font-bold text-white">
                         Dia {item.closingDay} / Dia {item.dueDay}
                       </Text>
@@ -158,8 +175,8 @@ export default function CardsScreen() {
 
                   {item.limit ? (
                     <View className="items-end">
-                      <Text className="text-[11px] text-white/70">Limite Total</Text>
-                      <Text className="text-sm font-bold text-white">
+                      <Text className="text-[10px] text-white/70 font-medium">Limite Total</Text>
+                      <Text className="text-sm font-bold text-white tabular-nums">
                         R${" "}
                         {parseFloat(item.limit).toLocaleString("pt-BR", {
                           minimumFractionDigits: 2,
