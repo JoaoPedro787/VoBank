@@ -26,8 +26,8 @@
 
 ## 4. Modais como Bottom Sheets Ergonômicos
 
-- [ ] 4.1 Converter `NewPurchaseModal.tsx` em Bottom Sheet ergonômico ancorado na base (`rounded-t-[28px]`, `ModalGrabHandle`, `KeyboardAvoidingView`)
-- [ ] 4.2 Converter `EditPurchaseModal.tsx` em Bottom Sheet ergonômico e corrigir o bug do atributo `numberOfLines={1}` dentro de `className`
-- [ ] 4.3 Converter `CreditCardModal.tsx` em Bottom Sheet ergonômico com alça superior e adaptação a teclado
-- [ ] 4.4 Converter `PersonModal.tsx` em Bottom Sheet ergonômico com alça superior e adaptação a teclado
-- [ ] 4.5 Executar validação final e testes de ponta a ponta com `pnpm check`
+- [x] 4.1 Converter `NewPurchaseModal.tsx` em Bottom Sheet ergonômico ancorado na base (`rounded-t-[28px]`, `ModalGrabHandle`, `KeyboardAvoidingView`)
+- [x] 4.2 Converter `EditPurchaseModal.tsx` em Bottom Sheet ergonômico e corrigir o bug do atributo `numberOfLines={1}` dentro de `className`
+- [x] 4.3 Converter `CreditCardModal.tsx` em Bottom Sheet ergonômico com alça superior e adaptação a teclado
+- [x] 4.4 Converter `PersonModal.tsx` em Bottom Sheet ergonômico com alça superior e adaptação a teclado
+- [x] 4.5 Executar validação final e testes de ponta a ponta com `pnpm check`

@@ -7,23 +7,25 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Animated,
+  StyleSheet,
 } from "react-native";
 import {
   CreditCard as CardIcon,
   Banknote,
   Wallet,
   Users,
-  X,
   Plus,
   Minus,
   Calendar,
 } from "lucide-react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useBottomSheetDismiss } from "@/shared/hooks/useBottomSheetDismiss";
 import { Input } from "@/shared/components/Input";
 import { Button } from "@/shared/components/Button";
 import { Badge } from "@/shared/components/Badge";
 import { Card, CardHeader, CardTitle, CardFooter } from "@/shared/components/Card";
 import { ModalGrabHandle } from "@/shared/components/ModalGrabHandle";
-import { AnimatedScaleFade } from "@/shared/components/AnimatedScaleFade";
 import { CreditCard } from "@/credit-cards/types/credit-cards.types";
 import { Person } from "@/people/types/people.types";
 import { CreatePurchaseData, PaymentMethod, CreateSplitData } from "../types/purchases.types";
@@ -49,6 +51,14 @@ export function NewPurchaseModal({
   cards,
   people,
 }: NewPurchaseModalProps) {
+  const insets = useSafeAreaInsets();
+  const {
+    panY,
+    panHandlers,
+    reset: resetSwipe,
+  } = useBottomSheetDismiss({
+    onDismiss: onClose,
+  });
   const [description, setDescription] = React.useState("");
   const [amountStr, setAmountStr] = React.useState("");
   const [purchaseDateStr, setPurchaseDateStr] = React.useState("");
@@ -75,6 +85,7 @@ export function NewPurchaseModal({
   // Resetar ao abrir
   React.useEffect(() => {
     if (visible) {
+      resetSwipe();
       setDescription("");
       setAmountStr("");
       setPurchaseDateStr("");
@@ -86,7 +97,7 @@ export function NewPurchaseModal({
       setPersonSplits({});
       setError(null);
     }
-  }, [visible, cards]);
+  }, [visible, cards, resetSwipe]);
 
   const numericTotalAmount = React.useMemo(() => {
     const clean = amountStr.replace(",", ".");
@@ -260,31 +271,46 @@ export function NewPurchaseModal({
   };
 
   return (
-    <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType="slide"
+      presentationStyle="overFullScreen"
+      statusBarTranslucent
+      onRequestClose={onClose}
+    >
+      {/* Fundo transparente escurecido que cobre 100% da tela (inclusive Dynamic Island e status bar) */}
+      <View style={StyleSheet.absoluteFill} className="bg-black/60">
+        <Pressable
+          style={StyleSheet.absoluteFill}
+          onPress={() => {
+            if (!isSubmitting) onClose();
+          }}
+          accessibilityLabel="Fechar modal"
+        />
+      </View>
+
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="flex-1 bg-black/60 justify-center p-4"
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        style={{ flex: 1, justifyContent: "flex-end" }}
+        pointerEvents="box-none"
       >
-        <AnimatedScaleFade className="w-full">
-          <Card className="max-h-[92%] w-full bg-card shadow-2xl border-border pt-1">
-            <ModalGrabHandle />
-            <CardHeader className="border-b border-border pb-3 pt-0 flex-row items-center justify-between">
-              <View>
+        <Animated.View style={{ transform: [{ translateY: panY }] }} className="w-full">
+          <Card className="max-h-[90%] w-full rounded-b-none rounded-t-[28px] border-b-0 border-x-0 border-t border-border bg-card p-0 shadow-2xl">
+            {/* Área superior interativa: arraste para baixo para fechar */}
+            <View {...panHandlers} className="w-full">
+              <ModalGrabHandle />
+              <CardHeader className="border-b border-border px-5 pb-3 pt-0">
                 <CardTitle className="text-xl">Nova Compra</CardTitle>
                 <Text className="text-xs text-muted-foreground mt-0.5">
                   Cadastre despesas à vista ou parcele no cartão
                 </Text>
-              </View>
-              <Pressable
-                onPress={onClose}
-                className="h-8 w-8 items-center justify-center rounded-full bg-muted active:opacity-70"
-              >
-                <X size={16} color="#71717a" />
-              </Pressable>
-            </CardHeader>
+              </CardHeader>
+            </View>
 
             <ScrollView
               showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
               contentContainerStyle={{ padding: 16, gap: 16 }}
             >
               {error ? (
@@ -622,7 +648,10 @@ export function NewPurchaseModal({
               ) : null}
             </ScrollView>
 
-            <CardFooter className="border-t border-border p-4 gap-2 flex-row">
+            <CardFooter
+              className="border-t border-border px-5 pt-3 gap-2 flex-row"
+              style={{ paddingBottom: Math.max(insets.bottom, 16) }}
+            >
               <Button
                 variant="outline"
                 label="Cancelar"
@@ -638,7 +667,7 @@ export function NewPurchaseModal({
               />
             </CardFooter>
           </Card>
-        </AnimatedScaleFade>
+        </Animated.View>
       </KeyboardAvoidingView>
     </Modal>
   );

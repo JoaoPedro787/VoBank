@@ -7,13 +7,16 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  Animated,
+  StyleSheet,
 } from "react-native";
-import { X, Calendar } from "lucide-react-native";
+import { Calendar } from "lucide-react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useBottomSheetDismiss } from "@/shared/hooks/useBottomSheetDismiss";
 import { Input } from "@/shared/components/Input";
 import { Button } from "@/shared/components/Button";
 import { Card, CardHeader, CardTitle, CardFooter } from "@/shared/components/Card";
 import { ModalGrabHandle } from "@/shared/components/ModalGrabHandle";
-import { AnimatedScaleFade } from "@/shared/components/AnimatedScaleFade";
 import { PRESET_COLORS } from "@/shared/constants/colors";
 import { CreditCard, CreateCreditCardData } from "../types/credit-cards.types";
 
@@ -27,6 +30,14 @@ export interface CreditCardModalProps {
 const FLAGS = ["Mastercard", "Visa", "Elo", "Hipercard", "Outro"];
 
 export function CreditCardModal({ visible, onClose, onSave, cardToEdit }: CreditCardModalProps) {
+  const insets = useSafeAreaInsets();
+  const {
+    panY,
+    panHandlers,
+    reset: resetSwipe,
+  } = useBottomSheetDismiss({
+    onDismiss: onClose,
+  });
   const [name, setName] = React.useState("");
   const [flag, setFlag] = React.useState("Mastercard");
   const [color, setColor] = React.useState(PRESET_COLORS[2] || "#8A05BE");
@@ -37,6 +48,9 @@ export function CreditCardModal({ visible, onClose, onSave, cardToEdit }: Credit
   const [isSubmitting, setIsSubmitting] = React.useState(false);
 
   React.useEffect(() => {
+    if (visible) {
+      resetSwipe();
+    }
     if (cardToEdit) {
       setName(cardToEdit.name);
       setFlag(cardToEdit.flag || "Mastercard");
@@ -97,34 +111,48 @@ export function CreditCardModal({ visible, onClose, onSave, cardToEdit }: Credit
   };
 
   return (
-    <Modal visible={visible} animationType="fade" transparent onRequestClose={onClose}>
+    <Modal
+      visible={visible}
+      animationType="slide"
+      transparent
+      presentationStyle="overFullScreen"
+      statusBarTranslucent
+      onRequestClose={onClose}
+    >
+      {/* Fundo transparente escurecido que cobre 100% da tela (inclusive Dynamic Island e status bar) */}
+      <View style={StyleSheet.absoluteFill} className="bg-black/60">
+        <Pressable
+          style={StyleSheet.absoluteFill}
+          onPress={() => {
+            if (!isSubmitting) onClose();
+          }}
+          accessibilityLabel="Fechar modal"
+        />
+      </View>
+
       <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        className="flex-1 justify-center bg-black/60 p-4"
+        behavior={Platform.OS === "ios" ? "padding" : undefined}
+        style={{ flex: 1, justifyContent: "flex-end" }}
+        pointerEvents="box-none"
       >
-        <AnimatedScaleFade className="w-full">
-          <Card className="max-h-[92%] w-full bg-card shadow-2xl border-border/80 pt-1">
-            <ModalGrabHandle />
-            <CardHeader className="border-b border-border/60 pb-3 pt-0 flex-row items-center justify-between">
-              <View>
+        <Animated.View style={{ transform: [{ translateY: panY }] }} className="w-full">
+          <Card className="max-h-[90%] w-full rounded-b-none rounded-t-[28px] border-b-0 border-x-0 border-t border-border bg-card p-0 shadow-2xl">
+            {/* Área superior interativa: arraste para baixo para fechar */}
+            <View {...panHandlers} className="w-full">
+              <ModalGrabHandle />
+              <CardHeader className="border-b border-border/60 px-5 pb-3 pt-0">
                 <CardTitle className="text-xl">
                   {cardToEdit ? "Editar Cartão" : "Novo Cartão"}
                 </CardTitle>
                 <Text className="text-xs text-muted-foreground mt-0.5">
                   Configure datas de fatura e limites
                 </Text>
-              </View>
-              <Pressable
-                onPress={onClose}
-                className="h-8 w-8 items-center justify-center rounded-full bg-muted active:scale-95 active:opacity-70"
-                accessibilityLabel="Fechar"
-              >
-                <X size={16} color="#71717a" />
-              </Pressable>
-            </CardHeader>
+              </CardHeader>
+            </View>
 
             <ScrollView
               showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps="handled"
               contentContainerStyle={{ padding: 16, gap: 16 }}
             >
               {/* Preview do Cartão com visual iOS Wallet */}
@@ -276,7 +304,10 @@ export function CreditCardModal({ visible, onClose, onSave, cardToEdit }: Credit
               />
             </ScrollView>
 
-            <CardFooter className="border-t border-border/60 gap-3 justify-end pt-3">
+            <CardFooter
+              className="border-t border-border/60 px-5 pt-3 gap-3 justify-end"
+              style={{ paddingBottom: Math.max(insets.bottom, 16) }}
+            >
               <Button
                 variant="outline"
                 label="Cancelar"
@@ -291,7 +322,7 @@ export function CreditCardModal({ visible, onClose, onSave, cardToEdit }: Credit
               />
             </CardFooter>
           </Card>
-        </AnimatedScaleFade>
+        </Animated.View>
       </KeyboardAvoidingView>
     </Modal>
   );
