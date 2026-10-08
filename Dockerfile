@@ -1,7 +1,7 @@
 FROM node:26-alpine
 
 # Install pnpm
-RUN npm install -g pnpm@12
+RUN npm install -g pnpm@12 
 
 WORKDIR /app
 
@@ -10,6 +10,8 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 # Install project dependencies
 RUN pnpm install --frozen-lockfile
+
+RUN pnpm install @expo/ngrok@^4.1.0
 
 # Copy application source
 COPY . .
@@ -21,4 +23,4 @@ EXPOSE 8081
 ENV NODE_ENV=development
 
 # Default command to start the server
-CMD ["pnpm", "start", "--host", "lan"]
+CMD ["pnpm", "start"]
