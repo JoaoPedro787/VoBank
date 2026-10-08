@@ -12,9 +12,9 @@
 
 ## 2. Navegação e Safe Areas Dinâmicas
 
-- [ ] 2.1 Refatorar `src/app/(tabs)/_layout.tsx` para calcular altura e padding inferior da Tab Bar via `useSafeAreaInsets()`, evitando sobreposição com o indicador de gestos
-- [ ] 2.2 Atualizar cabeçalhos de tela em `index.tsx`, `purchases.tsx`, `cards.tsx` e `people.tsx` com `insets.top` dinâmico em vez de `pt-14` fixo
-- [ ] 2.3 Executar e validar suite de testes e qualidade com `pnpm check`
+- [x] 2.1 Refatorar `src/app/(tabs)/_layout.tsx` para calcular altura e padding inferior da Tab Bar via `useSafeAreaInsets()`, evitando sobreposição com o indicador de gestos
+- [x] 2.2 Atualizar cabeçalhos de tela em `index.tsx`, `purchases.tsx`, `cards.tsx` e `people.tsx` com `insets.top` dinâmico em vez de `pt-14` fixo
+- [x] 2.3 Executar e validar suite de testes e qualidade com `pnpm check`
 
 ## 3. Resiliência de Layout e Prevenção de Estouro de Texto
 

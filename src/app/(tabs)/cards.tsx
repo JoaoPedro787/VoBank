@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { CreditCard as CardIcon, Plus, Pencil, Trash2, Calendar } from "lucide-react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useCreditCards } from "@/credit-cards/hooks/use-credit-cards";
 import { CreditCardModal } from "@/credit-cards/components/CreditCardModal";
 import { CreditCard, CreateCreditCardData } from "@/credit-cards/types/credit-cards.types";
@@ -17,6 +18,7 @@ import { Badge } from "@/shared/components/Badge";
 import { AnimatedScaleFade } from "@/shared/components/AnimatedScaleFade";
 
 export default function CardsScreen() {
+  const insets = useSafeAreaInsets();
   const { cards, isLoading, error, fetchCards, createCard, updateCard, deleteCard } =
     useCreditCards();
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -56,7 +58,10 @@ export default function CardsScreen() {
   return (
     <View className="flex-1 bg-background">
       {/* Header */}
-      <View className="border-b border-border bg-card px-6 pt-14 pb-4">
+      <View
+        className="border-b border-border bg-card px-6 pb-4"
+        style={{ paddingTop: Math.max(insets.top, 16) }}
+      >
         <View className="flex-row items-center justify-between">
           <View>
             <View className="flex-row items-center gap-2">

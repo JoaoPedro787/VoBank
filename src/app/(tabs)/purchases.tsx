@@ -22,6 +22,7 @@ import {
   RotateCcw,
 } from "lucide-react-native";
 import { usePurchases } from "@/purchases/hooks/use-purchases";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useCreditCards } from "@/credit-cards/hooks/use-credit-cards";
 import { usePeople } from "@/people/hooks/use-people";
 import { PurchaseCard } from "@/purchases/components/PurchaseCard";
@@ -53,6 +54,7 @@ const MONTH_NAMES = [
 ];
 
 export default function PurchasesScreen() {
+  const insets = useSafeAreaInsets();
   const {
     purchases,
     isLoading,
@@ -162,7 +164,10 @@ export default function PurchasesScreen() {
   return (
     <View className="flex-1 bg-background">
       {/* Header Fixo da Tela */}
-      <View className="border-b border-border bg-card px-6 pt-14 pb-4">
+      <View
+        className="border-b border-border bg-card px-6 pb-4"
+        style={{ paddingTop: Math.max(insets.top, 16) }}
+      >
         <View className="flex-row items-center justify-between">
           <View>
             <View className="flex-row items-center gap-2">

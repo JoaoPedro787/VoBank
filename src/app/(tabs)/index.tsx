@@ -21,6 +21,7 @@ import {
   Moon,
 } from "lucide-react-native";
 import { useAuth } from "@/auth/hooks/use-auth";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/shared/hooks/useTheme";
 import { useDashboard } from "@/dashboard/hooks/use-dashboard";
 import { usePurchases } from "@/purchases/hooks/use-purchases";
@@ -37,6 +38,7 @@ import { Badge } from "@/shared/components/Badge";
 import { AnimatedScaleFade } from "@/shared/components/AnimatedScaleFade";
 
 export default function HomeScreen() {
+  const insets = useSafeAreaInsets();
   const { user, logout } = useAuth();
   const { isDark, toggleColorScheme } = useTheme();
   const {
@@ -114,7 +116,10 @@ export default function HomeScreen() {
   return (
     <View className="flex-1 bg-background">
       {/* Header Fixo */}
-      <View className="border-b border-border bg-card px-6 pt-14 pb-4">
+      <View
+        className="border-b border-border bg-card px-6 pb-4"
+        style={{ paddingTop: Math.max(insets.top, 16) }}
+      >
         <View className="flex-row items-center justify-between">
           <View>
             <Text className="text-sm font-medium text-muted-foreground">

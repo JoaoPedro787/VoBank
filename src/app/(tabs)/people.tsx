@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Users, Plus, Pencil, Trash2 } from "lucide-react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { usePeople } from "@/people/hooks/use-people";
 import { PersonModal } from "@/people/components/PersonModal";
 import { Person, CreatePersonData } from "@/people/types/people.types";
@@ -17,6 +18,7 @@ import { Card } from "@/shared/components/Card";
 import { Badge } from "@/shared/components/Badge";
 
 export default function PeopleScreen() {
+  const insets = useSafeAreaInsets();
   const { people, isLoading, error, fetchPeople, createPerson, updatePerson, deletePerson } =
     usePeople();
   const [modalVisible, setModalVisible] = React.useState(false);
@@ -56,7 +58,10 @@ export default function PeopleScreen() {
   return (
     <View className="flex-1 bg-background">
       {/* Header */}
-      <View className="border-b border-border bg-card px-6 pt-14 pb-4">
+      <View
+        className="border-b border-border bg-card px-6 pb-4"
+        style={{ paddingTop: Math.max(insets.top, 16) }}
+      >
         <View className="flex-row items-center justify-between">
           <View>
             <View className="flex-row items-center gap-2">
