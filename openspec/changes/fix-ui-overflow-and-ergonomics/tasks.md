@@ -2,13 +2,13 @@
 
 ## 1. Design System & Componentes Fundamentais
 
-- [ ] 1.1 Instalar `expo-haptics` e criar helper seguro `src/shared/utils/haptics.ts` com fallback para ambientes sem suporte e verificar via teste unitário
-- [ ] 1.2 Refatorar `src/shared/components/Input.tsx` com borda fixa de 1.5px (zero layout shift no foco), suporte a ícones prefix/suffix e botão interativo de visualização de senha
-- [ ] 1.3 Refatorar `src/shared/components/Button.tsx` com preservação dimensional em loading, feedback tátil háptico no toque e alinhamento de ícone/texto
-- [ ] 1.4 Aprimorar `src/shared/components/Badge.tsx` para herdar e repassar cores adequadas a ícones e textos filhos
-- [ ] 1.5 Otimizar `src/shared/components/AnimatedScaleFade.tsx` para manter transições suaves a 60 FPS
-- [ ] 1.6 Atualizar formulários de login e cadastro (`login.tsx`, `register.tsx`) utilizando o novo Input com toggle de senha
-- [ ] 1.7 Executar e validar suite de testes e qualidade com `pnpm check`
+- [x] 1.1 Instalar `expo-haptics` e criar helper seguro `src/shared/utils/haptics.ts` com fallback para ambientes sem suporte e verificar via teste unitário
+- [x] 1.2 Refatorar `src/shared/components/Input.tsx` com borda fixa de 1.5px (zero layout shift no foco), suporte a ícones prefix/suffix e botão interativo de visualização de senha
+- [x] 1.3 Refatorar `src/shared/components/Button.tsx` com preservação dimensional em loading, feedback tátil háptico no toque e alinhamento de ícone/texto
+- [x] 1.4 Aprimorar `src/shared/components/Badge.tsx` para herdar e repassar cores adequadas a ícones e textos filhos
+- [x] 1.5 Otimizar `src/shared/components/AnimatedScaleFade.tsx` para manter transições suaves a 60 FPS
+- [x] 1.6 Atualizar formulários de login e cadastro (`login.tsx`, `register.tsx`) utilizando o novo Input com toggle de senha
+- [x] 1.7 Executar e validar suite de testes e qualidade com `pnpm check`
 
 ## 2. Navegação e Safe Areas Dinâmicas
 
