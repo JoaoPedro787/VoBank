@@ -5,6 +5,7 @@ import {
   validatePurchaseInvariance,
   splitInputSchema,
   toggleInstallmentSplitPaidSchema,
+  listPurchasesQuerySchema,
   purchases,
   installments,
   installmentSplits,
@@ -291,6 +292,76 @@ describe("Purchases, Installments & Splits Schemas & Validations", () => {
 
     it("should reject non-boolean isPaid", () => {
       expect(toggleInstallmentSplitPaidSchema.safeParse({ isPaid: "yes" }).success).toBe(false);
+    });
+  });
+
+  describe("listPurchasesQuerySchema", () => {
+    it("should accept empty query object", () => {
+      const result = listPurchasesQuerySchema.safeParse({});
+      expect(result.success).toBe(true);
+    });
+
+    it("should accept valid month and year as numbers", () => {
+      const result = listPurchasesQuerySchema.safeParse({
+        month: 3,
+        year: 2026,
+      });
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.month).toBe(3);
+        expect(result.data.year).toBe(2026);
+      }
+    });
+
+    it("should coerce string values for month and year", () => {
+      const result = listPurchasesQuerySchema.safeParse({
+        month: "12",
+        year: "2025",
+      });
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.month).toBe(12);
+        expect(result.data.year).toBe(2025);
+      }
+    });
+
+    it("should reject month less than 1 or greater than 12", () => {
+      expect(listPurchasesQuerySchema.safeParse({ month: 0 }).success).toBe(false);
+      expect(listPurchasesQuerySchema.safeParse({ month: 13 }).success).toBe(false);
+      expect(listPurchasesQuerySchema.safeParse({ month: -1 }).success).toBe(false);
+    });
+
+    it("should reject non-integer month", () => {
+      expect(listPurchasesQuerySchema.safeParse({ month: 4.5 }).success).toBe(false);
+    });
+
+    it("should reject year outside 2000-2100", () => {
+      expect(listPurchasesQuerySchema.safeParse({ year: 1999 }).success).toBe(false);
+      expect(listPurchasesQuerySchema.safeParse({ year: 2101 }).success).toBe(false);
+    });
+
+    it("should accept valid creditCardId, personId, and search", () => {
+      const result = listPurchasesQuerySchema.safeParse({
+        creditCardId: dummyCardId,
+        personId: dummyPersonId,
+        search: "Mercado",
+      });
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.creditCardId).toBe(dummyCardId);
+        expect(result.data.personId).toBe(dummyPersonId);
+        expect(result.data.search).toBe("Mercado");
+      }
+    });
+
+    it("should accept special filter identifiers such as 'no-card', 'none', and 'user'", () => {
+      const noCardResult = listPurchasesQuerySchema.safeParse({ creditCardId: "no-card" });
+      const noneCardResult = listPurchasesQuerySchema.safeParse({ creditCardId: "none" });
+      const userResult = listPurchasesQuerySchema.safeParse({ personId: "user" });
+
+      expect(noCardResult.success).toBe(true);
+      expect(noneCardResult.success).toBe(true);
+      expect(userResult.success).toBe(true);
     });
   });
 

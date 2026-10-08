@@ -77,8 +77,8 @@ export default function PeopleScreen() {
 
       {/* Error state banner */}
       {error ? (
-        <View className="m-4 rounded-xl bg-destructive/10 p-3 flex-row items-center justify-between">
-          <Text className="text-xs text-destructive flex-1 font-medium">{error}</Text>
+        <View className="m-4 rounded-xl bg-[#FF3B30]/10 border border-[#FF3B30]/20 p-3 flex-row items-center justify-between">
+          <Text className="text-xs text-[#FF3B30] flex-1 font-medium">{error}</Text>
           <Button variant="ghost" size="sm" label="Tentar de novo" onPress={fetchPeople} />
         </View>
       ) : null}
@@ -86,7 +86,7 @@ export default function PeopleScreen() {
       {/* List */}
       {isLoading && people.length === 0 ? (
         <View className="flex-1 items-center justify-center">
-          <ActivityIndicator size="large" color="#3B82F6" />
+          <ActivityIndicator size="large" color="#007AFF" />
         </View>
       ) : (
         <FlatList
@@ -98,7 +98,7 @@ export default function PeopleScreen() {
             flexGrow: people.length === 0 ? 1 : undefined,
           }}
           refreshControl={
-            <RefreshControl refreshing={isLoading} onRefresh={fetchPeople} tintColor="#3B82F6" />
+            <RefreshControl refreshing={isLoading} onRefresh={fetchPeople} tintColor="#007AFF" />
           }
           ListEmptyComponent={
             <View className="flex-1 items-center justify-center px-6 py-12">
@@ -115,10 +115,13 @@ export default function PeopleScreen() {
             </View>
           }
           renderItem={({ item }) => (
-            <Card animated className="flex-row items-center justify-between p-4">
-              <View className="flex-row items-center gap-3 flex-1">
+            <Card
+              animated
+              className="flex-row items-center justify-between p-4 rounded-2xl border-border/70"
+            >
+              <View className="flex-row items-center gap-3.5 flex-1 pr-2">
                 <View
-                  className="h-12 w-12 rounded-full items-center justify-center shadow-sm"
+                  className="h-12 w-12 rounded-full items-center justify-center shadow-md border-2 border-white/20"
                   style={{ backgroundColor: item.color }}
                 >
                   <Text className="text-lg font-bold text-white">
@@ -127,25 +130,35 @@ export default function PeopleScreen() {
                 </View>
 
                 <View className="flex-1">
-                  <Text className="text-base font-semibold text-foreground" numberOfLines={1}>
+                  <Text className="text-base font-bold text-foreground" numberOfLines={1}>
                     {item.name}
                   </Text>
-                  <Text className="text-xs text-muted-foreground">{item.color.toUpperCase()}</Text>
+                  <View className="flex-row items-center gap-1.5 mt-0.5">
+                    <View
+                      className="h-2 w-2 rounded-full"
+                      style={{ backgroundColor: item.color }}
+                    />
+                    <Text className="text-xs text-muted-foreground font-medium">
+                      {item.color.toUpperCase()}
+                    </Text>
+                  </View>
                 </View>
               </View>
 
               <View className="flex-row items-center gap-1">
                 <Pressable
                   onPress={() => handleOpenEdit(item)}
-                  className="h-9 w-9 items-center justify-center rounded-lg active:bg-accent"
+                  className="h-9 w-9 items-center justify-center rounded-xl bg-muted/60 active:scale-95 active:opacity-70"
+                  accessibilityLabel="Editar pessoa"
                 >
-                  <Pencil size={18} color="#71717a" />
+                  <Pencil size={16} color="#007AFF" />
                 </Pressable>
                 <Pressable
                   onPress={() => handleDelete(item)}
-                  className="h-9 w-9 items-center justify-center rounded-lg active:bg-destructive/10"
+                  className="h-9 w-9 items-center justify-center rounded-xl bg-[#FF3B30]/10 active:scale-95 active:opacity-70"
+                  accessibilityLabel="Excluir pessoa"
                 >
-                  <Trash2 size={18} color="#ef4444" />
+                  <Trash2 size={16} color="#FF3B30" />
                 </Pressable>
               </View>
             </Card>

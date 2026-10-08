@@ -4,12 +4,22 @@ import {
   CreatePurchaseData,
   UpdatePurchaseData,
   InstallmentSplitClient,
+  ListPurchasesFilters,
 } from "../types/purchases.types";
 
 export const purchasesApiService = {
-  async list(token: string): Promise<PurchaseClient[]> {
+  async list(token: string, filters?: ListPurchasesFilters): Promise<PurchaseClient[]> {
     const baseUrl = getBaseApiUrl();
-    const response = await fetch(`${baseUrl}/api/purchases`, {
+    const queryParams = new URLSearchParams();
+    if (filters?.month !== undefined) queryParams.append("month", String(filters.month));
+    if (filters?.year !== undefined) queryParams.append("year", String(filters.year));
+    if (filters?.creditCardId) queryParams.append("creditCardId", filters.creditCardId);
+    if (filters?.personId) queryParams.append("personId", filters.personId);
+    if (filters?.search) queryParams.append("search", filters.search);
+
+    const queryString = queryParams.toString();
+    const url = `${baseUrl}/api/purchases${queryString ? `?${queryString}` : ""}`;
+    const response = await fetch(url, {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,

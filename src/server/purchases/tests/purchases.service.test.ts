@@ -193,6 +193,212 @@ describe("PurchasesService (Isolated In-Memory Unit Tests)", () => {
     });
   });
 
+  describe("listPurchases with filters", () => {
+    let secondCardId: string;
+    let secondPersonId: string;
+
+    beforeEach(async () => {
+      const card2 = await cardsRepo.create({
+        userId,
+        name: "Inter",
+        flag: "Mastercard",
+        color: "#ff7a00",
+        closingDay: 10,
+        dueDay: 20,
+      });
+      secondCardId = card2.id;
+
+      const person2 = await peopleRepo.create({
+        userId,
+        name: "Mariana Costa",
+        color: "#10b981",
+      });
+      secondPersonId = person2.id;
+
+      purchasesRepo.setCards(cardsRepo.getAll());
+      purchasesRepo.setPeople(peopleRepo.getAll());
+    });
+
+    it("should filter purchases by search query on description", async () => {
+      await purchasesService.createPurchase(userId, {
+        description: "Supermercado Pão de Açúcar",
+        totalAmount: 200,
+        purchaseDate: new Date(),
+        paymentMethod: "cash",
+      });
+
+      await purchasesService.createPurchase(userId, {
+        description: "Farmácia Droga Raia",
+        totalAmount: 80,
+        purchaseDate: new Date(),
+        paymentMethod: "cash",
+      });
+
+      const result = await purchasesService.listPurchases(userId, { search: "supermercado" });
+      expect(result).toHaveLength(1);
+      expect(result[0].description).toBe("Supermercado Pão de Açúcar");
+
+      const empty = await purchasesService.listPurchases(userId, { search: "Posto Gasolina" });
+      expect(empty).toHaveLength(0);
+    });
+
+    it("should filter purchases by month and year", async () => {
+      await purchasesService.createPurchase(userId, {
+        description: "Compra Março",
+        totalAmount: 150,
+        purchaseDate: new Date(Date.UTC(2026, 2, 10)), // Month 3
+        paymentMethod: "cash",
+      });
+
+      await purchasesService.createPurchase(userId, {
+        description: "Compra Abril",
+        totalAmount: 90,
+        purchaseDate: new Date(Date.UTC(2026, 3, 15)), // Month 4
+        paymentMethod: "cash",
+      });
+
+      const marchResult = await purchasesService.listPurchases(userId, { month: 3, year: 2026 });
+      expect(marchResult).toHaveLength(1);
+      expect(marchResult[0].description).toBe("Compra Março");
+
+      const aprilResult = await purchasesService.listPurchases(userId, { month: 4, year: 2026 });
+      expect(aprilResult).toHaveLength(1);
+      expect(aprilResult[0].description).toBe("Compra Abril");
+
+      const yearResult = await purchasesService.listPurchases(userId, { year: 2026 });
+      expect(yearResult).toHaveLength(2);
+    });
+
+    it("should filter purchases by credit card", async () => {
+      await purchasesService.createPurchase(userId, {
+        description: "Compra Nubank",
+        totalAmount: 120,
+        purchaseDate: new Date(),
+        paymentMethod: "credit",
+        creditCardId: sampleCardId,
+        totalInstallments: 1,
+      });
+
+      await purchasesService.createPurchase(userId, {
+        description: "Compra Inter",
+        totalAmount: 250,
+        purchaseDate: new Date(),
+        paymentMethod: "credit",
+        creditCardId: secondCardId,
+        totalInstallments: 1,
+      });
+
+      await purchasesService.createPurchase(userId, {
+        description: "Compra Débito",
+        totalAmount: 50,
+        purchaseDate: new Date(),
+        paymentMethod: "debit",
+        totalInstallments: 1,
+      });
+
+      const nubankList = await purchasesService.listPurchases(userId, {
+        creditCardId: sampleCardId,
+      });
+      expect(nubankList).toHaveLength(1);
+      expect(nubankList[0].description).toBe("Compra Nubank");
+
+      const noCardList = await purchasesService.listPurchases(userId, {
+        creditCardId: "no-card",
+      });
+      expect(noCardList).toHaveLength(1);
+      expect(noCardList[0].description).toBe("Compra Débito");
+
+      const noneList = await purchasesService.listPurchases(userId, {
+        creditCardId: "none",
+      });
+      expect(noneList).toHaveLength(1);
+      expect(noneList[0].description).toBe("Compra Débito");
+    });
+
+    it("should filter purchases by participating person in splits", async () => {
+      await purchasesService.createPurchase(userId, {
+        description: "Jantar com Lucas",
+        totalAmount: 100,
+        purchaseDate: new Date(),
+        paymentMethod: "cash",
+        splits: [
+          { personId: samplePersonId, percentage: 50 },
+          { personId: null, percentage: 50 },
+        ],
+      });
+
+      await purchasesService.createPurchase(userId, {
+        description: "Almoço com Mariana",
+        totalAmount: 60,
+        purchaseDate: new Date(),
+        paymentMethod: "cash",
+        splits: [{ personId: secondPersonId, percentage: 100 }],
+      });
+
+      await purchasesService.createPurchase(userId, {
+        description: "Compra Apenas Titular",
+        totalAmount: 40,
+        purchaseDate: new Date(),
+        paymentMethod: "cash",
+      });
+
+      const lucasList = await purchasesService.listPurchases(userId, { personId: samplePersonId });
+      expect(lucasList).toHaveLength(1);
+      expect(lucasList[0].description).toBe("Jantar com Lucas");
+
+      const userList = await purchasesService.listPurchases(userId, { personId: "user" });
+      expect(userList.map((p) => p.description)).toContain("Jantar com Lucas");
+      expect(userList.map((p) => p.description)).toContain("Compra Apenas Titular");
+      expect(userList.map((p) => p.description)).not.toContain("Almoço com Mariana");
+    });
+
+    it("should combine multiple filters simultaneously", async () => {
+      await purchasesService.createPurchase(userId, {
+        description: "Supermercado Mensal",
+        totalAmount: 300,
+        purchaseDate: new Date(Date.UTC(2026, 2, 10)),
+        paymentMethod: "credit",
+        creditCardId: sampleCardId,
+        splits: [
+          { personId: samplePersonId, percentage: 50 },
+          { personId: null, percentage: 50 },
+        ],
+      });
+
+      await purchasesService.createPurchase(userId, {
+        description: "Cinema Inter",
+        totalAmount: 80,
+        purchaseDate: new Date(Date.UTC(2026, 2, 15)),
+        paymentMethod: "credit",
+        creditCardId: secondCardId,
+        splits: [{ personId: secondPersonId, percentage: 100 }],
+      });
+
+      const matched = await purchasesService.listPurchases(userId, {
+        month: 3,
+        year: 2026,
+        creditCardId: sampleCardId,
+        personId: samplePersonId,
+        search: "Supermercado",
+      });
+
+      expect(matched).toHaveLength(1);
+      expect(matched[0].description).toBe("Supermercado Mensal");
+
+      const unmatched = await purchasesService.listPurchases(userId, {
+        month: 3,
+        year: 2026,
+        creditCardId: secondCardId,
+        personId: samplePersonId,
+      });
+      expect(unmatched).toHaveLength(0);
+    });
+
+    it("should throw validation error when filters are invalid", async () => {
+      await expect(purchasesService.listPurchases(userId, { month: 13 })).rejects.toThrow();
+    });
+  });
+
   describe("toggleSplitPaid", () => {
     it("should toggle installment split isPaid to true with paidAt timestamp", async () => {
       const purchase = await purchasesService.createPurchase(userId, {

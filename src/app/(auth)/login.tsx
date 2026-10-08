@@ -1,6 +1,7 @@
 import * as React from "react";
 import { View, Text, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { router } from "expo-router";
+import { Wallet } from "lucide-react-native";
 import { useAuth } from "@/auth/hooks/use-auth";
 import {
   Card,
@@ -55,18 +56,18 @@ export default function LoginScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <View className="mb-8 items-center">
-          <View className="mb-3 h-14 w-14 items-center justify-center rounded-2xl bg-primary">
-            <Text className="text-2xl font-bold text-primary-foreground">$</Text>
+          <View className="mb-3.5 h-16 w-16 items-center justify-center rounded-2xl bg-primary shadow-lg shadow-primary/25">
+            <Wallet size={30} color="#ffffff" />
           </View>
           <Text className="text-3xl font-extrabold tracking-tight text-foreground">Finanças</Text>
-          <Text className="mt-1 text-sm text-muted-foreground">
-            Gerencie suas contas, cartões e divisões
+          <Text className="mt-1 text-sm text-muted-foreground text-center">
+            Gerencie suas contas, cartões e divisões com facilidade
           </Text>
         </View>
 
-        <Card className="w-full">
+        <Card className="w-full border-border/70 shadow-sm">
           <CardHeader>
-            <CardTitle>Entrar na conta</CardTitle>
+            <CardTitle className="text-xl">Entrar na conta</CardTitle>
             <CardDescription>
               Informe seu e-mail e senha cadastrados para acessar o sistema.
             </CardDescription>
@@ -74,8 +75,8 @@ export default function LoginScreen() {
 
           <CardContent className="gap-4">
             {errorMessage ? (
-              <View className="rounded-xl border border-destructive/20 bg-destructive/10 p-3">
-                <Text className="text-sm font-medium text-destructive">{errorMessage}</Text>
+              <View className="rounded-xl border border-[#FF3B30]/20 bg-[#FF3B30]/10 p-3">
+                <Text className="text-sm font-medium text-[#FF3B30]">{errorMessage}</Text>
               </View>
             ) : null}
 

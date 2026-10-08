@@ -17,8 +17,8 @@ export function PersonSummaryCard({ person, isSelected, onPress }: PersonSummary
     <Pressable
       onPress={onPress}
       className={cn(
-        "w-56 rounded-2xl border bg-card p-3.5 shadow-sm active:opacity-80 gap-2.5",
-        isSelected ? "border-primary bg-primary/5 dark:bg-primary/10" : "border-border",
+        "w-56 rounded-2xl border bg-card p-3.5 shadow-sm active:scale-[0.98] active:opacity-80 gap-2.5",
+        isSelected ? "border-primary bg-primary/10 shadow-md" : "border-border/70",
       )}
     >
       {/* Header: Cor e Nome */}
@@ -31,9 +31,9 @@ export function PersonSummaryCard({ person, isSelected, onPress }: PersonSummary
         </View>
 
         {person.overdueCount > 0 ? (
-          <View className="flex-row items-center gap-1 rounded-full bg-destructive/15 px-2 py-0.5">
-            <AlertCircle size={10} color="#ef4444" />
-            <Text className="text-[10px] font-bold text-destructive">
+          <View className="flex-row items-center gap-1 rounded-full bg-[#FF3B30]/10 px-2 py-0.5 border border-[#FF3B30]/20">
+            <AlertCircle size={10} color="#FF3B30" />
+            <Text className="text-[10px] font-bold text-[#FF3B30]">
               {person.overdueCount} atrasada(s)
             </Text>
           </View>
@@ -44,42 +44,40 @@ export function PersonSummaryCard({ person, isSelected, onPress }: PersonSummary
             </Text>
           </View>
         ) : (
-          <View className="rounded-full bg-emerald-500/15 px-2 py-0.5">
-            <Text className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">
-              Quitado
-            </Text>
+          <View className="rounded-full bg-[#34C759]/10 px-2 py-0.5 border border-[#34C759]/20">
+            <Text className="text-[10px] font-bold text-[#34C759]">Quitado</Text>
           </View>
         )}
       </View>
 
       {/* Total Comprometido */}
       <View>
-        <Text className="text-xs text-muted-foreground">Comprometido</Text>
-        <Text className="text-lg font-bold text-foreground">
+        <Text className="text-xs text-muted-foreground font-medium">Comprometido</Text>
+        <Text className="text-lg font-bold text-foreground tabular-nums tracking-tight">
           R$ {person.totalCommitted.toFixed(2)}
         </Text>
       </View>
 
       {/* Mini Métricas: Pago, Pendente, Vencido */}
-      <View className="flex-row items-center justify-between pt-2 border-t border-border/60">
+      <View className="flex-row items-center justify-between pt-2 border-t border-border/50">
         <View className="flex-row items-center gap-1">
-          <CheckCircle2 size={12} color="#10B981" />
-          <Text className="text-[11px] font-semibold text-emerald-600 dark:text-emerald-400">
+          <CheckCircle2 size={12} color="#34C759" />
+          <Text className="text-[11px] font-semibold text-[#34C759] tabular-nums">
             R$ {person.totalPaid.toFixed(2)}
           </Text>
         </View>
 
         {person.totalOverdue > 0 ? (
           <View className="flex-row items-center gap-1">
-            <AlertCircle size={12} color="#ef4444" />
-            <Text className="text-[11px] font-bold text-destructive">
+            <AlertCircle size={12} color="#FF3B30" />
+            <Text className="text-[11px] font-bold text-[#FF3B30] tabular-nums">
               R$ {person.totalOverdue.toFixed(2)}
             </Text>
           </View>
         ) : (
           <View className="flex-row items-center gap-1">
-            <Clock size={12} color="#F59E0B" />
-            <Text className="text-[11px] font-semibold text-amber-600 dark:text-amber-400">
+            <Clock size={12} color="#FF9500" />
+            <Text className="text-[11px] font-semibold text-[#FF9500] tabular-nums">
               R$ {person.totalPending.toFixed(2)}
             </Text>
           </View>

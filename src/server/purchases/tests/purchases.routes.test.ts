@@ -21,7 +21,24 @@ describe("Purchases Route Handlers (Isolated In-Memory TDD)", () => {
   const handleListPurchases = async (req: Request): Promise<Response> => {
     try {
       const authUser = requireAuth(req);
-      const result = await purchasesService.listPurchases(authUser.userId);
+      const url = new URL(req.url);
+      const queryParams: Record<string, string> = {};
+
+      const month = url.searchParams.get("month");
+      if (month) queryParams.month = month;
+      const year = url.searchParams.get("year");
+      if (year) queryParams.year = year;
+      const creditCardId = url.searchParams.get("creditCardId");
+      if (creditCardId) queryParams.creditCardId = creditCardId;
+      const personId = url.searchParams.get("personId");
+      if (personId) queryParams.personId = personId;
+      const search = url.searchParams.get("search");
+      if (search) queryParams.search = search;
+
+      const result = await purchasesService.listPurchases(
+        authUser.userId,
+        Object.keys(queryParams).length > 0 ? queryParams : undefined,
+      );
       return apiSuccess(result, 200);
     } catch (error) {
       return handleApiError(error);
@@ -206,6 +223,98 @@ describe("Purchases Route Handlers (Isolated In-Memory TDD)", () => {
       expect(Array.isArray(json)).toBe(true);
       expect(json).toHaveLength(1);
       expect(json[0].description).toBe("Cinema");
+    });
+
+    it("should filter purchases with query parameters (month, year, search, card, person)", async () => {
+      // 1. Compra Nubank com Lucas em Março/2026
+      await purchasesService.createPurchase(userId, {
+        description: "Supermercado Mensal",
+        totalAmount: 300,
+        purchaseDate: new Date(Date.UTC(2026, 2, 10)),
+        paymentMethod: "credit",
+        creditCardId: cardId,
+        splits: [
+          { personId, percentage: 50 },
+          { personId: null, percentage: 50 },
+        ],
+      });
+
+      // 2. Compra Débito Titular em Abril/2026
+      await purchasesService.createPurchase(userId, {
+        description: "Almoço Restaurante",
+        totalAmount: 50,
+        purchaseDate: new Date(Date.UTC(2026, 3, 5)),
+        paymentMethod: "debit",
+      });
+
+      // Filtro por busca textual
+      const searchReq = new Request("http://localhost:8081/api/purchases?search=supermercado", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const searchRes = await handleListPurchases(searchReq);
+      expect(searchRes.status).toBe(200);
+      const searchJson = await searchRes.json();
+      expect(searchJson).toHaveLength(1);
+      expect(searchJson[0].description).toBe("Supermercado Mensal");
+
+      // Filtro por mês e ano
+      const monthReq = new Request("http://localhost:8081/api/purchases?month=3&year=2026", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const monthRes = await handleListPurchases(monthReq);
+      expect(monthRes.status).toBe(200);
+      const monthJson = await monthRes.json();
+      expect(monthJson).toHaveLength(1);
+      expect(monthJson[0].description).toBe("Supermercado Mensal");
+
+      // Filtro por cartão de crédito
+      const cardReq = new Request(`http://localhost:8081/api/purchases?creditCardId=${cardId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const cardRes = await handleListPurchases(cardReq);
+      expect(cardRes.status).toBe(200);
+      const cardJson = await cardRes.json();
+      expect(cardJson).toHaveLength(1);
+      expect(cardJson[0].description).toBe("Supermercado Mensal");
+
+      // Filtro por compras sem cartão (no-card)
+      const noCardReq = new Request("http://localhost:8081/api/purchases?creditCardId=no-card", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const noCardRes = await handleListPurchases(noCardReq);
+      expect(noCardRes.status).toBe(200);
+      const noCardJson = await noCardRes.json();
+      expect(noCardJson).toHaveLength(1);
+      expect(noCardJson[0].description).toBe("Almoço Restaurante");
+
+      // Filtro por pessoa participante
+      const personReq = new Request(`http://localhost:8081/api/purchases?personId=${personId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const personRes = await handleListPurchases(personReq);
+      expect(personRes.status).toBe(200);
+      const personJson = await personRes.json();
+      expect(personJson).toHaveLength(1);
+      expect(personJson[0].description).toBe("Supermercado Mensal");
+
+      // Filtro pelo titular (user)
+      const userReq = new Request("http://localhost:8081/api/purchases?personId=user", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const userRes = await handleListPurchases(userReq);
+      expect(userRes.status).toBe(200);
+      const userJson = await userRes.json();
+      expect(userJson).toHaveLength(2);
+    });
+
+    it("should return 400 when invalid query parameters are provided", async () => {
+      const invalidReq = new Request("http://localhost:8081/api/purchases?month=13", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const invalidRes = await handleListPurchases(invalidReq);
+      expect(invalidRes.status).toBe(400);
+      const json = await invalidRes.json();
+      expect(json.error).toBeDefined();
     });
 
     it("should return single purchase", async () => {

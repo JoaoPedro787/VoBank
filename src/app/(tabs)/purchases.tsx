@@ -33,6 +33,7 @@ import {
   UpdatePurchaseData,
 } from "@/purchases/types/purchases.types";
 import { filterPurchases, calculatePurchasesMetrics } from "@/purchases/utils/purchases-filter";
+import { groupPurchasesByDay } from "@/purchases/utils/purchases-group";
 import { Button } from "@/shared/components/Button";
 import { Badge } from "@/shared/components/Badge";
 
@@ -136,6 +137,10 @@ export default function PurchasesScreen() {
     return calculatePurchasesMetrics(filteredPurchases);
   }, [filteredPurchases]);
 
+  const groupedPurchases = React.useMemo(() => {
+    return groupPurchasesByDay(filteredPurchases);
+  }, [filteredPurchases]);
+
   // Ações de Salvar e Excluir
   const handleSaveNewPurchase = async (data: CreatePurchaseData) => {
     await createPurchase(data);
@@ -164,9 +169,7 @@ export default function PurchasesScreen() {
               <Text className="text-2xl font-bold tracking-tight text-foreground">Compras</Text>
               <Badge variant="secondary" label={String(filteredPurchases.length)} />
             </View>
-            <Text className="text-sm text-muted-foreground mt-0.5">
-              Histórico consolidado e gestão de despesas
-            </Text>
+            <Text className="text-sm text-muted-foreground mt-0.5">Compras - Agrupado por Dia</Text>
           </View>
 
           <Button
@@ -184,7 +187,12 @@ export default function PurchasesScreen() {
       {error ? (
         <View className="m-4 rounded-xl bg-destructive/10 p-3 flex-row items-center justify-between">
           <Text className="text-xs text-destructive flex-1 font-medium">{error}</Text>
-          <Button variant="ghost" size="sm" label="Tentar de novo" onPress={fetchPurchases} />
+          <Button
+            variant="ghost"
+            size="sm"
+            label="Tentar de novo"
+            onPress={() => fetchPurchases()}
+          />
         </View>
       ) : null}
 
@@ -195,15 +203,19 @@ export default function PurchasesScreen() {
         </View>
       ) : (
         <FlatList
-          data={filteredPurchases}
-          keyExtractor={(item) => item.id}
+          data={groupedPurchases}
+          keyExtractor={(item) => item.dateKey}
           contentContainerStyle={{
             padding: 16,
-            gap: 12,
+            gap: 14,
             flexGrow: filteredPurchases.length === 0 ? 1 : undefined,
           }}
           refreshControl={
-            <RefreshControl refreshing={isLoading} onRefresh={fetchPurchases} tintColor="#3B82F6" />
+            <RefreshControl
+              refreshing={isLoading}
+              onRefresh={() => fetchPurchases()}
+              tintColor="#007AFF"
+            />
           }
           ListHeaderComponent={
             <View className="gap-4 mb-2">
@@ -220,7 +232,7 @@ export default function PurchasesScreen() {
                   </Text>
                 </View>
 
-                <Text className="text-3xl font-extrabold text-foreground tracking-tight">
+                <Text className="text-3xl font-extrabold text-foreground tracking-tight tabular-nums">
                   R$ {metrics.totalAmount.toFixed(2).replace(".", ",")}
                 </Text>
 
@@ -229,7 +241,7 @@ export default function PurchasesScreen() {
                     <View className="h-2 w-2 rounded-full bg-emerald-500" />
                     <Text className="text-xs text-muted-foreground">
                       Quitado:{" "}
-                      <Text className="font-semibold text-foreground">
+                      <Text className="font-semibold text-foreground tabular-nums">
                         R$ {metrics.paidAmount.toFixed(2).replace(".", ",")}
                       </Text>
                     </Text>
@@ -239,7 +251,7 @@ export default function PurchasesScreen() {
                     <View className="h-2 w-2 rounded-full bg-amber-500" />
                     <Text className="text-xs text-muted-foreground">
                       Pendente:{" "}
-                      <Text className="font-semibold text-foreground">
+                      <Text className="font-semibold text-foreground tabular-nums">
                         R$ {metrics.pendingAmount.toFixed(2).replace(".", ",")}
                       </Text>
                     </Text>
@@ -509,7 +521,33 @@ export default function PurchasesScreen() {
               )}
             </View>
           }
-          renderItem={({ item }) => <PurchaseCard purchase={item} onPressEdit={handleOpenEdit} />}
+          renderItem={({ item: dayGroup }) => (
+            <View className="gap-2.5 mb-2">
+              {/* Separador de Data / Header do Dia */}
+              <View className="flex-row items-center justify-between px-1 pt-1 pb-0.5">
+                <View className="flex-row items-baseline gap-2">
+                  <Text className="text-sm font-bold text-foreground tracking-tight">
+                    {dayGroup.title}
+                  </Text>
+                  <Text className="text-xs text-muted-foreground">{dayGroup.formattedDate}</Text>
+                </View>
+                <Text className="text-xs font-semibold text-muted-foreground tabular-nums">
+                  R$ {dayGroup.totalAmount.toFixed(2).replace(".", ",")}
+                </Text>
+              </View>
+
+              {/* Lista de Compras do Dia */}
+              <View className="gap-2.5">
+                {dayGroup.purchases.map((purchase) => (
+                  <PurchaseCard
+                    key={purchase.id}
+                    purchase={purchase}
+                    onPressEdit={handleOpenEdit}
+                  />
+                ))}
+              </View>
+            </View>
+          )}
         />
       )}
 

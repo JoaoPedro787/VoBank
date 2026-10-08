@@ -36,7 +36,7 @@ O sistema SHALL permitir marcar individualmente se a parcela de uma pessoa em um
 - **THEN** o sistema atualiza o status da parcela daquela pessoa para "pago" e registra a data do acerto
 
 ### Requirement: Listagem e Filtros de Compras
-O sistema SHALL disponibilizar uma visualização consolidada de todas as compras de todos os cartões com suporte a filtros cruzados em tempo real por cartão de crédito, por pessoa participante (incluindo o titular), combinação de cartão e pessoa, período por mês e ano (com opção de visualizar todos os períodos) e pesquisa textual por descrição.
+O sistema SHALL disponibilizar uma visualização consolidada de todas as compras de todos os cartões com suporte a filtros cruzados por cartão de crédito, por pessoa participante (incluindo o titular), combinação de cartão e pessoa, período por mês e ano (com opção de visualizar todos os períodos) e pesquisa textual por descrição. O endpoint de listagem de compras (`GET /api/purchases`) SHALL aceitar parâmetros de consulta opcionais (`month`, `year`, `creditCardId`, `personId`, `search`) para aplicar a filtragem no nível de servidor/repositório. Na interface móvel, a listagem de compras SHALL apresentar as transações agrupadas cronologicamente por dia com separadores de data.
 
 #### Scenario: Filtragem combinada por cartão e pessoa
 - **WHEN** o usuário seleciona um cartão específico (ex: "Nubank") e uma pessoa específica (ex: "Maria")
@@ -45,6 +45,14 @@ O sistema SHALL disponibilizar uma visualização consolidada de todas as compra
 #### Scenario: Filtragem por mês e ano
 - **WHEN** o usuário seleciona o mês de "Março" e o ano "2026"
 - **THEN** a listagem apresenta apenas as compras realizadas dentro do período especificado e recalcula os totais consolidados exibidos no cabeçalho
+
+#### Scenario: Filtragem na API por parâmetros de consulta
+- **WHEN** o cliente realiza uma requisição `GET /api/purchases` fornecendo parâmetros de busca como `month`, `year`, `creditCardId`, `personId` ou `search`
+- **THEN** o servidor aplica as restrições na consulta do banco e retorna apenas as compras correspondentes aos critérios
+
+#### Scenario: Visualização agrupada por dia na interface
+- **WHEN** o usuário acessa a tela de compras com transações cadastradas em diferentes datas
+- **THEN** a lista exibe as compras agrupadas por blocos de datas (ex: "Hoje", "Ontem" ou DD/MM/AAAA) com seus respectivos totais diários
 
 ### Requirement: Edição e Exclusão de Compras
 O sistema SHALL permitir a edição dos dados de uma compra existente restrita a descrição, data da compra e rateio/atribuição entre pessoas. O sistema SHALL proibir explicitamente a alteração do método de pagamento (e cartão de crédito associado), do valor total da compra e da quantidade de parcelas para proteger a integridade dos ciclos de fatura, conciliação financeira e pagamentos já liquidados. O sistema SHALL também permitir a exclusão completa de uma compra, removendo em cascata suas parcelas e rateios associados.

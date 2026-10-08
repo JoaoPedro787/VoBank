@@ -1,0 +1,56 @@
+services:
+  db:
+    image: postgres:18-alpine
+    container_name: finances-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-root}
+      POSTGRES_DB: ${POSTGRES_DB:-finances}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-finances}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      finances-network:
+        aliases:
+          - postgres
+
+  node:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: finances-node
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      NODE_ENV: ${NODE_ENV:-development}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-root}@db:5432/${POSTGRES_DB:-finances}
+      JWT_SECRET: ${JWT_SECRET:-supersecretjwtkeythatissufficientlylongandsecure12345}
+      EXPO_PUBLIC_API_URL: ${EXPO_PUBLIC_API_URL:-http://localhost:8081}
+    ports:
+      - "8081:8081"
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.expo
+    networks:
+      - finances-network
+    stdin_open: true
+    tty: true
+
+volumes:
+  pgdata:
+    name: finances_pgdata
+
+networks:
+  finances-network:
+    name: finances_network
+    driver: bridge
