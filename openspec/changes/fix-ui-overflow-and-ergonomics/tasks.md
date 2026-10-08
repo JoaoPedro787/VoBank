@@ -18,11 +18,11 @@
 
 ## 3. Resiliência de Layout e Prevenção de Estouro de Texto
 
-- [ ] 3.1 Refatorar `MonthlyMetricsCard.tsx` com `adjustsFontSizeToFit`, `numberOfLines={1}` e paddings otimizados para evitar quebra de valores monetários
-- [ ] 3.2 Refatorar `PersonSummaryCard.tsx` com `adjustsFontSizeToFit`, `numberOfLines={1}` e badges compactas
-- [ ] 3.3 Refatorar `PurchaseCard.tsx` com badges acessíveis de status de parcelas, preenchimento de ícones e contenção de texto
-- [ ] 3.4 Refatorar cartões em `cards.tsx` e `people.tsx` para garantir contenção de valores monetários e nomes extensos
-- [ ] 3.5 Executar e validar suite de testes e qualidade com `pnpm check`
+- [x] 3.1 Refatorar `MonthlyMetricsCard.tsx` com `adjustsFontSizeToFit`, `numberOfLines={1}` e paddings otimizados para evitar quebra de valores monetários
+- [x] 3.2 Refatorar `PersonSummaryCard.tsx` com `adjustsFontSizeToFit`, `numberOfLines={1}` e badges compactas
+- [x] 3.3 Refatorar `PurchaseCard.tsx` com badges acessíveis de status de parcelas, preenchimento de ícones e contenção de texto
+- [x] 3.4 Refatorar cartões em `cards.tsx` e `people.tsx` para garantir contenção de valores monetários e nomes extensos
+- [x] 3.5 Executar e validar suite de testes e qualidade com `pnpm check`
 
 ## 4. Modais como Bottom Sheets Ergonômicos
 

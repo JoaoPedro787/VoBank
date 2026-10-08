@@ -132,13 +132,13 @@ export function PurchaseCard({ purchase, onPressEdit }: PurchaseCardProps) {
       >
         {/* Linha Superior: Descrição, Valor e Gatilho de Edição */}
         <View className="flex-row items-start justify-between gap-3">
-          <View className="flex-1">
+          <View className="flex-1 min-w-0 pr-1">
             <Text numberOfLines={2} className="text-base font-bold text-foreground leading-snug">
               {purchase.description}
             </Text>
 
             {/* Data e Parcelas */}
-            <View className="flex-row items-center gap-2 mt-1">
+            <View className="flex-row items-center gap-2 mt-1 flex-wrap">
               <View className="flex-row items-center gap-1">
                 <Calendar size={12} color="#71717a" />
                 <Text className="text-xs text-muted-foreground">
@@ -148,7 +148,10 @@ export function PurchaseCard({ purchase, onPressEdit }: PurchaseCardProps) {
 
               <Text className="text-xs text-muted-foreground/60">•</Text>
 
-              <Text className="text-xs font-semibold text-muted-foreground tabular-nums">
+              <Text
+                numberOfLines={1}
+                className="text-xs font-semibold text-muted-foreground tabular-nums"
+              >
                 {installmentsCount > 1
                   ? `${installmentsCount}x de R$ ${installmentValue.toFixed(2).replace(".", ",")}`
                   : "À vista"}
@@ -157,8 +160,13 @@ export function PurchaseCard({ purchase, onPressEdit }: PurchaseCardProps) {
           </View>
 
           {/* Valor Total e Botão Editar */}
-          <View className="items-end gap-1.5">
-            <Text className="text-base font-bold text-foreground tabular-nums tracking-tight">
+          <View className="items-end gap-1.5 shrink-0 max-w-[45%]">
+            <Text
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.7}
+              className="text-base font-bold text-foreground tabular-nums tracking-tight"
+            >
               R$ {numericTotal.toFixed(2).replace(".", ",")}
             </Text>
 
@@ -179,10 +187,13 @@ export function PurchaseCard({ purchase, onPressEdit }: PurchaseCardProps) {
           {purchase.paymentMethod === "credit" && purchase.creditCard ? (
             <View className="flex-row items-center gap-1.5 rounded-full bg-muted/80 px-2.5 py-1 border border-border">
               <View
-                className="h-2.5 w-2.5 rounded-full"
+                className="h-2.5 w-2.5 rounded-full shrink-0"
                 style={{ backgroundColor: purchase.creditCard.color }}
               />
-              <Text className="text-xs font-semibold text-foreground">
+              <Text
+                numberOfLines={1}
+                className="text-xs font-semibold text-foreground max-w-[120px]"
+              >
                 {purchase.creditCard.name}
               </Text>
               <Text className="text-[10px] uppercase font-bold text-muted-foreground">
@@ -207,15 +218,20 @@ export function PurchaseCard({ purchase, onPressEdit }: PurchaseCardProps) {
 
           {/* Badges de Participantes (Divisão / Rachado) */}
           {participants.length > 0 ? (
-            <View className="flex-row items-center gap-1">
+            <View className="flex-row items-center gap-1 flex-wrap">
               <Users size={12} color="#71717a" />
               {participants.slice(0, 3).map((p) => (
                 <View
                   key={p.id}
-                  className="flex-row items-center gap-1 rounded-full bg-muted/70 px-2 py-0.5 border border-border/80"
+                  className="flex-row items-center gap-1 rounded-full bg-muted/70 px-2 py-0.5 border border-border/80 max-w-[110px]"
                 >
-                  <View className="h-2 w-2 rounded-full" style={{ backgroundColor: p.color }} />
-                  <Text className="text-[11px] font-medium text-foreground">{p.name}</Text>
+                  <View
+                    className="h-2 w-2 rounded-full shrink-0"
+                    style={{ backgroundColor: p.color }}
+                  />
+                  <Text numberOfLines={1} className="text-[11px] font-medium text-foreground">
+                    {p.name}
+                  </Text>
                 </View>
               ))}
               {participants.length > 3 ? (
@@ -230,15 +246,19 @@ export function PurchaseCard({ purchase, onPressEdit }: PurchaseCardProps) {
         </View>
 
         {/* Rodapé do Card: Status da Parcela */}
-        <View className="flex-row items-center justify-between border-t border-border/40 pt-2.5">
-          <View className="flex-row items-center gap-1.5">
+        <View className="flex-row items-center justify-between border-t border-border/40 pt-2.5 gap-2">
+          <View className="flex-row items-center gap-1.5 shrink-0">
             <Badge variant={paymentStatus.variant} className="gap-1 px-2.5 py-0.5">
               <StatusIcon size={11} />
-              <Text className="text-[11px] font-bold">{paymentStatus.label}</Text>
+              <Text numberOfLines={1} className="text-[11px] font-bold">
+                {paymentStatus.label}
+              </Text>
             </Badge>
           </View>
 
-          <Text className="text-[11px] text-muted-foreground">Toque para ver detalhes</Text>
+          <Text numberOfLines={1} className="text-[11px] text-muted-foreground shrink-1 text-right">
+            Toque para ver detalhes
+          </Text>
         </View>
       </Pressable>
     </AnimatedScaleFade>

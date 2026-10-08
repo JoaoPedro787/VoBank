@@ -124,9 +124,9 @@ export default function PeopleScreen() {
               animated
               className="flex-row items-center justify-between p-4 rounded-2xl border-border/70"
             >
-              <View className="flex-row items-center gap-3.5 flex-1 pr-2">
+              <View className="flex-row items-center gap-3.5 flex-1 min-w-0 pr-2">
                 <View
-                  className="h-12 w-12 rounded-full items-center justify-center shadow-md border-2 border-white/20"
+                  className="h-12 w-12 rounded-full items-center justify-center shadow-md border-2 border-white/20 shrink-0"
                   style={{ backgroundColor: item.color }}
                 >
                   <Text className="text-lg font-bold text-white">
@@ -134,23 +134,28 @@ export default function PeopleScreen() {
                   </Text>
                 </View>
 
-                <View className="flex-1">
-                  <Text className="text-base font-bold text-foreground" numberOfLines={1}>
+                <View className="flex-1 min-w-0">
+                  <Text
+                    className="text-base font-bold text-foreground"
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
+                    minimumFontScale={0.8}
+                  >
                     {item.name}
                   </Text>
                   <View className="flex-row items-center gap-1.5 mt-0.5">
                     <View
-                      className="h-2 w-2 rounded-full"
+                      className="h-2 w-2 rounded-full shrink-0"
                       style={{ backgroundColor: item.color }}
                     />
-                    <Text className="text-xs text-muted-foreground font-medium">
+                    <Text numberOfLines={1} className="text-xs text-muted-foreground font-medium">
                       {item.color.toUpperCase()}
                     </Text>
                   </View>
                 </View>
               </View>
 
-              <View className="flex-row items-center gap-1">
+              <View className="flex-row items-center gap-1 shrink-0">
                 <Pressable
                   onPress={() => handleOpenEdit(item)}
                   className="h-9 w-9 items-center justify-center rounded-xl bg-muted/60 active:scale-95 active:opacity-70"
