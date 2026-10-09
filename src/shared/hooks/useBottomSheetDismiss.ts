@@ -1,6 +1,7 @@
 import * as React from "react";
 import {
   Animated,
+  Dimensions,
   PanResponder,
   PanResponderCallbacks,
   GestureResponderHandlers,
@@ -31,12 +32,12 @@ export function createBottomSheetPanResponderConfig({
     },
     onPanResponderRelease: (_, gestureState) => {
       if (gestureState.dy > dismissThreshold || gestureState.vy > velocityThreshold) {
+        const screenHeight = Dimensions.get("window").height || 1000;
         Animated.timing(panY, {
-          toValue: 600,
+          toValue: screenHeight,
           duration: 200,
           useNativeDriver: false,
         }).start(() => {
-          panY.setValue(0);
           onDismiss();
         });
       } else {

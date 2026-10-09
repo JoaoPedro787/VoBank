@@ -43,6 +43,7 @@ describe("BottomSheet PanResponder Drag Logic (TDD & Unit)", () => {
 
   it("should trigger onDismiss when released past dismissThreshold", () => {
     const panY = new Animated.Value(0);
+    const setValueSpy = jest.spyOn(panY, "setValue");
     const onDismiss = jest.fn();
     const timingSpy = jest.spyOn(Animated, "timing").mockReturnValue({
       start: (cb?: (result: { finished: boolean }) => void) => cb?.({ finished: true }),
@@ -63,7 +64,10 @@ describe("BottomSheet PanResponder Drag Logic (TDD & Unit)", () => {
 
     expect(timingSpy).toHaveBeenCalled();
     expect(onDismiss).toHaveBeenCalledTimes(1);
+    // panY não deve ser resetado para 0 no término do dismiss para evitar flash visual
+    expect(setValueSpy).not.toHaveBeenCalledWith(0);
     timingSpy.mockRestore();
+    setValueSpy.mockRestore();
   });
 
   it("should spring back and not dismiss when released below threshold and low velocity", () => {
