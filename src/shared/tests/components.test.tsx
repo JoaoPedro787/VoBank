@@ -30,6 +30,11 @@ describe("Shared Cupertino Components (TDD & Unit)", () => {
       expect(button).toBeDefined();
       expect(button.props.variant).toBe("success");
       expect(button.props.size).toBe("lg");
+
+      const secondaryButton = <Button variant="secondary" label="Cancelar" />;
+      expect(secondaryButton).toBeDefined();
+      expect(secondaryButton.props.variant).toBe("secondary");
+      expect(secondaryButton.props.label).toBe("Cancelar");
     });
 
     it("should render button in loading state", () => {

@@ -559,7 +559,7 @@ export function NewPurchaseForm({ cards, people, onSave, onCancel }: NewPurchase
       <ModalSheet.Footer>
         {onCancel ? (
           <Button
-            variant="outline"
+            variant="secondary"
             label="Cancelar"
             className="flex-1"
             onPress={onCancel}

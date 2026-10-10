@@ -234,7 +234,7 @@ export function CreditCardForm({ cardToEdit, onSave, onCancel }: CreditCardFormP
 
       <ModalSheet.Footer>
         {onCancel ? (
-          <Button variant="outline" label="Cancelar" onPress={onCancel} disabled={isSubmitting} />
+          <Button variant="secondary" label="Cancelar" onPress={onCancel} disabled={isSubmitting} />
         ) : null}
         <Button
           variant="default"

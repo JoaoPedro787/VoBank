@@ -402,7 +402,7 @@ export function EditPurchaseForm({
                 </Text>
                 <View className="flex-row gap-2 pt-1">
                   <Button
-                    variant="outline"
+                    variant="secondary"
                     label="Cancelar"
                     size="sm"
                     className="flex-1"
@@ -435,7 +435,7 @@ export function EditPurchaseForm({
       <ModalSheet.Footer>
         {onCancel ? (
           <Button
-            variant="outline"
+            variant="secondary"
             label="Cancelar"
             className="flex-1"
             onPress={onCancel}

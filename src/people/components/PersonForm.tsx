@@ -114,7 +114,7 @@ export function PersonForm({ personToEdit, onSave, onCancel }: PersonFormProps) 
 
       <ModalSheet.Footer>
         {onCancel ? (
-          <Button variant="outline" label="Cancelar" onPress={onCancel} disabled={isSubmitting} />
+          <Button variant="secondary" label="Cancelar" onPress={onCancel} disabled={isSubmitting} />
         ) : null}
         <Button
           variant="default"

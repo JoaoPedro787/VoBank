@@ -105,7 +105,7 @@ describe("ModalSheet Compound Component (TDD & Unit)", () => {
 
       const element = (
         <ModalSheet.Footer>
-          <Button variant="outline" label="Cancelar" onPress={handleCancel} />
+          <Button variant="secondary" label="Cancelar" onPress={handleCancel} />
           <Button variant="default" label="Salvar" onPress={handleSave} />
         </ModalSheet.Footer>
       );
