@@ -11,7 +11,7 @@
 
 ## 2. Migração das Rotas Modais de Features e Validação Global
 
-- [ ] 2.1 Criar a rota `src/app/(modals)/person.tsx` conectada a `src/people/components/PersonForm.tsx` (ou equivalente refatorado), atualizar navegação na aba `people.tsx` com `useFocusEffect` e testar com `pnpm test src/people/tests/`
-- [ ] 2.2 Criar a rota `src/app/(modals)/card.tsx` conectada a `src/credit-cards/components/CreditCardForm.tsx` (ou equivalente refatorado), atualizar navegação na aba `cards.tsx` com `useFocusEffect` e testar com `pnpm test src/credit-cards/tests/`
-- [ ] 2.3 Criar a rota `src/app/(modals)/purchase.tsx` conectada aos formulários de compras, atualizar navegação em `src/app/(tabs)/index.tsx` e testar com `pnpm test src/purchases/tests/`
-- [ ] 2.4 Limpar componentes obsoletos de modais locais, remover a rota temporária `(modals)/example.tsx` e executar validação global com `pnpm check` (Prettier, ESLint, TypeScript e testes) garantindo 100% de aprovação
+- [x] 2.1 Criar a rota `src/app/(modals)/person.tsx` conectada a `src/people/components/PersonForm.tsx` (ou equivalente refatorado), atualizar navegação na aba `people.tsx` com `useFocusEffect` e testar com `pnpm test src/people/tests/`
+- [x] 2.2 Criar a rota `src/app/(modals)/card.tsx` conectada a `src/credit-cards/components/CreditCardForm.tsx` (ou equivalente refatorado), atualizar navegação na aba `cards.tsx` com `useFocusEffect` e testar com `pnpm test src/credit-cards/tests/`
+- [x] 2.3 Criar a rota `src/app/(modals)/purchase.tsx` conectada aos formulários de compras, atualizar navegação em `src/app/(tabs)/index.tsx` e testar com `pnpm test src/purchases/tests/`
+- [x] 2.4 Limpar componentes obsoletos de modais locais, remover a rota temporária `(modals)/example.tsx` e executar validação global com `pnpm check` (Prettier, ESLint, TypeScript e testes) garantindo 100% de aprovação

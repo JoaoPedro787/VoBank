@@ -8,7 +8,7 @@ import {
   ActivityIndicator,
   ScrollView,
 } from "react-native";
-import { router } from "expo-router";
+import { router, useFocusEffect } from "expo-router";
 import {
   Plus,
   ShoppingBag,
@@ -24,11 +24,6 @@ import { useAuth } from "@/auth/hooks/use-auth";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTheme } from "@/shared/hooks/useTheme";
 import { useDashboard } from "@/dashboard/hooks/use-dashboard";
-import { usePurchases } from "@/purchases/hooks/use-purchases";
-import { useCreditCards } from "@/credit-cards/hooks/use-credit-cards";
-import { usePeople } from "@/people/hooks/use-people";
-import { NewPurchaseModal } from "@/purchases/components/NewPurchaseModal";
-import { CreatePurchaseData } from "@/purchases/types/purchases.types";
 import { DashboardSplitItemClient } from "@/dashboard/types/dashboard.types";
 import { MonthSelector } from "@/dashboard/components/MonthSelector";
 import { MonthlyMetricsCard } from "@/dashboard/components/MonthlyMetricsCard";
@@ -55,20 +50,15 @@ export default function HomeScreen() {
     toggleSplitPaid,
   } = useDashboard();
 
-  const { cards } = useCreditCards();
-  const { people } = usePeople();
-  const { createPurchase } = usePurchases();
-
-  const [modalVisible, setModalVisible] = React.useState(false);
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchDashboard(month, year);
+    }, [fetchDashboard, month, year]),
+  );
 
   const handleLogout = async () => {
     await logout();
     router.replace("/(auth)/login");
-  };
-
-  const handleSavePurchase = async (purchaseData: CreatePurchaseData) => {
-    await createPurchase(purchaseData);
-    await fetchDashboard(month, year);
   };
 
   // Coleta as parcelas filtradas com base na pessoa selecionada
@@ -132,7 +122,7 @@ export default function HomeScreen() {
             <Button
               size="sm"
               className="flex-row items-center gap-1.5"
-              onPress={() => setModalVisible(true)}
+              onPress={() => router.push("/(modals)/purchase")}
             >
               <Plus size={16} color="#ffffff" />
               <Text className="text-sm font-semibold text-primary-foreground">Nova Compra</Text>
@@ -301,7 +291,7 @@ export default function HomeScreen() {
               <Button
                 size="sm"
                 label="Registrar Nova Compra"
-                onPress={() => setModalVisible(true)}
+                onPress={() => router.push("/(modals)/purchase")}
               />
             </View>
           }
@@ -381,15 +371,6 @@ export default function HomeScreen() {
           }}
         />
       )}
-
-      {/* Modal Nova Compra */}
-      <NewPurchaseModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        onSave={handleSavePurchase}
-        cards={cards}
-        people={people}
-      />
     </View>
   );
 }

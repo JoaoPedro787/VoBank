@@ -10,36 +10,32 @@ import {
 } from "react-native";
 import { CreditCard as CardIcon, Plus, Pencil, Trash2, Calendar } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { router, useFocusEffect } from "expo-router";
 import { useCreditCards } from "@/credit-cards/hooks/use-credit-cards";
-import { CreditCardModal } from "@/credit-cards/components/CreditCardModal";
-import { CreditCard, CreateCreditCardData } from "@/credit-cards/types/credit-cards.types";
+import { CreditCard } from "@/credit-cards/types/credit-cards.types";
 import { Button } from "@/shared/components/Button";
 import { Badge } from "@/shared/components/Badge";
 import { AnimatedScaleFade } from "@/shared/components/AnimatedScaleFade";
 
 export default function CardsScreen() {
   const insets = useSafeAreaInsets();
-  const { cards, isLoading, error, fetchCards, createCard, updateCard, deleteCard } =
-    useCreditCards();
-  const [modalVisible, setModalVisible] = React.useState(false);
-  const [cardToEdit, setCardToEdit] = React.useState<CreditCard | null>(null);
+  const { cards, isLoading, error, fetchCards, deleteCard } = useCreditCards();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchCards();
+    }, [fetchCards]),
+  );
 
   const handleOpenCreate = () => {
-    setCardToEdit(null);
-    setModalVisible(true);
+    router.push("/(modals)/card");
   };
 
   const handleOpenEdit = (card: CreditCard) => {
-    setCardToEdit(card);
-    setModalVisible(true);
-  };
-
-  const handleSave = async (data: CreateCreditCardData) => {
-    if (cardToEdit) {
-      await updateCard(cardToEdit.id, data);
-    } else {
-      await createCard(data);
-    }
+    router.push({
+      pathname: "/(modals)/card",
+      params: { id: card.id },
+    });
   };
 
   const handleDelete = (card: CreditCard) => {
@@ -204,14 +200,6 @@ export default function CardsScreen() {
           )}
         />
       )}
-
-      {/* Modal */}
-      <CreditCardModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        onSave={handleSave}
-        cardToEdit={cardToEdit}
-      />
     </View>
   );
 }

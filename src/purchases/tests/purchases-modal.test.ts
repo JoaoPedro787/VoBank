@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   maskDateBR,
   parseDateBR,
@@ -7,14 +6,10 @@ import {
   getTodayBR,
   getYesterdayBR,
 } from "../utils/purchase-date";
-import { NewPurchaseModal, NewPurchaseModalProps } from "../components/NewPurchaseModal";
-import { EditPurchaseModal, EditPurchaseModalProps } from "../components/EditPurchaseModal";
 import { PurchaseClient } from "../types/purchases.types";
-import { Person } from "@/people/types/people.types";
-import { CreditCard } from "@/credit-cards/types/credit-cards.types";
 import { calculateInstallmentDates } from "@/shared/utils/invoice-cycle";
 
-describe("Purchases Modal & Date Logic (TDD)", () => {
+describe("Purchases Date & Cycle Logic (TDD)", () => {
   describe("Date Mask & Formatting Utilities", () => {
     it("should correctly mask partial and full date inputs (DD/MM/AAAA)", () => {
       expect(maskDateBR("")).toBe("");
@@ -232,102 +227,6 @@ describe("Purchases Modal & Date Logic (TDD)", () => {
       expect(mockPurchase.totalAmount).toBe("450.00");
       expect(mockPurchase.totalInstallments).toBe(3);
       expect(mockPurchase.paymentMethod).toBe("credit");
-    });
-  });
-
-  describe("Component Rendering & Prop Validation", () => {
-    const mockPeople: Person[] = [
-      {
-        id: "p1",
-        userId: "u1",
-        name: "Maria",
-        color: "#ec4899",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-      {
-        id: "p2",
-        userId: "u1",
-        name: "João",
-        color: "#3b82f6",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ];
-
-    const mockCards: CreditCard[] = [
-      {
-        id: "c1",
-        userId: "u1",
-        name: "Nubank",
-        flag: "Mastercard",
-        color: "#820ad1",
-        limit: "5000",
-        closingDay: 25,
-        dueDay: 5,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ];
-
-    it("should instantiate NewPurchaseModal component element with expected props", () => {
-      const element = React.createElement<NewPurchaseModalProps>(NewPurchaseModal, {
-        visible: true,
-        onClose: jest.fn(),
-        onSave: jest.fn(),
-        cards: mockCards,
-        people: mockPeople,
-      });
-
-      expect(element).toBeDefined();
-      expect(element.props.visible).toBe(true);
-      expect(element.props.cards.length).toBe(1);
-      expect(element.props.people.length).toBe(2);
-    });
-
-    it("should instantiate EditPurchaseModal component element with expected props", () => {
-      const mockPurchase: PurchaseClient = {
-        id: "p-1",
-        userId: "u-1",
-        description: "Jantar",
-        totalAmount: "120.00",
-        purchaseDate: "2026-03-10T12:00:00Z",
-        paymentMethod: "credit",
-        totalInstallments: 1,
-        creditCardId: "c1",
-        createdAt: "",
-        updatedAt: "",
-        creditCard: mockCards[0],
-        installments: [],
-      };
-
-      const element = React.createElement<EditPurchaseModalProps>(EditPurchaseModal, {
-        visible: true,
-        purchase: mockPurchase,
-        onClose: jest.fn(),
-        onSave: jest.fn(),
-        onDelete: jest.fn(),
-        people: mockPeople,
-        cards: mockCards,
-      });
-
-      expect(element).toBeDefined();
-      expect(element.props.visible).toBe(true);
-      expect(element.props.purchase?.description).toBe("Jantar");
-      expect(element.props.onDelete).toBeDefined();
-    });
-
-    it("should handle null purchase gracefully in EditPurchaseModal", () => {
-      const element = React.createElement<EditPurchaseModalProps>(EditPurchaseModal, {
-        visible: false,
-        purchase: null,
-        onClose: jest.fn(),
-        onSave: jest.fn(),
-        people: mockPeople,
-      });
-
-      expect(element).toBeDefined();
-      expect(element.props.purchase).toBeNull();
     });
   });
 });

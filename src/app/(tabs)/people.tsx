@@ -10,36 +10,32 @@ import {
 } from "react-native";
 import { Users, Plus, Pencil, Trash2 } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { router, useFocusEffect } from "expo-router";
 import { usePeople } from "@/people/hooks/use-people";
-import { PersonModal } from "@/people/components/PersonModal";
-import { Person, CreatePersonData } from "@/people/types/people.types";
+import { Person } from "@/people/types/people.types";
 import { Button } from "@/shared/components/Button";
 import { Card } from "@/shared/components/Card";
 import { Badge } from "@/shared/components/Badge";
 
 export default function PeopleScreen() {
   const insets = useSafeAreaInsets();
-  const { people, isLoading, error, fetchPeople, createPerson, updatePerson, deletePerson } =
-    usePeople();
-  const [modalVisible, setModalVisible] = React.useState(false);
-  const [personToEdit, setPersonToEdit] = React.useState<Person | null>(null);
+  const { people, isLoading, error, fetchPeople, deletePerson } = usePeople();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchPeople();
+    }, [fetchPeople]),
+  );
 
   const handleOpenCreate = () => {
-    setPersonToEdit(null);
-    setModalVisible(true);
+    router.push("/(modals)/person");
   };
 
   const handleOpenEdit = (person: Person) => {
-    setPersonToEdit(person);
-    setModalVisible(true);
-  };
-
-  const handleSave = async (data: CreatePersonData) => {
-    if (personToEdit) {
-      await updatePerson(personToEdit.id, data);
-    } else {
-      await createPerson(data);
-    }
+    router.push({
+      pathname: "/(modals)/person",
+      params: { id: person.id },
+    });
   };
 
   const handleDelete = (person: Person) => {
@@ -175,14 +171,6 @@ export default function PeopleScreen() {
           )}
         />
       )}
-
-      {/* Modal */}
-      <PersonModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        onSave={handleSave}
-        personToEdit={personToEdit}
-      />
     </View>
   );
 }
