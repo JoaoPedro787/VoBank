@@ -4,3 +4,4 @@ export * from "./Card";
 export * from "./Badge";
 export * from "./AnimatedScaleFade";
 export * from "./ModalGrabHandle";
+export * from "./ModalSheet";
