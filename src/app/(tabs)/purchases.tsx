@@ -22,16 +22,12 @@ import {
   RotateCcw,
 } from "lucide-react-native";
 import { usePurchases } from "@/purchases/hooks/use-purchases";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { router, useFocusEffect } from "expo-router";
 import { useCreditCards } from "@/credit-cards/hooks/use-credit-cards";
 import { usePeople } from "@/people/hooks/use-people";
 import { PurchaseCard } from "@/purchases/components/PurchaseCard";
-import { NewPurchaseModal } from "@/purchases/components/NewPurchaseModal";
-import { EditPurchaseModal } from "@/purchases/components/EditPurchaseModal";
-import {
-  PurchaseClient,
-  CreatePurchaseData,
-  UpdatePurchaseData,
-} from "@/purchases/types/purchases.types";
+import { PurchaseClient } from "@/purchases/types/purchases.types";
 import { filterPurchases, calculatePurchasesMetrics } from "@/purchases/utils/purchases-filter";
 import { groupPurchasesByDay } from "@/purchases/utils/purchases-group";
 import { Button } from "@/shared/components/Button";
@@ -53,18 +49,17 @@ const MONTH_NAMES = [
 ];
 
 export default function PurchasesScreen() {
-  const {
-    purchases,
-    isLoading,
-    error,
-    fetchPurchases,
-    createPurchase,
-    updatePurchase,
-    deletePurchase,
-  } = usePurchases();
+  const insets = useSafeAreaInsets();
+  const { purchases, isLoading, error, fetchPurchases } = usePurchases();
 
   const { cards } = useCreditCards();
   const { people } = usePeople();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchPurchases();
+    }, [fetchPurchases]),
+  );
 
   // Estados dos Filtros
   const [searchQuery, setSearchQuery] = React.useState("");
@@ -73,11 +68,6 @@ export default function PurchasesScreen() {
   const [selectedYear, setSelectedYear] = React.useState(() => new Date().getFullYear());
   const [selectedCardId, setSelectedCardId] = React.useState<string>("all");
   const [selectedPersonId, setSelectedPersonId] = React.useState<string>("all");
-
-  // Estados dos Modais
-  const [isNewModalOpen, setIsNewModalOpen] = React.useState(false);
-  const [purchaseToEdit, setPurchaseToEdit] = React.useState<PurchaseClient | null>(null);
-  const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);
 
   // Navegação de mês
   const handlePrevMonth = () => {
@@ -141,28 +131,24 @@ export default function PurchasesScreen() {
     return groupPurchasesByDay(filteredPurchases);
   }, [filteredPurchases]);
 
-  // Ações de Salvar e Excluir
-  const handleSaveNewPurchase = async (data: CreatePurchaseData) => {
-    await createPurchase(data);
-  };
-
-  const handleSaveEditPurchase = async (id: string, data: UpdatePurchaseData) => {
-    await updatePurchase(id, data);
-  };
-
-  const handleDeletePurchase = async (id: string) => {
-    await deletePurchase(id);
+  const handleOpenCreate = () => {
+    router.push("/(modals)/purchase");
   };
 
   const handleOpenEdit = (purchase: PurchaseClient) => {
-    setPurchaseToEdit(purchase);
-    setIsEditModalOpen(true);
+    router.push({
+      pathname: "/(modals)/purchase",
+      params: { id: purchase.id },
+    });
   };
 
   return (
     <View className="flex-1 bg-background">
       {/* Header Fixo da Tela */}
-      <View className="border-b border-border bg-card px-6 pt-14 pb-4">
+      <View
+        className="border-b border-border bg-card px-6 pb-4"
+        style={{ paddingTop: Math.max(insets.top, 16) }}
+      >
         <View className="flex-row items-center justify-between">
           <View>
             <View className="flex-row items-center gap-2">
@@ -172,11 +158,7 @@ export default function PurchasesScreen() {
             <Text className="text-sm text-muted-foreground mt-0.5">Compras - Agrupado por Dia</Text>
           </View>
 
-          <Button
-            size="sm"
-            className="flex-row items-center gap-1.5"
-            onPress={() => setIsNewModalOpen(true)}
-          >
+          <Button size="sm" className="flex-row items-center gap-1.5" onPress={handleOpenCreate}>
             <Plus size={16} color="#ffffff" />
             <Text className="text-sm font-semibold text-primary-foreground">Nova</Text>
           </Button>
@@ -515,7 +497,7 @@ export default function PurchasesScreen() {
               </Text>
 
               {purchases.length === 0 ? (
-                <Button label="Registrar Primeira Compra" onPress={() => setIsNewModalOpen(true)} />
+                <Button label="Registrar Primeira Compra" onPress={handleOpenCreate} />
               ) : (
                 <Button variant="outline" label="Limpar Filtros" onPress={handleResetFilters} />
               )}
@@ -550,29 +532,6 @@ export default function PurchasesScreen() {
           )}
         />
       )}
-
-      {/* Modal Nova Compra */}
-      <NewPurchaseModal
-        visible={isNewModalOpen}
-        onClose={() => setIsNewModalOpen(false)}
-        onSave={handleSaveNewPurchase}
-        cards={cards}
-        people={people}
-      />
-
-      {/* Modal Editar Compra */}
-      <EditPurchaseModal
-        visible={isEditModalOpen}
-        purchase={purchaseToEdit}
-        onClose={() => {
-          setIsEditModalOpen(false);
-          setPurchaseToEdit(null);
-        }}
-        onSave={handleSaveEditPurchase}
-        onDelete={handleDeletePurchase}
-        people={people}
-        cards={cards}
-      />
     </View>
   );
 }

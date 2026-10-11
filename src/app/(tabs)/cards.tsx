@@ -9,35 +9,33 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { CreditCard as CardIcon, Plus, Pencil, Trash2, Calendar } from "lucide-react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { router, useFocusEffect } from "expo-router";
 import { useCreditCards } from "@/credit-cards/hooks/use-credit-cards";
-import { CreditCardModal } from "@/credit-cards/components/CreditCardModal";
-import { CreditCard, CreateCreditCardData } from "@/credit-cards/types/credit-cards.types";
+import { CreditCard } from "@/credit-cards/types/credit-cards.types";
 import { Button } from "@/shared/components/Button";
 import { Badge } from "@/shared/components/Badge";
 import { AnimatedScaleFade } from "@/shared/components/AnimatedScaleFade";
 
 export default function CardsScreen() {
-  const { cards, isLoading, error, fetchCards, createCard, updateCard, deleteCard } =
-    useCreditCards();
-  const [modalVisible, setModalVisible] = React.useState(false);
-  const [cardToEdit, setCardToEdit] = React.useState<CreditCard | null>(null);
+  const insets = useSafeAreaInsets();
+  const { cards, isLoading, error, fetchCards, deleteCard } = useCreditCards();
+
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchCards();
+    }, [fetchCards]),
+  );
 
   const handleOpenCreate = () => {
-    setCardToEdit(null);
-    setModalVisible(true);
+    router.push("/(modals)/card");
   };
 
   const handleOpenEdit = (card: CreditCard) => {
-    setCardToEdit(card);
-    setModalVisible(true);
-  };
-
-  const handleSave = async (data: CreateCreditCardData) => {
-    if (cardToEdit) {
-      await updateCard(cardToEdit.id, data);
-    } else {
-      await createCard(data);
-    }
+    router.push({
+      pathname: "/(modals)/card",
+      params: { id: card.id },
+    });
   };
 
   const handleDelete = (card: CreditCard) => {
@@ -56,7 +54,10 @@ export default function CardsScreen() {
   return (
     <View className="flex-1 bg-background">
       {/* Header */}
-      <View className="border-b border-border bg-card px-6 pt-14 pb-4">
+      <View
+        className="border-b border-border bg-card px-6 pb-4"
+        style={{ paddingTop: Math.max(insets.top, 16) }}
+      >
         <View className="flex-row items-center justify-between">
           <View>
             <View className="flex-row items-center gap-2">
@@ -125,8 +126,10 @@ export default function CardsScreen() {
                 <View className="absolute top-0 left-0 right-0 h-24 bg-white/10 rounded-t-3xl" />
 
                 <View className="flex-row items-start justify-between z-10">
-                  <View className="flex-1 pr-2">
-                    <Text className="text-xl font-bold text-white tracking-wide">{item.name}</Text>
+                  <View className="flex-1 min-w-0 pr-2">
+                    <Text numberOfLines={1} className="text-xl font-bold text-white tracking-wide">
+                      {item.name}
+                    </Text>
                     {/* Chip metálico Apple Wallet */}
                     <View className="w-10 h-6 rounded-md bg-white/20 border border-white/30 mt-2.5 justify-center px-1">
                       <View className="h-[1px] w-full bg-white/30 my-0.5" />
@@ -134,7 +137,7 @@ export default function CardsScreen() {
                     </View>
                   </View>
 
-                  <View className="flex-row items-center gap-2">
+                  <View className="flex-row items-center gap-2 shrink-0">
                     <View className="bg-black/25 px-2.5 py-1 rounded-full border border-white/15">
                       <Text className="text-xs font-bold text-white uppercase tracking-wider">
                         {item.flag}
@@ -160,23 +163,30 @@ export default function CardsScreen() {
                   </View>
                 </View>
 
-                <View className="flex-row items-center justify-between border-t border-white/15 pt-3 z-10">
-                  <View className="flex-row items-center gap-2">
+                <View className="flex-row items-center justify-between border-t border-white/15 pt-3 z-10 gap-2">
+                  <View className="flex-row items-center gap-2 flex-1 min-w-0">
                     <Calendar size={16} color="#ffffff" />
-                    <View>
-                      <Text className="text-[10px] text-white/70 font-medium">
+                    <View className="flex-1 min-w-0">
+                      <Text numberOfLines={1} className="text-[10px] text-white/70 font-medium">
                         Fechamento / Vencimento
                       </Text>
-                      <Text className="text-sm font-bold text-white">
+                      <Text numberOfLines={1} className="text-sm font-bold text-white">
                         Dia {item.closingDay} / Dia {item.dueDay}
                       </Text>
                     </View>
                   </View>
 
                   {item.limit ? (
-                    <View className="items-end">
-                      <Text className="text-[10px] text-white/70 font-medium">Limite Total</Text>
-                      <Text className="text-sm font-bold text-white tabular-nums">
+                    <View className="items-end shrink-0 max-w-[45%]">
+                      <Text numberOfLines={1} className="text-[10px] text-white/70 font-medium">
+                        Limite Total
+                      </Text>
+                      <Text
+                        numberOfLines={1}
+                        adjustsFontSizeToFit
+                        minimumFontScale={0.7}
+                        className="text-sm font-bold text-white tabular-nums"
+                      >
                         R${" "}
                         {parseFloat(item.limit).toLocaleString("pt-BR", {
                           minimumFractionDigits: 2,
@@ -190,14 +200,6 @@ export default function CardsScreen() {
           )}
         />
       )}
-
-      {/* Modal */}
-      <CreditCardModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        onSave={handleSave}
-        cardToEdit={cardToEdit}
-      />
     </View>
   );
 }

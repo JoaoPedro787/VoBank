@@ -30,6 +30,11 @@ describe("Shared Cupertino Components (TDD & Unit)", () => {
       expect(button).toBeDefined();
       expect(button.props.variant).toBe("success");
       expect(button.props.size).toBe("lg");
+
+      const secondaryButton = <Button variant="secondary" label="Cancelar" />;
+      expect(secondaryButton).toBeDefined();
+      expect(secondaryButton.props.variant).toBe("secondary");
+      expect(secondaryButton.props.label).toBe("Cancelar");
     });
 
     it("should render button in loading state", () => {
@@ -42,6 +47,21 @@ describe("Shared Cupertino Components (TDD & Unit)", () => {
       const button = <Button label="Desabilitado" disabled={true} />;
       expect(button).toBeDefined();
       expect(button.props.disabled).toBe(true);
+    });
+
+    it("should support icon alignment and onPress handler", () => {
+      const handlePress = jest.fn();
+      const button = (
+        <Button
+          label="Adicionar"
+          leftIcon={<Text>+</Text>}
+          rightIcon={<Text>→</Text>}
+          onPress={handlePress}
+        />
+      );
+      expect(button).toBeDefined();
+      expect(button.props.leftIcon).toBeDefined();
+      expect(button.props.rightIcon).toBeDefined();
     });
   });
 
@@ -57,6 +77,21 @@ describe("Shared Cupertino Components (TDD & Unit)", () => {
       const input = <Input label="Valor" error="Campo obrigatório" />;
       expect(input).toBeDefined();
       expect(input.props.error).toBe("Campo obrigatório");
+    });
+
+    it("should support prefix, suffix and password toggle props", () => {
+      const input = (
+        <Input
+          label="Senha"
+          leftIcon={<Text>Icon</Text>}
+          rightIcon={<Text>Check</Text>}
+          showPasswordToggle={true}
+        />
+      );
+      expect(input).toBeDefined();
+      expect(input.props.showPasswordToggle).toBe(true);
+      expect(input.props.leftIcon).toBeDefined();
+      expect(input.props.rightIcon).toBeDefined();
     });
   });
 
@@ -77,6 +112,21 @@ describe("Shared Cupertino Components (TDD & Unit)", () => {
       expect(pendingBadge.props.variant).toBe("warning");
       expect(overdueBadge.props.variant).toBe("destructive");
       expect(installmentBadge.props.variant).toBe("installment");
+    });
+
+    it("should support icon and children composition", () => {
+      const badgeWithIcon = <Badge variant="success" icon={<Text>✓</Text>} label="Concluído" />;
+      expect(badgeWithIcon).toBeDefined();
+      expect(badgeWithIcon.props.variant).toBe("success");
+      expect(badgeWithIcon.props.icon).toBeDefined();
+
+      const badgeWithChildren = (
+        <Badge variant="warning">
+          <Text>Atenção</Text>
+        </Badge>
+      );
+      expect(badgeWithChildren).toBeDefined();
+      expect(badgeWithChildren.props.children).toBeDefined();
     });
   });
 

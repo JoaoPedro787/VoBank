@@ -96,7 +96,7 @@ export default function LoginScreen() {
             <Input
               label="Senha"
               placeholder="Sua senha secreta"
-              secureTextEntry
+              showPasswordToggle
               value={password}
               onChangeText={(text) => {
                 setPassword(text);

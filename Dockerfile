@@ -11,8 +11,6 @@ COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 # Install project dependencies
 RUN pnpm install --frozen-lockfile
 
-RUN pnpm install @expo/ngrok@^4.1.0
-
 # Copy application source
 COPY . .
 

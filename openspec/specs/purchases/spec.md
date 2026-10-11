@@ -7,7 +7,7 @@ Permitir o registro de despesas à vista ou parceladas no cartão, com geração
 ## Requirements
 
 ### Requirement: Lançamento de Compras
-O sistema SHALL permitir registrar compras com descrição, valor total, data da compra opcional (assumindo a data e hora do momento da criação caso não seja informada), método de pagamento (à vista, débito, crédito), cartão de crédito associado (obrigatório se crédito), quantidade de parcelas e divisão/rateio opcional. Quando uma data específica for informada, o sistema SHALL utilizá-la como referência temporal para o ciclo de fechamento e vencimento das faturas.
+O sistema SHALL permitir registrar compras com descrição, valor total, data da compra opcional (assumindo a data e hora do momento da criação caso não seja informada), método de pagamento (à vista, débito, crédito), cartão de crédito associado (obrigatório se crédito), quantidade de parcelas e divisão/rateio opcional. O formulário de registro de nova compra SHALL ser exibido na interface móvel em formato de Bottom Sheet ancorado na base da tela, com alça de arraste superior, cantos superiores arredondados e ajuste dinâmico à altura do teclado virtual. Quando uma data específica for informada, o sistema SHALL utilizá-la como referência temporal para o ciclo de fechamento e vencimento das faturas.
 
 #### Scenario: Registro de compra com data retroativa informada
 - **WHEN** o usuário cria uma compra com data específica no mês anterior e associa a um cartão de crédito
@@ -20,6 +20,10 @@ O sistema SHALL permitir registrar compras com descrição, valor total, data da
 #### Scenario: Registro de compra parcelada no crédito
 - **WHEN** o usuário cria uma compra de R$ 600 em 3 parcelas associada a um cartão
 - **THEN** o sistema cria o registro mestre da compra e gera 3 parcelas de R$ 200 com datas de vencimento alinhadas ao ciclo do cartão
+
+#### Scenario: Apresentação ergonômica em Bottom Sheet
+- **WHEN** o usuário aciona a ação de registrar nova compra
+- **THEN** o sistema abre a interface em uma folha deslizante (Bottom Sheet) a partir da base da tela, permitindo rolagem fluida e adaptação aos limites do teclado
 
 ### Requirement: Divisão de Compras (Rachar Compras)
 O sistema SHALL permitir a atribuição da compra a si mesmo, a uma pessoa cadastrada ou a divisão proporcional entre múltiplas pessoas cadastradas.
@@ -55,7 +59,7 @@ O sistema SHALL disponibilizar uma visualização consolidada de todas as compra
 - **THEN** a lista exibe as compras agrupadas por blocos de datas (ex: "Hoje", "Ontem" ou DD/MM/AAAA) com seus respectivos totais diários
 
 ### Requirement: Edição e Exclusão de Compras
-O sistema SHALL permitir a edição dos dados de uma compra existente restrita a descrição, data da compra e rateio/atribuição entre pessoas. O sistema SHALL proibir explicitamente a alteração do método de pagamento (e cartão de crédito associado), do valor total da compra e da quantidade de parcelas para proteger a integridade dos ciclos de fatura, conciliação financeira e pagamentos já liquidados. O sistema SHALL também permitir a exclusão completa de uma compra, removendo em cascata suas parcelas e rateios associados.
+O sistema SHALL permitir a edição dos dados de uma compra existente restrita a descrição, data da compra e rateio/atribuição entre pessoas. O formulário de edição de compra SHALL ser apresentado em formato de Bottom Sheet ancorado na base da tela, prevenindo bugs de classes utilitárias e mantendo a integridade visual dos dados fixos da compra. O sistema SHALL proibir explicitamente a alteração do método de pagamento (e cartão de crédito associado), do valor total da compra e da quantidade de parcelas para proteger a integridade dos ciclos de fatura, conciliação financeira e pagamentos já liquidados. O sistema SHALL também permitir a exclusão completa de uma compra, removendo em cascata suas parcelas e rateios associados.
 
 #### Scenario: Bloqueio de campos estruturais na edição
 - **WHEN** o usuário visualiza o formulário de edição de uma compra existente
@@ -68,3 +72,14 @@ O sistema SHALL permitir a edição dos dados de uma compra existente restrita a
 #### Scenario: Exclusão de compra existente
 - **WHEN** o usuário confirma a exclusão de uma compra existente
 - **THEN** o sistema exclui a compra mestre, suas parcelas e divisões no banco de dados e atualiza a listagem removendo o item
+
+#### Scenario: Visualização do modal de edição como Bottom Sheet
+- **WHEN** o usuário toca para editar uma compra existente
+- **THEN** a tela de edição abre como um Bottom Sheet na base do dispositivo, exibindo botões e campos de entrada devidamente espaçados
+
+### Requirement: Integridade Visual do Cartão de Compra
+O cartão de compra na listagem cronológica SHALL renderizar informações de descrição, parcelas, participantes e status de quitação de forma resiliente, aplicando cores harmônicas e contraste adequado para ícones e rótulos de status em modo claro e escuro.
+
+#### Scenario: Renderização com badge de status e participantes
+- **WHEN** uma compra possui múltiplos participantes e parcelas em aberto ou quitadas
+- **THEN** os badges de participantes e o badge de status exibem ícones e textos com cores legíveis correspondentes ao tema ativo, sem ultrapassar a largura do cartão

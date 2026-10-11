@@ -123,7 +123,7 @@ export default function RegisterScreen() {
             <Input
               label="Senha"
               placeholder="Mínimo de 6 caracteres"
-              secureTextEntry
+              showPasswordToggle
               value={password}
               onChangeText={(text) => {
                 setPassword(text);
@@ -134,7 +134,7 @@ export default function RegisterScreen() {
             <Input
               label="Confirmar Senha"
               placeholder="Digite a senha novamente"
-              secureTextEntry
+              showPasswordToggle
               value={confirmPassword}
               onChangeText={(text) => {
                 setConfirmPassword(text);

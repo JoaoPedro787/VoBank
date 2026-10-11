@@ -23,7 +23,16 @@ export default function RootLayout() {
           <Stack.Screen name="index" options={{ headerShown: false }} />
           <Stack.Screen name="(auth)" options={{ headerShown: false }} />
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="(modals)" options={{ presentation: "modal", headerShown: false }} />
+          <Stack.Screen
+            name="(modals)"
+            options={{
+              presentation: "formSheet",
+              sheetAllowedDetents: [0.6, 0.9],
+              sheetGrabberVisible: true,
+              sheetCornerRadius: 24,
+              headerShown: false,
+            }}
+          />
         </Stack>
       </AuthProvider>
     </SafeAreaProvider>

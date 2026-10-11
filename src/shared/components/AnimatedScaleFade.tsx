@@ -10,9 +10,9 @@ export interface AnimatedScaleFadeProps extends ViewProps {
 
 /**
  * Componente utilitário de micro-animação (fade-in + scale-up)
- * Proporciona transições suaves para modais, cards e popups
+ * Proporciona transições suaves a 60 FPS para modais, cards e popups
  */
-export function AnimatedScaleFade({
+export const AnimatedScaleFade = React.memo(function AnimatedScaleFade({
   duration = 200,
   initialScale = 0.94,
   delay = 0,
@@ -24,7 +24,7 @@ export function AnimatedScaleFade({
   const scaleAnim = React.useRef(new Animated.Value(initialScale)).current;
 
   React.useEffect(() => {
-    Animated.parallel([
+    const anim = Animated.parallel([
       Animated.timing(opacityAnim, {
         toValue: 1,
         duration,
@@ -38,7 +38,13 @@ export function AnimatedScaleFade({
         delay,
         useNativeDriver: true,
       }),
-    ]).start();
+    ]);
+
+    anim.start();
+
+    return () => {
+      anim.stop();
+    };
   }, [opacityAnim, scaleAnim, duration, delay]);
 
   return (
@@ -55,4 +61,4 @@ export function AnimatedScaleFade({
       {children}
     </Animated.View>
   );
-}
+});
