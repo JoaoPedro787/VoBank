@@ -2,8 +2,8 @@
 
 ## 1. Instalação e Configuração Base do Expo UI
 
-- [ ] 1.1 Instalar `@expo/ui` e registrar dependência no `package.json` utilizando `pnpm`
-- [ ] 1.2 Configurar suporte a testes unitários (mocks dos componentes nativos do `@expo/ui` para Jest) garantindo que `pnpm check` execute sem erros de importação nativa
+- [x] 1.1 Instalar `@expo/ui` e registrar dependência no `package.json` utilizando `pnpm`
+- [x] 1.2 Configurar suporte a testes unitários (mocks dos componentes nativos do `@expo/ui` para Jest) garantindo que `pnpm check` execute sem erros de importação nativa
 
 ## 2. Renovação dos Componentes Base Compartilhados
 
