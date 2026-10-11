@@ -11,7 +11,7 @@ O projeto utiliza Expo SDK 57, React Native 0.86, NativeWind v4 e Tailwind CSS. 
 - Adotar a biblioteca oficial `@expo/ui` para elevar a fluidez e a fidelidade nativa dos componentes compartilhados.
 - Priorizar componentes universais (`@expo/ui`) para iOS e Android com base de código única.
 - Adotar split por plataforma (`.ios.tsx` com `@expo/ui/swift-ui` e `.android.tsx` com `@expo/ui/jetpack-compose`) estritamente em componentes que não possuam cobertura universal.
-- Padronizar confirmações destrutivas com o novo `DeleteConfirmationSheet` em Cartões, Pessoas e Compras.
+- Padronizar confirmações destrutivas com o novo diálogo nativo `DeleteConfirmationDialog` em Cartões, Pessoas e Compras.
 - Disponibilizar seletor nativo de data via calendário (`@expo/ui/community/datetime-picker`) em criação, edição e navegação de filtros (mantendo navegação por setas `<` e `>`).
 - Preservar a API pública dos componentes em `src/shared/components/` para evitar quebras nas telas existentes.
 
@@ -34,12 +34,15 @@ O projeto utiliza Expo SDK 57, React Native 0.86, NativeWind v4 e Tailwind CSS. 
 - **Decisão:** Manter os contratos de props estabelecidos em `ButtonProps`, `InputProps` e `ModalSheetProps`, adaptando as chamadas internas para os componentes do `@expo/ui`.
 - **Benefício:** Zero impacto de quebra nas telas consumidoras (`app/(tabs)/...`, `app/(modals)/...`).
 
-### 3. Confirmação de Exclusão em Bottom Sheet (`DeleteConfirmationSheet`)
+### 3. Confirmação de Exclusão com Diálogo Nativo (`DeleteConfirmationDialog`)
 
-- **Decisão:** Criar um componente dedicado baseado no `ModalSheet` exibindo ícone de perigo, detalhes do item a ser excluído e botões nativos `Button` (secundário e destrutivo).
+- **Decisão:** Utilizar cada componente nativo do sistema via `@expo/ui` com divisão de arquivos por plataforma:
+  - **Android (`DeleteConfirmationDialog.android.tsx`):** Utilizar `AlertDialog` do Jetpack Compose (`@expo/ui/jetpack-compose`), com botões nativos de confirmação e dispensa (`AlertDialog.ConfirmButton`, `AlertDialog.DismissButton`, `AlertDialog.Title`, `AlertDialog.Text`), sob `<Host>`.
+  - **iOS (`DeleteConfirmationDialog.ios.tsx`):** Utilizar `Alert` do SwiftUI (`@expo/ui/swift-ui`), com gatilhos, botões de ação e mensagem nativos (`Alert`, `Alert.Trigger`, `Alert.Actions`, `Alert.Message`), sob `<Host>`.
+  - **Contrato Universal (`DeleteConfirmationDialog.tsx`):** Definir o contrato comum de props (`isOpen`, `onClose`, `onConfirm`, `title`, `description`, `confirmText`, `cancelText`, `isLoading`, `destructive`) e fallback para plataformas não nativas.
 - **Alternativas consideradas:**
-  - `Alert.alert` do sistema (descartado por inconsistência visual e falta de suporte a design customizado).
-  - Modal central flutuante (descartado pela decisão explícita do usuário de utilizar o componente sheet já existente no projeto).
+  - `ModalSheet` / BottomSheet customizado (descartado pela decisão explícita do usuário de utilizar diálogos nativos do sistema operacional).
+  - `Alert.alert` imperativo do React Native (descartado em favor dos componentes declarativos nativos modernos do `@expo/ui`).
 
 ### 4. Calendário Nativo (`@expo/ui/community/datetime-picker`)
 

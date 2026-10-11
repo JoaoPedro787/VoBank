@@ -93,5 +93,79 @@ jest.mock("@expo/ui/community/datetime-picker", () => {
 });
 
 // Mock platform-specific subpaths
-jest.mock("@expo/ui/swift-ui", () => ({}));
-jest.mock("@expo/ui/jetpack-compose", () => ({}));
+jest.mock("@expo/ui/swift-ui", () => {
+  const ReactMod = require("react");
+  const { View, Text, Pressable } = require("react-native");
+
+  const Alert = ({ title, children, isPresented, ...props }: any) =>
+    isPresented
+      ? ReactMod.createElement(
+          View,
+          { testID: "expo-ui-swiftui-alert", accessibilityLabel: title, ...props },
+          children,
+        )
+      : null;
+
+  Alert.Trigger = ({ children }: any) =>
+    ReactMod.createElement(View, { testID: "alert-trigger" }, children);
+  Alert.Actions = ({ children }: any) =>
+    ReactMod.createElement(View, { testID: "alert-actions" }, children);
+  Alert.Message = ({ children }: any) =>
+    ReactMod.createElement(View, { testID: "alert-message" }, children);
+
+  const Button = ({ label, onPress, children, ...props }: any) =>
+    ReactMod.createElement(
+      Pressable,
+      { onPress, accessibilityRole: "button", ...props },
+      label ? ReactMod.createElement(Text, null, label) : children,
+    );
+
+  const Spacer = (props: any) => ReactMod.createElement(View, { testID: "spacer", ...props });
+
+  return {
+    Alert,
+    Button,
+    Text,
+    Spacer,
+  };
+});
+
+jest.mock("@expo/ui/jetpack-compose", () => {
+  const ReactMod = require("react");
+  const { View, Text, Pressable } = require("react-native");
+
+  const AlertDialog = ({ children, _onDismissRequest, ...props }: any) =>
+    ReactMod.createElement(View, { testID: "expo-ui-compose-alert-dialog", ...props }, children);
+
+  AlertDialog.Title = ({ children }: any) =>
+    ReactMod.createElement(View, { testID: "alert-dialog-title" }, children);
+  AlertDialog.Text = ({ children }: any) =>
+    ReactMod.createElement(View, { testID: "alert-dialog-text" }, children);
+  AlertDialog.ConfirmButton = ({ children }: any) =>
+    ReactMod.createElement(View, { testID: "alert-dialog-confirm" }, children);
+  AlertDialog.DismissButton = ({ children }: any) =>
+    ReactMod.createElement(View, { testID: "alert-dialog-dismiss" }, children);
+  AlertDialog.Icon = ({ children }: any) =>
+    ReactMod.createElement(View, { testID: "alert-dialog-icon" }, children);
+
+  const Button = ({ onClick, children, ...props }: any) =>
+    ReactMod.createElement(
+      Pressable,
+      { onPress: onClick, accessibilityRole: "button", ...props },
+      children,
+    );
+
+  const TextButton = ({ onClick, children, ...props }: any) =>
+    ReactMod.createElement(
+      Pressable,
+      { onPress: onClick, accessibilityRole: "button", ...props },
+      children,
+    );
+
+  return {
+    AlertDialog,
+    Button,
+    TextButton,
+    Text,
+  };
+});

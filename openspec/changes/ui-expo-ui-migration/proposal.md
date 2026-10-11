@@ -12,9 +12,9 @@ Atualmente, o aplicativo utiliza componentes customizados baseados em Tailwind/N
   - Criação de componente universal `Switch` (`src/shared/components/Switch.tsx`) para toggles de formulário.
   - Migração de `ModalSheet` para utilizar o `BottomSheet` universal do `@expo/ui`.
   - Estratégia de fallback: quando um componente ou modificador não existir na camada universal do `@expo/ui`, implementação dividida por plataforma (`.ios.tsx` consumindo `@expo/ui/swift-ui` e `.android.tsx` consumindo `@expo/ui/jetpack-compose`), sempre encapsulados por `<Host>` da raiz do `@expo/ui`.
-- **Diálogo de Exclusão Padronizado (`DeleteConfirmationSheet`):**
-  - Criação do componente `DeleteConfirmationSheet` baseado no `ModalSheet`.
-  - Substituição dos `Alert.alert` em Cartões (`cards.tsx`) e Pessoas (`people.tsx`).
+- **Diálogo de Exclusão Nativo (`DeleteConfirmationDialog`):**
+  - Criação do componente `DeleteConfirmationDialog` com suporte nativo de cada plataforma utilizando `@expo/ui`: `AlertDialog` (`@expo/ui/jetpack-compose`) no Android e `Alert` (`@expo/ui/swift-ui`) no iOS.
+  - Substituição dos `Alert.alert` legados em Cartões (`cards.tsx`) e Pessoas (`people.tsx`).
   - Substituição da View/Card inline de confirmação de exclusão em `EditPurchaseForm.tsx`.
 - **Seletor de Data Nativo (`DatePicker`):**
   - Implementação de `DatePicker` utilizando `@expo/ui/community/datetime-picker`.
@@ -25,15 +25,15 @@ Atualmente, o aplicativo utiliza componentes customizados baseados em Tailwind/N
 
 ### Modified Capabilities
 
-- `ui-ergonomics`: Atualização dos padrões de componentes base (`Button`, `Input`, `Switch`, `ModalSheet`) para utilizar `@expo/ui` e padronização do sheet de confirmação de exclusão.
-- `purchases`: Adição de seletor nativo de data via calendário em criação/edição e nos filtros de período, além do novo diálogo de exclusão na edição de compra.
-- `credit-cards`: Substituição de `Alert.alert` pelo diálogo padronizado de exclusão em BottomSheet.
-- `people`: Substituição de `Alert.alert` pelo diálogo padronizado de exclusão em BottomSheet.
+- `ui-ergonomics`: Atualização dos padrões de componentes base (`Button`, `Input`, `Switch`, `ModalSheet`) para utilizar `@expo/ui` e padronização do diálogo nativo de confirmação de exclusão (`DeleteConfirmationDialog`).
+- `purchases`: Adição de seletor nativo de data via calendário em criação/edição e nos filtros de período, além do novo diálogo nativo de exclusão na edição de compra.
+- `credit-cards`: Substituição de `Alert.alert` legado pelo diálogo nativo padronizado de exclusão (`DeleteConfirmationDialog`).
+- `people`: Substituição de `Alert.alert` legado pelo diálogo nativo padronizado de exclusão (`DeleteConfirmationDialog`).
 
 ## Impact
 
 - **Dependências:** Adição de `@expo/ui` ao `package.json`.
-- **Código Compartilhado:** Modificação de `src/shared/components/` (`Button.tsx`, `Input.tsx`, `ModalSheet.tsx`) e adição de `DatePicker.tsx`, `Switch.tsx`, `DeleteConfirmationSheet.tsx`.
+- **Código Compartilhado:** Modificação de `src/shared/components/` (`Button.tsx`, `Input.tsx`, `ModalSheet.tsx`) e adição de `DatePicker.tsx`, `Switch.tsx`, `DeleteConfirmationDialog.tsx` (com `.android.tsx` e `.ios.tsx`).
 - **Telas Afetadas:**
   - `src/app/(tabs)/cards.tsx`
   - `src/app/(tabs)/people.tsx`

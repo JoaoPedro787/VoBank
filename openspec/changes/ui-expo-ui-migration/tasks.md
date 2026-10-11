@@ -20,12 +20,12 @@
 - [x] 3.3 Integrar o `DatePicker` no formulário de edição de compras (`src/purchases/components/EditPurchaseForm.tsx`)
 - [x] 3.4 Integrar o seletor nativo de mês/ano no Dashboard (`src/dashboard/components/MonthSelector.tsx`) e na listagem de Compras (`src/app/(tabs)/purchases.tsx`), preservando os botões de seta `<` e `>` para navegação rápida mês a mês
 
-## 4. Implementação e Integração do Diálogo de Exclusão
+## 4. Implementação e Integração do Diálogo de Exclusão Nativo
 
-- [ ] 4.1 Criar o componente `DeleteConfirmationSheet` (`src/shared/components/DeleteConfirmationSheet.tsx`) baseado no `ModalSheet` e nos botões do `@expo/ui`
-- [ ] 4.2 Integrar a confirmação de exclusão na tela de Cartões (`src/app/(tabs)/cards.tsx`), substituindo o `Alert.alert` pelo `DeleteConfirmationSheet`
-- [ ] 4.3 Integrar a confirmação de exclusão na tela de Pessoas (`src/app/(tabs)/people.tsx`), substituindo o `Alert.alert` pelo `DeleteConfirmationSheet`
-- [ ] 4.4 Integrar a confirmação de exclusão na tela de Edição de Compra (`src/purchases/components/EditPurchaseForm.tsx`), substituindo o card estático pelo `DeleteConfirmationSheet`
+- [ ] 4.1 Criar o componente `DeleteConfirmationDialog` (`src/shared/components/DeleteConfirmationDialog.tsx`) com divisão de plataforma: Android com `AlertDialog` (`@expo/ui/jetpack-compose` em `DeleteConfirmationDialog.android.tsx`) e iOS com `Alert` (`@expo/ui/swift-ui` em `DeleteConfirmationDialog.ios.tsx`), sob `<Host>`
+- [ ] 4.2 Integrar a confirmação de exclusão na tela de Cartões (`src/app/(tabs)/cards.tsx`), utilizando o `DeleteConfirmationDialog` nativo
+- [ ] 4.3 Integrar a confirmação de exclusão na tela de Pessoas (`src/app/(tabs)/people.tsx`), utilizando o `DeleteConfirmationDialog` nativo
+- [ ] 4.4 Integrar a confirmação de exclusão na tela de Edição de Compra (`src/purchases/components/EditPurchaseForm.tsx`), utilizando o `DeleteConfirmationDialog` nativo
 
 ## 5. Validação Integrada e Qualidade de Código
 

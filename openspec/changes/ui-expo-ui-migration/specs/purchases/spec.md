@@ -53,15 +53,15 @@ O sistema SHALL disponibilizar uma visualização consolidada de todas as compra
 - **THEN** a lista exibe as compras agrupadas por blocos de datas (ex: "Hoje", "Ontem" ou DD/MM/AAAA) com seus respectivos totais diários
 
 ### Requirement: Edição e Exclusão de Compras
-O sistema SHALL permitir a edição dos dados de uma compra existente restrita a descrição, data da compra e rateio/atribuição entre pessoas. O campo de data na edição SHALL disponibilizar botão com ícone de calendário que abre o seletor nativo de data (`DatePicker`), além de atalhos rápidos "Hoje" e "Ontem". O formulário de edição de compra SHALL ser apresentado em formato de Bottom Sheet ancorado na base da tela, prevenindo bugs de classes utilitárias e mantendo a integridade visual dos dados fixos da compra. O sistema SHALL proibir explicitamente a alteração do método de pagamento (e cartão de crédito associado), do valor total da compra e da quantidade de parcelas para proteger a integridade dos ciclos de fatura, conciliação financeira e pagamentos já liquidados. Ao acionar a exclusão da compra, o sistema SHALL exibir o diálogo padronizado de confirmação em Bottom Sheet (`DeleteConfirmationSheet`) ao invés de um cartão estático na rolagem, removendo em cascata a compra, suas parcelas e rateios associados após a confirmação.
+O sistema SHALL permitir a edição dos dados de uma compra existente restrita a descrição, data da compra e rateio/atribuição entre pessoas. O campo de data na edição SHALL disponibilizar botão com ícone de calendário que abre o seletor nativo de data (`DatePicker`), além de atalhos rápidos "Hoje" e "Ontem". O formulário de edição de compra SHALL ser apresentado em formato de Bottom Sheet ancorado na base da tela, prevenindo bugs de classes utilitárias e mantendo a integridade visual dos dados fixos da compra. O sistema SHALL proibir explicitamente a alteração do método de pagamento (e cartão de crédito associado), do valor total da compra e da quantidade de parcelas para proteger a integridade dos ciclos de fatura, conciliação financeira e pagamentos já liquidados. Ao acionar a exclusão da compra, o sistema SHALL exibir o diálogo nativo padronizado de confirmação (`DeleteConfirmationDialog` via `@expo/ui`: `AlertDialog` no Android e `Alert` no iOS) ao invés de um cartão estático na rolagem, removendo em cascata a compra, suas parcelas e rateios associados após a confirmação.
 
 #### Scenario: Seleção de nova data de compra via calendário na edição
 - **WHEN** o usuário edita a compra e seleciona uma nova data utilizando o botão de calendário
 - **THEN** o campo de data é atualizado com o valor escolhido
 
-#### Scenario: Confirmação de exclusão da compra via DeleteConfirmationSheet
+#### Scenario: Confirmação de exclusão da compra via DeleteConfirmationDialog
 - **WHEN** o usuário toca no botão de excluir compra na tela de edição
-- **THEN** o sistema abre o `DeleteConfirmationSheet` apresentando os avisos de exclusão e solicitando confirmação
+- **THEN** o sistema abre o `DeleteConfirmationDialog` apresentando os avisos de exclusão e solicitando confirmação nativa
 
 #### Scenario: Bloqueio de campos estruturais na edição
 - **WHEN** o usuário visualiza o formulário de edição de uma compra existente

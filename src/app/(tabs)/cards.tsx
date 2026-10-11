@@ -1,13 +1,5 @@
 import * as React from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  Pressable,
-  RefreshControl,
-  Alert,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, FlatList, Pressable, RefreshControl, ActivityIndicator } from "react-native";
 import { CreditCard as CardIcon, Plus, Pencil, Trash2, Calendar } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router, useFocusEffect } from "expo-router";
@@ -16,10 +8,13 @@ import { CreditCard } from "@/credit-cards/types/credit-cards.types";
 import { Button } from "@/shared/components/Button";
 import { Badge } from "@/shared/components/Badge";
 import { AnimatedScaleFade } from "@/shared/components/AnimatedScaleFade";
+import { DeleteConfirmationSheet } from "@/shared/components/DeleteConfirmationSheet";
 
 export default function CardsScreen() {
   const insets = useSafeAreaInsets();
   const { cards, isLoading, error, fetchCards, deleteCard } = useCreditCards();
+  const [cardToDelete, setCardToDelete] = React.useState<CreditCard | null>(null);
+  const [isDeleting, setIsDeleting] = React.useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -39,16 +34,18 @@ export default function CardsScreen() {
   };
 
   const handleDelete = (card: CreditCard) => {
-    Alert.alert("Excluir Cartão", `Tem certeza que deseja remover o cartão ${card.name}?`, [
-      { text: "Cancelar", style: "cancel" },
-      {
-        text: "Excluir",
-        style: "destructive",
-        onPress: async () => {
-          await deleteCard(card.id);
-        },
-      },
-    ]);
+    setCardToDelete(card);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!cardToDelete) return;
+    try {
+      setIsDeleting(true);
+      await deleteCard(cardToDelete.id);
+      setCardToDelete(null);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return (
@@ -200,6 +197,17 @@ export default function CardsScreen() {
           )}
         />
       )}
+
+      <DeleteConfirmationSheet
+        isOpen={!!cardToDelete}
+        onClose={() => setCardToDelete(null)}
+        onConfirm={handleConfirmDelete}
+        isLoading={isDeleting}
+        title="Excluir Cartão"
+        itemName={cardToDelete?.name}
+        description={`Tem certeza que deseja remover o cartão ${cardToDelete?.name ?? ""}? Esta ação não pode ser desfeita.`}
+        confirmLabel="Excluir"
+      />
     </View>
   );
 }

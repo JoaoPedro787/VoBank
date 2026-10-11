@@ -1,6 +1,6 @@
 import * as React from "react";
 import { View, Text, Pressable } from "react-native";
-import { Users, Calendar, Lock, Trash2, AlertTriangle, Info } from "lucide-react-native";
+import { Users, Calendar, Lock, Trash2, Info } from "lucide-react-native";
 import { Input } from "@/shared/components/Input";
 import { Button } from "@/shared/components/Button";
 import { Badge } from "@/shared/components/Badge";
@@ -8,6 +8,7 @@ import { Switch } from "@/shared/components/Switch";
 import { Card } from "@/shared/components/Card";
 import { ModalSheet } from "@/shared/components/ModalSheet";
 import { DatePicker } from "@/shared/components/DatePicker";
+import { DeleteConfirmationSheet } from "@/shared/components/DeleteConfirmationSheet";
 import { Person } from "@/people/types/people.types";
 import { CreditCard } from "@/credit-cards/types/credit-cards.types";
 import { PurchaseClient, UpdatePurchaseData, CreateSplitData } from "../types/purchases.types";
@@ -416,45 +417,15 @@ export function EditPurchaseForm({
         {/* Zona de Exclusão */}
         {onDelete ? (
           <View className="pt-2">
-            {showDeleteConfirm ? (
-              <Card className="gap-3 border-destructive/40 bg-destructive/5 p-3.5">
-                <View className="flex-row items-center gap-2">
-                  <AlertTriangle size={16} color="#ef4444" />
-                  <Text className="text-xs font-bold text-destructive">
-                    Confirmar Exclusão da Compra
-                  </Text>
-                </View>
-                <Text className="text-xs text-muted-foreground">
-                  Esta ação excluirá permanentemente a compra e todas as suas parcelas geradas.
-                </Text>
-                <View className="flex-row gap-2 pt-1">
-                  <Button
-                    variant="secondary"
-                    label="Cancelar"
-                    size="sm"
-                    className="flex-1"
-                    onPress={() => setShowDeleteConfirm(false)}
-                    disabled={isDeleting}
-                  />
-                  <Button
-                    variant="destructive"
-                    label={isDeleting ? "Excluindo..." : "Excluir Definitivamente"}
-                    size="sm"
-                    className="flex-1"
-                    onPress={handleDelete}
-                    disabled={isDeleting}
-                  />
-                </View>
-              </Card>
-            ) : (
-              <Pressable
-                onPress={() => setShowDeleteConfirm(true)}
-                className="flex-row items-center justify-center gap-2 py-3 rounded-xl border border-destructive/30 bg-destructive/5 active:opacity-70"
-              >
-                <Trash2 size={16} color="#ef4444" />
-                <Text className="text-xs font-semibold text-destructive">Excluir esta Compra</Text>
-              </Pressable>
-            )}
+            <Pressable
+              onPress={() => setShowDeleteConfirm(true)}
+              className="flex-row items-center justify-center gap-2 py-3 rounded-xl border border-destructive/30 bg-destructive/5 active:opacity-70"
+              accessibilityRole="button"
+              accessibilityLabel="Excluir esta compra"
+            >
+              <Trash2 size={16} color="#ef4444" />
+              <Text className="text-xs font-semibold text-destructive">Excluir esta Compra</Text>
+            </Pressable>
           </View>
         ) : null}
       </ModalSheet.Body>
@@ -476,6 +447,19 @@ export function EditPurchaseForm({
           disabled={isSubmitting || isDeleting}
         />
       </ModalSheet.Footer>
+
+      {onDelete ? (
+        <DeleteConfirmationSheet
+          isOpen={showDeleteConfirm}
+          onClose={() => setShowDeleteConfirm(false)}
+          onConfirm={handleDelete}
+          isLoading={isDeleting}
+          title="Excluir Compra"
+          itemName={purchase.description}
+          description="Esta ação excluirá permanentemente a compra e todas as suas parcelas geradas."
+          confirmLabel="Excluir Definitivamente"
+        />
+      ) : null}
     </>
   );
 }

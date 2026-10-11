@@ -2,9 +2,9 @@
 
 ## ADDED Requirements
 
-### Requirement: Confirmação de Exclusão de Pessoa em Bottom Sheet
-O sistema SHALL exibir o diálogo de confirmação `DeleteConfirmationSheet` ancorado na base da tela ao solicitar a remoção de uma pessoa cadastrada, alertando o usuário sobre o impacto nas despesas e divisões atribuídas àquela pessoa, substituindo alertas nativos bloqueantes de sistema (`Alert.alert`).
+### Requirement: Confirmação de Exclusão de Pessoa com Diálogo Nativo
+O sistema SHALL exibir o diálogo de confirmação nativo `DeleteConfirmationDialog` (`AlertDialog` no Android e `Alert` no iOS via `@expo/ui`) ao solicitar a remoção de uma pessoa cadastrada, alertando o usuário sobre o impacto nas despesas e divisões atribuídas àquela pessoa, substituindo alertas legados de sistema (`Alert.alert`).
 
 #### Scenario: Acionamento da exclusão de pessoa
 - **WHEN** o usuário toca no ícone de lixeira em uma pessoa da lista de pessoas
-- **THEN** o sistema exibe o `DeleteConfirmationSheet` com o nome da pessoa a ser excluída e as opções de cancelamento e confirmação destrutiva
+- **THEN** o sistema exibe o `DeleteConfirmationDialog` nativo com o nome da pessoa a ser excluída e as opções de cancelamento e confirmação destrutiva
