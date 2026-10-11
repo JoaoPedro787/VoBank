@@ -12,6 +12,7 @@ import {
 import { Input } from "@/shared/components/Input";
 import { Button } from "@/shared/components/Button";
 import { Badge } from "@/shared/components/Badge";
+import { Switch } from "@/shared/components/Switch";
 import { ModalSheet } from "@/shared/components/ModalSheet";
 import { CreditCard } from "@/credit-cards/types/credit-cards.types";
 import { Person } from "@/people/types/people.types";
@@ -423,20 +424,11 @@ export function NewPurchaseForm({ cards, people, onSave, onCancel }: NewPurchase
                 Rachar com Outras Pessoas
               </Text>
             </View>
-            <Pressable
-              onPress={() => setIsSplitting(!isSplitting)}
-              className={`px-3 py-1 rounded-full ${
-                isSplitting ? "bg-primary text-white" : "bg-muted text-foreground"
-              }`}
-            >
-              <Text
-                className={`text-xs font-bold ${
-                  isSplitting ? "text-primary-foreground" : "text-muted-foreground"
-                }`}
-              >
-                {isSplitting ? "Ativo" : "Não dividir"}
-              </Text>
-            </Pressable>
+            <Switch
+              value={isSplitting}
+              onValueChange={setIsSplitting}
+              testID="split-purchase-switch"
+            />
           </View>
 
           {isSplitting ? (

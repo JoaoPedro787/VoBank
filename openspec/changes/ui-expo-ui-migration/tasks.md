@@ -7,11 +7,11 @@
 
 ## 2. Renovação dos Componentes Base Compartilhados
 
-- [ ] 2.1 Renovar o componente `Button` (`src/shared/components/Button.tsx`) integrando o botão nativo do `@expo/ui`, preservando variantes, tamanhos, feedback háptico e loading
-- [ ] 2.2 Renovar o componente `Input` (`src/shared/components/Input.tsx`) integrando o `TextInput` do `@expo/ui`, preservando rótulos, erros, ícones e alternância de senha
-- [ ] 2.3 Criar o componente universal `Switch` (`src/shared/components/Switch.tsx`) utilizando `@expo/ui`, conectando à opção de rachar despesas nos formulários de compra
-- [ ] 2.4 Renovar o componente `ModalSheet` (`src/shared/components/ModalSheet.tsx`) integrando a apresentação em `BottomSheet` universal do `@expo/ui`
-- [ ] 2.5 Atualizar o índice `src/shared/components/index.ts` exportando os novos componentes e validar que não há quebras de tipagem em `pnpm typecheck`
+- [x] 2.1 Renovar o componente `Button` (`src/shared/components/Button.tsx`) integrando o botão nativo do `@expo/ui`, preservando variantes, tamanhos, feedback háptico e loading
+- [x] 2.2 Renovar o componente `Input` (`src/shared/components/Input.tsx`) integrando o `TextInput` do `@expo/ui`, preservando rótulos, erros, ícones e alternância de senha
+- [x] 2.3 Criar o componente universal `Switch` (`src/shared/components/Switch.tsx`) utilizando `@expo/ui`, conectando à opção de rachar despesas nos formulários de compra
+- [x] 2.4 Renovar o componente `ModalSheet` (`src/shared/components/ModalSheet.tsx`) integrando a apresentação em `BottomSheet` universal do `@expo/ui`
+- [x] 2.5 Atualizar o índice `src/shared/components/index.ts` exportando os novos componentes e validar que não há quebras de tipagem em `pnpm typecheck`
 
 ## 3. Implementação e Integração do Seletor de Data Nativo
 

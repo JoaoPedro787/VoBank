@@ -5,3 +5,4 @@ export * from "./Badge";
 export * from "./AnimatedScaleFade";
 export * from "./ModalGrabHandle";
 export * from "./ModalSheet";
+export * from "./Switch";

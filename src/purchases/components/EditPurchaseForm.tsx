@@ -4,6 +4,7 @@ import { Users, Calendar, Lock, Trash2, AlertTriangle, Info } from "lucide-react
 import { Input } from "@/shared/components/Input";
 import { Button } from "@/shared/components/Button";
 import { Badge } from "@/shared/components/Badge";
+import { Switch } from "@/shared/components/Switch";
 import { Card } from "@/shared/components/Card";
 import { ModalSheet } from "@/shared/components/ModalSheet";
 import { Person } from "@/people/types/people.types";
@@ -303,18 +304,11 @@ export function EditPurchaseForm({
                 Rachar com Outras Pessoas
               </Text>
             </View>
-            <Pressable
-              onPress={() => setIsSplitting(!isSplitting)}
-              className={`px-3 py-1 rounded-full ${isSplitting ? "bg-primary" : "bg-muted"}`}
-            >
-              <Text
-                className={`text-xs font-bold ${
-                  isSplitting ? "text-primary-foreground" : "text-muted-foreground"
-                }`}
-              >
-                {isSplitting ? "Ativo" : "Não dividir"}
-              </Text>
-            </Pressable>
+            <Switch
+              value={isSplitting}
+              onValueChange={setIsSplitting}
+              testID="edit-split-purchase-switch"
+            />
           </View>
 
           {isSplitting ? (
