@@ -41,7 +41,7 @@ export const Input = React.forwardRef<React.ElementRef<typeof TextInput>, InputP
         {label ? <Text className="text-sm font-medium text-foreground">{label}</Text> : null}
         <View
           className={cn(
-            "h-12 w-full flex-row items-center rounded-[14px] border-[1.5px] bg-[#E5E5EA] px-3.5 dark:bg-[#2C2C2E]",
+            "h-12 w-full flex-row items-center rounded-[14px] border-[1.5px] bg-input px-3.5",
             isFocused ? "border-[#007AFF]" : "border-border/80 dark:border-transparent",
             error && "border-destructive",
           )}

@@ -10,8 +10,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default: "bg-primary active:bg-primary/90",
-        secondary:
-          "bg-[#E5E5EA] border border-border/80 active:bg-[#D1D1D6] dark:bg-[#2C2C2E] dark:border-transparent dark:active:bg-[#3A3A3C]",
+        secondary: "bg-secondary border border-border/80 active:opacity-80 dark:border-transparent",
         destructive: "bg-destructive active:bg-destructive/90",
         success: "bg-success active:bg-success/90",
         outline: "border border-border bg-transparent active:bg-accent",
@@ -36,7 +35,7 @@ const buttonTextVariants = cva("text-base font-semibold text-center", {
   variants: {
     variant: {
       default: "text-primary-foreground",
-      secondary: "text-foreground",
+      secondary: "text-secondary-foreground",
       destructive: "text-destructive-foreground",
       success: "text-success-foreground",
       outline: "text-foreground",
