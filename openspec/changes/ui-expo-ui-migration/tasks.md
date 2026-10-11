@@ -15,10 +15,10 @@
 
 ## 3. Implementação e Integração do Seletor de Data Nativo
 
-- [ ] 3.1 Criar o componente `DatePicker` (`src/shared/components/DatePicker.tsx`) utilizando `@expo/ui/community/datetime-picker` com suporte aos pickers nativos de iOS e Android
-- [ ] 3.2 Integrar o `DatePicker` no formulário de criação de compras (`src/purchases/components/NewPurchaseForm.tsx`), mantendo os atalhos rápidos "Hoje" e "Ontem"
-- [ ] 3.3 Integrar o `DatePicker` no formulário de edição de compras (`src/purchases/components/EditPurchaseForm.tsx`)
-- [ ] 3.4 Integrar o seletor nativo de mês/ano no Dashboard (`src/dashboard/components/MonthSelector.tsx`) e na listagem de Compras (`src/app/(tabs)/purchases.tsx`), preservando os botões de seta `<` e `>` para navegação rápida mês a mês
+- [x] 3.1 Criar o componente `DatePicker` (`src/shared/components/DatePicker.tsx`) utilizando `@expo/ui/community/datetime-picker` com suporte aos pickers nativos de iOS e Android
+- [x] 3.2 Integrar o `DatePicker` no formulário de criação de compras (`src/purchases/components/NewPurchaseForm.tsx`), mantendo os atalhos rápidos "Hoje" e "Ontem"
+- [x] 3.3 Integrar o `DatePicker` no formulário de edição de compras (`src/purchases/components/EditPurchaseForm.tsx`)
+- [x] 3.4 Integrar o seletor nativo de mês/ano no Dashboard (`src/dashboard/components/MonthSelector.tsx`) e na listagem de Compras (`src/app/(tabs)/purchases.tsx`), preservando os botões de seta `<` e `>` para navegação rápida mês a mês
 
 ## 4. Implementação e Integração do Diálogo de Exclusão
 

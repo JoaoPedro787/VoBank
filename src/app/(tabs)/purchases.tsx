@@ -32,6 +32,7 @@ import { filterPurchases, calculatePurchasesMetrics } from "@/purchases/utils/pu
 import { groupPurchasesByDay } from "@/purchases/utils/purchases-group";
 import { Button } from "@/shared/components/Button";
 import { Badge } from "@/shared/components/Badge";
+import { DatePicker } from "@/shared/components/DatePicker";
 
 const MONTH_NAMES = [
   "Janeiro",
@@ -64,6 +65,7 @@ export default function PurchasesScreen() {
   // Estados dos Filtros
   const [searchQuery, setSearchQuery] = React.useState("");
   const [isAllPeriods, setIsAllPeriods] = React.useState(false);
+  const [isDatePickerOpen, setIsDatePickerOpen] = React.useState(false);
   const [selectedMonth, setSelectedMonth] = React.useState(() => new Date().getMonth() + 1);
   const [selectedYear, setSelectedYear] = React.useState(() => new Date().getFullYear());
   const [selectedCardId, setSelectedCardId] = React.useState<string>("all");
@@ -289,9 +291,17 @@ export default function PurchasesScreen() {
                       <ChevronLeft size={16} color="#71717a" />
                     </Pressable>
 
-                    <Text className="text-xs font-bold text-foreground">
-                      {MONTH_NAMES[selectedMonth - 1]} {selectedYear}
-                    </Text>
+                    <Pressable
+                      onPress={() => setIsDatePickerOpen(true)}
+                      className="px-2 py-1 items-center justify-center active:opacity-70 rounded-lg"
+                      accessibilityRole="button"
+                      accessibilityLabel={`Selecionar período, atualmente ${MONTH_NAMES[selectedMonth - 1]} de ${selectedYear}`}
+                      testID="purchases-month-selector-title"
+                    >
+                      <Text className="text-xs font-bold text-foreground">
+                        {MONTH_NAMES[selectedMonth - 1]} {selectedYear}
+                      </Text>
+                    </Pressable>
 
                     <Pressable
                       onPress={handleNextMonth}
@@ -532,6 +542,18 @@ export default function PurchasesScreen() {
           )}
         />
       )}
+
+      <DatePicker
+        visible={isDatePickerOpen}
+        value={new Date(selectedYear, selectedMonth - 1, 1)}
+        onChange={(date) => {
+          setSelectedMonth(date.getMonth() + 1);
+          setSelectedYear(date.getFullYear());
+        }}
+        onClose={() => setIsDatePickerOpen(false)}
+        title="Selecionar Período"
+        testID="purchases-month-date-picker"
+      />
     </View>
   );
 }

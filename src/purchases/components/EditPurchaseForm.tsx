@@ -7,6 +7,7 @@ import { Badge } from "@/shared/components/Badge";
 import { Switch } from "@/shared/components/Switch";
 import { Card } from "@/shared/components/Card";
 import { ModalSheet } from "@/shared/components/ModalSheet";
+import { DatePicker } from "@/shared/components/DatePicker";
 import { Person } from "@/people/types/people.types";
 import { CreditCard } from "@/credit-cards/types/credit-cards.types";
 import { PurchaseClient, UpdatePurchaseData, CreateSplitData } from "../types/purchases.types";
@@ -37,6 +38,7 @@ export function EditPurchaseForm({
 }: EditPurchaseFormProps) {
   const [description, setDescription] = React.useState(purchase.description);
   const [purchaseDateStr, setPurchaseDateStr] = React.useState(formatDateBR(purchase.purchaseDate));
+  const [isDatePickerOpen, setIsDatePickerOpen] = React.useState(false);
 
   // Rachar compras
   const [isSplitting, setIsSplitting] = React.useState(false);
@@ -91,6 +93,12 @@ export function EditPurchaseForm({
     setSplitMode(detectedMode);
     setPersonSplits(splitsMap);
   }, [purchase]);
+
+  const effectivePurchaseDate = React.useMemo(() => {
+    if (!purchaseDateStr.trim()) return new Date();
+    const parsed = parseDateBR(purchaseDateStr);
+    return parsed ?? new Date();
+  }, [purchaseDateStr]);
 
   const numericTotalAmount = Number(purchase.totalAmount) || 0;
 
@@ -267,10 +275,15 @@ export function EditPurchaseForm({
         {/* Data da Compra (Editável) */}
         <View className="gap-1.5">
           <View className="flex-row items-center justify-between">
-            <View className="flex-row items-center gap-1.5">
-              <Calendar size={14} color="#71717a" />
+            <Pressable
+              onPress={() => setIsDatePickerOpen(true)}
+              className="flex-row items-center gap-1.5 active:opacity-70"
+              accessibilityRole="button"
+              accessibilityLabel="Selecionar data da compra no calendário"
+            >
+              <Calendar size={14} color="#007AFF" />
               <Text className="text-sm font-medium text-foreground">Data da Compra</Text>
-            </View>
+            </Pressable>
             <View className="flex-row gap-1.5">
               <Pressable
                 onPress={() => setPurchaseDateStr(getTodayBR())}
@@ -292,8 +305,28 @@ export function EditPurchaseForm({
             maxLength={10}
             value={purchaseDateStr}
             onChangeText={(val) => setPurchaseDateStr(maskDateBR(val))}
+            rightIcon={
+              <Pressable
+                onPress={() => setIsDatePickerOpen(true)}
+                className="p-1 items-center justify-center active:opacity-70"
+                accessibilityRole="button"
+                accessibilityLabel="Abrir calendário"
+                testID="open-edit-purchase-date-picker-button"
+              >
+                <Calendar size={18} color="#007AFF" />
+              </Pressable>
+            }
           />
         </View>
+
+        <DatePicker
+          visible={isDatePickerOpen}
+          value={effectivePurchaseDate}
+          onChange={(selected) => setPurchaseDateStr(formatDateBR(selected))}
+          onClose={() => setIsDatePickerOpen(false)}
+          title="Data da Compra"
+          testID="edit-purchase-date-picker"
+        />
 
         {/* Rachar Compras (Editável) */}
         <View className="gap-3 rounded-2xl bg-muted/20 p-3.5 border border-border">

@@ -14,6 +14,7 @@ import { Button } from "@/shared/components/Button";
 import { Badge } from "@/shared/components/Badge";
 import { Switch } from "@/shared/components/Switch";
 import { ModalSheet } from "@/shared/components/ModalSheet";
+import { DatePicker } from "@/shared/components/DatePicker";
 import { CreditCard } from "@/credit-cards/types/credit-cards.types";
 import { Person } from "@/people/types/people.types";
 import { CreatePurchaseData, PaymentMethod, CreateSplitData } from "../types/purchases.types";
@@ -22,7 +23,13 @@ import {
   calculatePurchaseSplitsAndInstallments,
   CalculatedInstallment,
 } from "@/shared/utils/purchase-split";
-import { maskDateBR, parseDateBR, getTodayBR, getYesterdayBR } from "../utils/purchase-date";
+import {
+  maskDateBR,
+  parseDateBR,
+  formatDateBR,
+  getTodayBR,
+  getYesterdayBR,
+} from "../utils/purchase-date";
 
 export interface NewPurchaseFormProps {
   cards: CreditCard[];
@@ -35,6 +42,7 @@ export function NewPurchaseForm({ cards, people, onSave, onCancel }: NewPurchase
   const [description, setDescription] = React.useState("");
   const [amountStr, setAmountStr] = React.useState("");
   const [purchaseDateStr, setPurchaseDateStr] = React.useState("");
+  const [isDatePickerOpen, setIsDatePickerOpen] = React.useState(false);
   const [paymentMethod, setPaymentMethod] = React.useState<PaymentMethod>("credit");
   const [selectedCardId, setSelectedCardId] = React.useState<string | null>(() => {
     return cards.length > 0 ? cards[0].id : null;
@@ -254,13 +262,18 @@ export function NewPurchaseForm({ cards, people, onSave, onCancel }: NewPurchase
         {/* Data da Compra (Opcional) */}
         <View className="gap-1.5">
           <View className="flex-row items-center justify-between">
-            <View className="flex-row items-center gap-1.5">
-              <Calendar size={14} color="#71717a" />
+            <Pressable
+              onPress={() => setIsDatePickerOpen(true)}
+              className="flex-row items-center gap-1.5 active:opacity-70"
+              accessibilityRole="button"
+              accessibilityLabel="Selecionar data da compra no calendário"
+            >
+              <Calendar size={14} color="#007AFF" />
               <Text className="text-sm font-medium text-foreground">
                 Data da Compra{" "}
                 <Text className="text-xs text-muted-foreground font-normal">(Opcional)</Text>
               </Text>
-            </View>
+            </Pressable>
             <View className="flex-row gap-1.5">
               <Pressable
                 onPress={() => setPurchaseDateStr(getTodayBR())}
@@ -282,8 +295,30 @@ export function NewPurchaseForm({ cards, people, onSave, onCancel }: NewPurchase
             maxLength={10}
             value={purchaseDateStr}
             onChangeText={(val) => setPurchaseDateStr(maskDateBR(val))}
+            rightIcon={
+              <Pressable
+                onPress={() => setIsDatePickerOpen(true)}
+                className="p-1 items-center justify-center active:opacity-70"
+                accessibilityRole="button"
+                accessibilityLabel="Abrir calendário"
+                testID="open-new-purchase-date-picker-button"
+              >
+                <Calendar size={18} color="#007AFF" />
+              </Pressable>
+            }
           />
         </View>
+
+        <DatePicker
+          visible={isDatePickerOpen}
+          value={effectivePurchaseDate}
+          onChange={(date) => {
+            setPurchaseDateStr(formatDateBR(date));
+          }}
+          onClose={() => setIsDatePickerOpen(false)}
+          title="Data da Compra"
+          testID="new-purchase-date-picker"
+        />
 
         {/* Método de Pagamento */}
         <View className="gap-2">
