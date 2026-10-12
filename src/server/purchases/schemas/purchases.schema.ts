@@ -110,7 +110,7 @@ export const createPurchaseSchema = z
   .object({
     description: z.string().trim().min(1, "A descrição da compra é obrigatória"),
     totalAmount: z.coerce.number().positive("O valor total da compra deve ser positivo"),
-    purchaseDate: z.coerce.date(),
+    purchaseDate: z.coerce.date().default(() => new Date()),
     paymentMethod: z.enum(["cash", "debit", "credit"], {
       errorMap: () => ({ message: "Método de pagamento inválido (cash, debit, credit)" }),
     }),
@@ -135,8 +135,127 @@ export const createPurchaseSchema = z
     },
   );
 
+export const updatePurchaseSchema = z.object({
+  description: z.string().trim().min(1, "A descrição da compra é obrigatória").optional(),
+  purchaseDate: z.coerce.date().optional(),
+  paymentMethod: z
+    .enum(["cash", "debit", "credit"], {
+      errorMap: () => ({ message: "Método de pagamento inválido (cash, debit, credit)" }),
+    })
+    .optional(),
+  creditCardId: z.string().uuid("ID do cartão inválido").optional().nullable(),
+  totalAmount: z.coerce.number().positive("O valor total da compra deve ser positivo").optional(),
+  totalInstallments: z.coerce
+    .number()
+    .int("A quantidade de parcelas deve ser inteira")
+    .min(1, "A quantidade mínima de parcelas é 1")
+    .optional(),
+  splits: z.array(splitInputSchema).optional(),
+});
+
+export const createUpdatePurchaseWithInvarianceSchema = (original: {
+  paymentMethod: string;
+  creditCardId?: string | null;
+  totalAmount: string | number;
+  totalInstallments: number;
+}) =>
+  updatePurchaseSchema.superRefine((data, ctx) => {
+    if (data.paymentMethod !== undefined && data.paymentMethod !== original.paymentMethod) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Não é permitido alterar o método de pagamento da compra",
+        path: ["paymentMethod"],
+      });
+    }
+    if (
+      data.creditCardId !== undefined &&
+      (data.creditCardId || null) !== (original.creditCardId || null)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Não é permitido alterar o cartão de crédito da compra",
+        path: ["creditCardId"],
+      });
+    }
+    if (
+      data.totalAmount !== undefined &&
+      Number(data.totalAmount) !== Number(original.totalAmount)
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Não é permitido alterar o valor total da compra",
+        path: ["totalAmount"],
+      });
+    }
+    if (
+      data.totalInstallments !== undefined &&
+      data.totalInstallments !== original.totalInstallments
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Não é permitido alterar a quantidade de parcelas da compra",
+        path: ["totalInstallments"],
+      });
+    }
+  });
+
+export function validatePurchaseInvariance(
+  original: {
+    paymentMethod: string;
+    creditCardId?: string | null;
+    totalAmount: string | number;
+    totalInstallments: number;
+  },
+  update: {
+    paymentMethod?: string;
+    creditCardId?: string | null;
+    totalAmount?: number | string;
+    totalInstallments?: number;
+  },
+): void {
+  if (update.paymentMethod !== undefined && update.paymentMethod !== original.paymentMethod) {
+    throw new Error("Não é permitido alterar o método de pagamento da compra");
+  }
+  if (
+    update.creditCardId !== undefined &&
+    (update.creditCardId || null) !== (original.creditCardId || null)
+  ) {
+    throw new Error("Não é permitido alterar o cartão de crédito da compra");
+  }
+  if (
+    update.totalAmount !== undefined &&
+    Number(update.totalAmount) !== Number(original.totalAmount)
+  ) {
+    throw new Error("Não é permitido alterar o valor total da compra");
+  }
+  if (
+    update.totalInstallments !== undefined &&
+    update.totalInstallments !== original.totalInstallments
+  ) {
+    throw new Error("Não é permitido alterar a quantidade de parcelas da compra");
+  }
+}
+
 export const toggleInstallmentSplitPaidSchema = z.object({
   isPaid: z.boolean({ required_error: "O status isPaid é obrigatório" }),
+});
+
+export const listPurchasesQuerySchema = z.object({
+  month: z.coerce
+    .number()
+    .int("O mês deve ser um número inteiro")
+    .min(1, "O mês deve estar entre 1 e 12")
+    .max(12, "O mês deve estar entre 1 e 12")
+    .optional(),
+  year: z.coerce
+    .number()
+    .int("O ano deve ser um número inteiro")
+    .min(2000, "O ano deve estar entre 2000 e 2100")
+    .max(2100, "O ano deve estar entre 2000 e 2100")
+    .optional(),
+  creditCardId: z.string().optional(),
+  personId: z.string().optional(),
+  search: z.string().optional(),
 });
 
 export const installmentSplitResponseSchema = z.object({
@@ -187,8 +306,12 @@ export type InstallmentSplit = typeof installmentSplits.$inferSelect;
 export type NewInstallmentSplit = typeof installmentSplits.$inferInsert;
 
 export type CreateSplitInput = z.infer<typeof splitInputSchema>;
-export type CreatePurchaseInput = z.infer<typeof createPurchaseSchema>;
+export type CreatePurchaseInput = z.input<typeof createPurchaseSchema>;
+export type UpdatePurchaseInput = z.input<typeof updatePurchaseSchema>;
+export type UpdatePurchaseOutput = z.infer<typeof updatePurchaseSchema>;
 export type ToggleInstallmentSplitPaidInput = z.infer<typeof toggleInstallmentSplitPaidSchema>;
+export type ListPurchasesQuery = z.infer<typeof listPurchasesQuerySchema>;
+export type ListPurchasesFilters = z.infer<typeof listPurchasesQuerySchema>;
 export type PurchaseResponse = z.infer<typeof purchaseResponseSchema>;
 export type InstallmentResponse = z.infer<typeof installmentResponseSchema>;
 export type InstallmentSplitResponse = z.infer<typeof installmentSplitResponseSchema>;

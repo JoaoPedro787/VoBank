@@ -23,6 +23,7 @@ O projeto segue estritamente uma arquitetura baseada em features tanto no client
 
 - **Linter & Formatação:** ESLint configurado para capturar erros ocultos e Prettier para formatação padrão.
 - **Testes (TDD):** Implementação orientada a testes (TDD) para validar regras de negócio críticas. Os testes devem ficar organizados dentro da pasta `tests/` de cada feature (`src/[feat]/tests/`, `src/server/[feat]/tests/` e `src/shared/tests/`), evitando pastas globais soltas.
+- **Testes Isolados e In-Memory (Sem .env/DB em CI):** Testes unitários/automatizados (executados em CI/GitHub Actions via `pnpm check`) **NUNCA** devem depender de variáveis de ambiente de banco de dados (`.env`, `DATABASE_URL`) nem de conexão ativa com banco de dados real. Não teste as rotas finais (`src/app/api/...`) diretamente caso elas importem a conexão com o banco de dados; em vez disso, teste os componentes isolados da rota em memória (services com repositórios in-memory/mocks, middlewares de autenticação, schemas Zod e utilitários de resposta HTTP).
 - **Script Unificado de Validação:** Deve existir um script no `package.json` (ex: `pnpm check` ou `pnpm validate`) que executa em sequência:
   1. Verificação do Prettier (`prettier --check .`)
   2. Linter ESLint (`eslint .`)
@@ -49,7 +50,7 @@ O projeto segue estritamente uma arquitetura baseada em features tanto no client
 
 ## 2. Sugestão Obrigatória de Commits
 
-Ao final de cada etapa, tarefa implementada ou arquivo significativo criado/alterado, o assistente deve **sempre sugerir ideias de mensagens de commit** formatadas no padrão **Conventional Commits**:
+Deve ser **sempre 1 commit único por grupo principal de tasks** (agrupando todas as alterações e arquivos pertencentes àquele grupo finalizado), formatado no padrão **Conventional Commits**:
 
 - `feat(...)`: Novas funcionalidades.
 - `fix(...)`: Correção de bugs.
@@ -63,4 +64,4 @@ Ao final de cada etapa, tarefa implementada ou arquivo significativo criado/alte
 
 - **Execução por Grupo Principal:** O assistente deve implementar as tarefas agrupadas pelo seu número principal (ex: concluir todas as subtasks do grupo `1` como `1.1`, `1.2`, `1.3`, etc.).
 - **Pausa Obrigatória:** Sempre **parar e aguardar confirmação/validação do usuário** imediatamente após finalizar um grupo completo de tasks (ex: terminou todas as do bloco `1`, pare antes de iniciar o bloco `2`).
-- **Relatório e Commits:** Ao parar no final de cada grupo, apresentar um resumo do que foi entregue, o status das tarefas e a sugestão de commits correspondentes.
+- **Relatório e Commits:** Ao parar no final de cada grupo, apresentar um resumo do que foi entregue, o status das tarefas e a sugestão de **1 commit único que englobe todas as alterações do grupo finalizado**.

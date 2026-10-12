@@ -1,7 +1,11 @@
 import {
   createPurchaseSchema,
+  updatePurchaseSchema,
+  createUpdatePurchaseWithInvarianceSchema,
+  validatePurchaseInvariance,
   splitInputSchema,
   toggleInstallmentSplitPaidSchema,
+  listPurchasesQuerySchema,
   purchases,
   installments,
   installmentSplits,
@@ -101,6 +105,158 @@ describe("Purchases, Installments & Splits Schemas & Validations", () => {
 
       expect(createPurchaseSchema.safeParse(invalidInstallments).success).toBe(false);
     });
+
+    it("should accept purchase without purchaseDate and default to current date", () => {
+      const before = new Date();
+      const withoutDate = {
+        description: "Almoço sem data",
+        totalAmount: 35,
+        paymentMethod: "cash" as const,
+      };
+
+      const result = createPurchaseSchema.safeParse(withoutDate);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.purchaseDate).toBeInstanceOf(Date);
+        expect(result.data.purchaseDate.getTime()).toBeGreaterThanOrEqual(before.getTime() - 1000);
+      }
+    });
+
+    it("should preserve explicitly provided purchaseDate", () => {
+      const explicitDate = new Date("2026-01-15T12:00:00Z");
+      const data = {
+        description: "Compra com data explícita",
+        totalAmount: 50,
+        purchaseDate: explicitDate,
+        paymentMethod: "cash" as const,
+      };
+
+      const result = createPurchaseSchema.safeParse(data);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.purchaseDate.getTime()).toBe(explicitDate.getTime());
+      }
+    });
+  });
+
+  describe("updatePurchaseSchema and Invariance", () => {
+    const originalPurchase = {
+      paymentMethod: "credit",
+      creditCardId: dummyCardId,
+      totalAmount: 600,
+      totalInstallments: 3,
+    };
+
+    it("should accept valid partial update with description and splits", () => {
+      const validUpdate = {
+        description: "Supermercado - Descrição Atualizada",
+        splits: [{ personId: dummyPersonId, percentage: 100, amount: 600 }],
+      };
+
+      const result = updatePurchaseSchema.safeParse(validUpdate);
+      expect(result.success).toBe(true);
+    });
+
+    it("should accept update with purchaseDate", () => {
+      const validUpdate = {
+        purchaseDate: new Date("2026-02-10T10:00:00Z"),
+      };
+
+      const result = updatePurchaseSchema.safeParse(validUpdate);
+      expect(result.success).toBe(true);
+    });
+
+    it("should reject changing paymentMethod under invariance validation", () => {
+      const invarianceSchema = createUpdatePurchaseWithInvarianceSchema(originalPurchase);
+      const invalidUpdate = {
+        paymentMethod: "cash" as const,
+      };
+
+      const result = invarianceSchema.safeParse(invalidUpdate);
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.errors[0].message).toBe(
+          "Não é permitido alterar o método de pagamento da compra",
+        );
+      }
+
+      expect(() => validatePurchaseInvariance(originalPurchase, { paymentMethod: "cash" })).toThrow(
+        "Não é permitido alterar o método de pagamento da compra",
+      );
+    });
+
+    it("should reject changing creditCardId under invariance validation", () => {
+      const invarianceSchema = createUpdatePurchaseWithInvarianceSchema(originalPurchase);
+      const anotherCardId = "c3d4e5f6-a7b8-9c0d-1e2f-3a4b5c6d7e8f";
+      const invalidUpdate = {
+        creditCardId: anotherCardId,
+      };
+
+      const result = invarianceSchema.safeParse(invalidUpdate);
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.errors[0].message).toBe(
+          "Não é permitido alterar o cartão de crédito da compra",
+        );
+      }
+
+      expect(() =>
+        validatePurchaseInvariance(originalPurchase, { creditCardId: anotherCardId }),
+      ).toThrow("Não é permitido alterar o cartão de crédito da compra");
+    });
+
+    it("should reject changing totalAmount under invariance validation", () => {
+      const invarianceSchema = createUpdatePurchaseWithInvarianceSchema(originalPurchase);
+      const invalidUpdate = {
+        totalAmount: 700,
+      };
+
+      const result = invarianceSchema.safeParse(invalidUpdate);
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.errors[0].message).toBe(
+          "Não é permitido alterar o valor total da compra",
+        );
+      }
+
+      expect(() => validatePurchaseInvariance(originalPurchase, { totalAmount: 700 })).toThrow(
+        "Não é permitido alterar o valor total da compra",
+      );
+    });
+
+    it("should reject changing totalInstallments under invariance validation", () => {
+      const invarianceSchema = createUpdatePurchaseWithInvarianceSchema(originalPurchase);
+      const invalidUpdate = {
+        totalInstallments: 5,
+      };
+
+      const result = invarianceSchema.safeParse(invalidUpdate);
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.errors[0].message).toBe(
+          "Não é permitido alterar a quantidade de parcelas da compra",
+        );
+      }
+
+      expect(() => validatePurchaseInvariance(originalPurchase, { totalInstallments: 5 })).toThrow(
+        "Não é permitido alterar a quantidade de parcelas da compra",
+      );
+    });
+
+    it("should accept invariant fields when matching original values", () => {
+      const invarianceSchema = createUpdatePurchaseWithInvarianceSchema(originalPurchase);
+      const validUpdate = {
+        description: "Nova descrição",
+        paymentMethod: "credit" as const,
+        creditCardId: dummyCardId,
+        totalAmount: 600,
+        totalInstallments: 3,
+      };
+
+      const result = invarianceSchema.safeParse(validUpdate);
+      expect(result.success).toBe(true);
+      expect(() => validatePurchaseInvariance(originalPurchase, validUpdate)).not.toThrow();
+    });
   });
 
   describe("splitInputSchema", () => {
@@ -136,6 +292,76 @@ describe("Purchases, Installments & Splits Schemas & Validations", () => {
 
     it("should reject non-boolean isPaid", () => {
       expect(toggleInstallmentSplitPaidSchema.safeParse({ isPaid: "yes" }).success).toBe(false);
+    });
+  });
+
+  describe("listPurchasesQuerySchema", () => {
+    it("should accept empty query object", () => {
+      const result = listPurchasesQuerySchema.safeParse({});
+      expect(result.success).toBe(true);
+    });
+
+    it("should accept valid month and year as numbers", () => {
+      const result = listPurchasesQuerySchema.safeParse({
+        month: 3,
+        year: 2026,
+      });
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.month).toBe(3);
+        expect(result.data.year).toBe(2026);
+      }
+    });
+
+    it("should coerce string values for month and year", () => {
+      const result = listPurchasesQuerySchema.safeParse({
+        month: "12",
+        year: "2025",
+      });
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.month).toBe(12);
+        expect(result.data.year).toBe(2025);
+      }
+    });
+
+    it("should reject month less than 1 or greater than 12", () => {
+      expect(listPurchasesQuerySchema.safeParse({ month: 0 }).success).toBe(false);
+      expect(listPurchasesQuerySchema.safeParse({ month: 13 }).success).toBe(false);
+      expect(listPurchasesQuerySchema.safeParse({ month: -1 }).success).toBe(false);
+    });
+
+    it("should reject non-integer month", () => {
+      expect(listPurchasesQuerySchema.safeParse({ month: 4.5 }).success).toBe(false);
+    });
+
+    it("should reject year outside 2000-2100", () => {
+      expect(listPurchasesQuerySchema.safeParse({ year: 1999 }).success).toBe(false);
+      expect(listPurchasesQuerySchema.safeParse({ year: 2101 }).success).toBe(false);
+    });
+
+    it("should accept valid creditCardId, personId, and search", () => {
+      const result = listPurchasesQuerySchema.safeParse({
+        creditCardId: dummyCardId,
+        personId: dummyPersonId,
+        search: "Mercado",
+      });
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.creditCardId).toBe(dummyCardId);
+        expect(result.data.personId).toBe(dummyPersonId);
+        expect(result.data.search).toBe("Mercado");
+      }
+    });
+
+    it("should accept special filter identifiers such as 'no-card', 'none', and 'user'", () => {
+      const noCardResult = listPurchasesQuerySchema.safeParse({ creditCardId: "no-card" });
+      const noneCardResult = listPurchasesQuerySchema.safeParse({ creditCardId: "none" });
+      const userResult = listPurchasesQuerySchema.safeParse({ personId: "user" });
+
+      expect(noCardResult.success).toBe(true);
+      expect(noneCardResult.success).toBe(true);
+      expect(userResult.success).toBe(true);
     });
   });
 

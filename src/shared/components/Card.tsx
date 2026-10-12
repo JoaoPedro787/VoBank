@@ -2,13 +2,30 @@ import * as React from "react";
 import { View, Text } from "react-native";
 import { cn } from "@/shared/lib/utils";
 
-export function Card({ className, ...props }: React.ComponentPropsWithoutRef<typeof View>) {
-  return (
+import { AnimatedScaleFade } from "./AnimatedScaleFade";
+
+export interface CardProps extends React.ComponentPropsWithoutRef<typeof View> {
+  animated?: boolean;
+}
+
+export function Card({ className, animated = false, children, ...props }: CardProps) {
+  const content = (
     <View
-      className={cn("rounded-2xl border border-border bg-card p-5 shadow-sm", className)}
+      className={cn(
+        "rounded-2xl border border-black/[0.04] bg-card p-5 shadow-sm dark:border-white/[0.08]",
+        className,
+      )}
       {...props}
-    />
+    >
+      {children}
+    </View>
   );
+
+  if (animated) {
+    return <AnimatedScaleFade>{content}</AnimatedScaleFade>;
+  }
+
+  return content;
 }
 
 export function CardHeader({ className, ...props }: React.ComponentPropsWithoutRef<typeof View>) {

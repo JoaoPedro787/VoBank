@@ -40,14 +40,38 @@ module.exports = {
           foreground: "hsl(var(--card-foreground))",
         },
         success: {
-          DEFAULT: "hsl(142 71% 45%)",
-          foreground: "hsl(0 0% 100%)",
+          DEFAULT: "hsl(var(--success))",
+          foreground: "hsl(var(--success-foreground))",
+        },
+        warning: {
+          DEFAULT: "hsl(var(--warning))",
+          foreground: "hsl(var(--warning-foreground))",
+        },
+        cupertino: {
+          blue: "#007AFF",
+          indigo: "#5856D6",
+          mint: "#34C759",
+          amber: "#FF9500",
+          coral: "#FF3B30",
+          canvas: {
+            light: "#F2F2F7",
+            dark: "#000000",
+          },
+          card: {
+            light: "#FFFFFF",
+            dark: "#1C1C1E",
+          },
+          surface: {
+            light: "#E5E5EA",
+            dark: "#2C2C2E",
+          },
         },
       },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+        14: "14px",
       },
     },
   },
