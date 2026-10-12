@@ -2,8 +2,8 @@
 
 ## 1. Design Tokens & CSS Runtime Configuration
 
-- [ ] 1.1 Atualizar `src/styles/global.css` substituindo o seletor `.dark` por `.dark:root` e refinando os tokens de tema escuro para a paleta Deep Zinc / Cupertino (`--background: 240 10% 4%`, `--card: 240 5% 10%`, `--border: 240 4% 18%`), verificando a correta compilação pelo NativeWind
-- [ ] 1.2 Criar `src/shared/constants/theme.ts` exportando as constantes `NAV_THEME` (`light` e `dark`) com mapeamento tipado de cores para o React Navigation
+- [x] 1.1 Atualizar `src/styles/global.css` substituindo o seletor `.dark` por `.dark:root` e refinando os tokens de tema escuro para a paleta Deep Zinc / Cupertino (`--background: 240 10% 4%`, `--card: 240 5% 10%`, `--border: 240 4% 18%`), verificando a correta compilação pelo NativeWind
+- [x] 1.2 Criar `src/shared/constants/theme.ts` exportando as constantes `NAV_THEME` (`light` e `dark`) com mapeamento tipado de cores para o React Navigation
 
 ## 2. Theme Persistence & Root Navigation Synchronization
 
