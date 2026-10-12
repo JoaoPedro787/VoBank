@@ -9,9 +9,9 @@
 
 ## 2. Integração de Toasts em Compras e Rateios do Dashboard
 
-- [ ] 2.1 Integrar `showToast` no modal de compras `src/app/(modals)/purchase.tsx` para cadastro, atualização e exclusão, verificando chamadas de sucesso e captura de erro
-- [ ] 2.2 Integrar `showToast` na alternância de status de pagamento de parcelas (pago/pendente) em `src/app/(tabs)/index.tsx`
-- [ ] 2.3 Atualizar ou adicionar testes unitários em `src/purchases/tests/` e `src/dashboard/tests/` verificando os disparos de toast
+- [x] 2.1 Integrar `showToast` no modal de compras `src/app/(modals)/purchase.tsx` para cadastro, atualização e exclusão, verificando chamadas de sucesso e captura de erro
+- [x] 2.2 Integrar `showToast` na alternância de status de pagamento de parcelas (pago/pendente) em `src/app/(tabs)/index.tsx`
+- [x] 2.3 Atualizar ou adicionar testes unitários em `src/purchases/tests/` e `src/dashboard/tests/` verificando os disparos de toast
 
 ## 3. Integração de Toasts em Cartões e Pessoas e Validação Completa
 
