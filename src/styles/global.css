@@ -30,12 +30,12 @@
     --radius: 0.875rem;
   }
 
-  .dark {
-    --background: 0 0% 0%;
+  .dark:root {
+    --background: 240 10% 4%;
     --foreground: 0 0% 98%;
-    --card: 240 3% 11%;
+    --card: 240 5% 10%;
     --card-foreground: 0 0% 98%;
-    --popover: 240 3% 11%;
+    --popover: 240 5% 10%;
     --popover-foreground: 0 0% 98%;
     --primary: 211 100% 50%;
     --primary-foreground: 0 0% 100%;
