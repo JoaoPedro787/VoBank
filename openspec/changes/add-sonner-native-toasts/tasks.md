@@ -2,10 +2,10 @@
 
 ## 1. Infraestrutura, Toaster na Raiz e Helper de Toast
 
-- [ ] 1.1 Instalar dependências `sonner-native` e `react-native-worklets` via `pnpm add` e verificar registro no `package.json`
-- [ ] 1.2 Criar utilitário `src/shared/utils/toast.ts` integrando `showToast.success` e `showToast.error` ao `hapticFeedback`
-- [ ] 1.3 Configurar mock de `sonner-native` em `src/shared/tests/setup.ts` e adicionar suíte de testes unitários em `src/shared/tests/toast.test.ts`
-- [ ] 1.4 Adicionar container `<Toaster position="top-center" />` no layout raiz `src/app/_layout.tsx` com detecção de tema (claro/escuro) e verificar compilação de tipos
+- [x] 1.1 Instalar dependências `sonner-native` e `react-native-worklets` via `pnpm add` e verificar registro no `package.json`
+- [x] 1.2 Criar utilitário `src/shared/utils/toast.ts` integrando `showToast.success` e `showToast.error` ao `hapticFeedback`
+- [x] 1.3 Configurar mock de `sonner-native` em `src/shared/tests/setup.ts` e adicionar suíte de testes unitários em `src/shared/tests/toast.test.ts`
+- [x] 1.4 Adicionar container `<Toaster position="top-center" />` no layout raiz `src/app/_layout.tsx` com detecção de tema (claro/escuro) e verificar compilação de tipos
 
 ## 2. Integração de Toasts em Compras e Rateios do Dashboard
 
