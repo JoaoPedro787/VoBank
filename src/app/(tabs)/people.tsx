@@ -8,7 +8,7 @@ import { Person } from "@/people/types/people.types";
 import { Button } from "@/shared/components/Button";
 import { Card } from "@/shared/components/Card";
 import { Badge } from "@/shared/components/Badge";
-import { DeleteConfirmationSheet } from "@/shared/components/DeleteConfirmationSheet";
+import { DeleteConfirmationDialog } from "@/shared/components/DeleteConfirmationDialog";
 
 export default function PeopleScreen() {
   const insets = useSafeAreaInsets();
@@ -169,7 +169,7 @@ export default function PeopleScreen() {
         />
       )}
 
-      <DeleteConfirmationSheet
+      <DeleteConfirmationDialog
         isOpen={!!personToDelete}
         onClose={() => setPersonToDelete(null)}
         onConfirm={handleConfirmDelete}

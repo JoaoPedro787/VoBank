@@ -8,7 +8,7 @@ import { Switch } from "@/shared/components/Switch";
 import { Card } from "@/shared/components/Card";
 import { ModalSheet } from "@/shared/components/ModalSheet";
 import { DatePicker } from "@/shared/components/DatePicker";
-import { DeleteConfirmationSheet } from "@/shared/components/DeleteConfirmationSheet";
+import { DeleteConfirmationDialog } from "@/shared/components/DeleteConfirmationDialog";
 import { Person } from "@/people/types/people.types";
 import { CreditCard } from "@/credit-cards/types/credit-cards.types";
 import { PurchaseClient, UpdatePurchaseData, CreateSplitData } from "../types/purchases.types";
@@ -449,7 +449,7 @@ export function EditPurchaseForm({
       </ModalSheet.Footer>
 
       {onDelete ? (
-        <DeleteConfirmationSheet
+        <DeleteConfirmationDialog
           isOpen={showDeleteConfirm}
           onClose={() => setShowDeleteConfirm(false)}
           onConfirm={handleDelete}

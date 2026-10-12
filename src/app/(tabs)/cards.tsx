@@ -8,7 +8,7 @@ import { CreditCard } from "@/credit-cards/types/credit-cards.types";
 import { Button } from "@/shared/components/Button";
 import { Badge } from "@/shared/components/Badge";
 import { AnimatedScaleFade } from "@/shared/components/AnimatedScaleFade";
-import { DeleteConfirmationSheet } from "@/shared/components/DeleteConfirmationSheet";
+import { DeleteConfirmationDialog } from "@/shared/components/DeleteConfirmationDialog";
 
 export default function CardsScreen() {
   const insets = useSafeAreaInsets();
@@ -198,7 +198,7 @@ export default function CardsScreen() {
         />
       )}
 
-      <DeleteConfirmationSheet
+      <DeleteConfirmationDialog
         isOpen={!!cardToDelete}
         onClose={() => setCardToDelete(null)}
         onConfirm={handleConfirmDelete}

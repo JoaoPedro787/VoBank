@@ -22,10 +22,10 @@
 
 ## 4. Implementação e Integração do Diálogo de Exclusão Nativo
 
-- [ ] 4.1 Criar o componente `DeleteConfirmationDialog` (`src/shared/components/DeleteConfirmationDialog.tsx`) com divisão de plataforma: Android com `AlertDialog` (`@expo/ui/jetpack-compose` em `DeleteConfirmationDialog.android.tsx`) e iOS com `Alert` (`@expo/ui/swift-ui` em `DeleteConfirmationDialog.ios.tsx`), sob `<Host>`
-- [ ] 4.2 Integrar a confirmação de exclusão na tela de Cartões (`src/app/(tabs)/cards.tsx`), utilizando o `DeleteConfirmationDialog` nativo
-- [ ] 4.3 Integrar a confirmação de exclusão na tela de Pessoas (`src/app/(tabs)/people.tsx`), utilizando o `DeleteConfirmationDialog` nativo
-- [ ] 4.4 Integrar a confirmação de exclusão na tela de Edição de Compra (`src/purchases/components/EditPurchaseForm.tsx`), utilizando o `DeleteConfirmationDialog` nativo
+- [x] 4.1 Criar o componente `DeleteConfirmationDialog` (`src/shared/components/DeleteConfirmationDialog.tsx`) para Android e Web com diálogo modal (título bold, botão `secondary` para Cancelar e padrão para Confirmar) e iOS com `Alert` (`@expo/ui/swift-ui` em `DeleteConfirmationDialog.ios.tsx`), sob `<Host>`
+- [x] 4.2 Integrar a confirmação de exclusão na tela de Cartões (`src/app/(tabs)/cards.tsx`), utilizando o `DeleteConfirmationDialog` nativo
+- [x] 4.3 Integrar a confirmação de exclusão na tela de Pessoas (`src/app/(tabs)/people.tsx`), utilizando o `DeleteConfirmationDialog` nativo
+- [x] 4.4 Integrar a confirmação de exclusão na tela de Edição de Compra (`src/purchases/components/EditPurchaseForm.tsx`), utilizando o `DeleteConfirmationDialog` nativo
 
 ## 5. Validação Integrada e Qualidade de Código
 

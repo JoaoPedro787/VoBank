@@ -36,10 +36,9 @@ O projeto utiliza Expo SDK 57, React Native 0.86, NativeWind v4 e Tailwind CSS. 
 
 ### 3. Confirmação de Exclusão com Diálogo Nativo (`DeleteConfirmationDialog`)
 
-- **Decisão:** Utilizar cada componente nativo do sistema via `@expo/ui` com divisão de arquivos por plataforma:
-  - **Android (`DeleteConfirmationDialog.android.tsx`):** Utilizar `AlertDialog` do Jetpack Compose (`@expo/ui/jetpack-compose`), com botões nativos de confirmação e dispensa (`AlertDialog.ConfirmButton`, `AlertDialog.DismissButton`, `AlertDialog.Title`, `AlertDialog.Text`), sob `<Host>`.
+- **Decisão:** Manter divisão por plataforma focada:
   - **iOS (`DeleteConfirmationDialog.ios.tsx`):** Utilizar `Alert` do SwiftUI (`@expo/ui/swift-ui`), com gatilhos, botões de ação e mensagem nativos (`Alert`, `Alert.Trigger`, `Alert.Actions`, `Alert.Message`), sob `<Host>`.
-  - **Contrato Universal (`DeleteConfirmationDialog.tsx`):** Definir o contrato comum de props (`isOpen`, `onClose`, `onConfirm`, `title`, `description`, `confirmText`, `cancelText`, `isLoading`, `destructive`) e fallback para plataformas não nativas.
+  - **Android e Web (`DeleteConfirmationDialog.tsx`):** Utilizar diálogo modal padronizado com título em negrito (`font-bold`), botão de cancelamento com variante `secondary` e botão de confirmação com variante padrão (`default`), garantindo consistência visual e ergonômica entre Android e Web.
 - **Alternativas consideradas:**
   - `ModalSheet` / BottomSheet customizado (descartado pela decisão explícita do usuário de utilizar diálogos nativos do sistema operacional).
   - `Alert.alert` imperativo do React Native (descartado em favor dos componentes declarativos nativos modernos do `@expo/ui`).

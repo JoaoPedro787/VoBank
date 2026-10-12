@@ -7,4 +7,4 @@ export * from "./ModalGrabHandle";
 export * from "./ModalSheet";
 export * from "./Switch";
 export * from "./DatePicker";
-export * from "./DeleteConfirmationSheet";
+export * from "./DeleteConfirmationDialog";
