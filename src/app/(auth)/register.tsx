@@ -1,7 +1,6 @@
 import * as React from "react";
 import { View, Text, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { router } from "expo-router";
-import { Wallet } from "lucide-react-native";
 import { useAuth } from "@/auth/hooks/use-auth";
 import {
   Card,
@@ -13,6 +12,7 @@ import {
 } from "@/shared/components/Card";
 import { Input } from "@/shared/components/Input";
 import { Button } from "@/shared/components/Button";
+import { Logo } from "@/shared/components/Logo";
 
 export default function RegisterScreen() {
   const { register } = useAuth();
@@ -70,9 +70,7 @@ export default function RegisterScreen() {
         keyboardShouldPersistTaps="handled"
       >
         <View className="mb-6 items-center">
-          <View className="mb-3.5 h-16 w-16 items-center justify-center rounded-2xl bg-primary shadow-lg shadow-primary/25">
-            <Wallet size={30} color="#ffffff" />
-          </View>
+          <Logo className="mb-3.5" />
           <Text className="text-3xl font-extrabold tracking-tight text-foreground">
             Criar Conta
           </Text>

@@ -8,3 +8,4 @@ export * from "./ModalSheet";
 export * from "./Switch";
 export * from "./DatePicker";
 export * from "./DeleteConfirmationDialog";
+export * from "./Logo";
