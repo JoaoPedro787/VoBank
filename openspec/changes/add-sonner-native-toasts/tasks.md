@@ -15,7 +15,7 @@
 
 ## 3. Integração de Toasts em Cartões e Pessoas e Validação Completa
 
-- [ ] 3.1 Integrar `showToast` no modal de cartões `src/app/(modals)/card.tsx` e no fluxo de exclusão em `src/app/(tabs)/cards.tsx`
-- [ ] 3.2 Integrar `showToast` no modal de pessoas `src/app/(modals)/person.tsx` e no fluxo de exclusão em `src/app/(tabs)/people.tsx`
-- [ ] 3.3 Atualizar ou adicionar testes unitários em `src/credit-cards/tests/` e `src/people/tests/` cobrindo o feedback visual
-- [ ] 3.4 Executar a validação completa do projeto (`pnpm check`) garantindo Prettier, ESLint, TypeScript e 100% dos testes unitários passando
+- [x] 3.1 Integrar `showToast` no modal de cartões `src/app/(modals)/card.tsx` e no fluxo de exclusão em `src/app/(tabs)/cards.tsx`
+- [x] 3.2 Integrar `showToast` no modal de pessoas `src/app/(modals)/person.tsx` e no fluxo de exclusão em `src/app/(tabs)/people.tsx`
+- [x] 3.3 Atualizar ou adicionar testes unitários em `src/credit-cards/tests/` e `src/people/tests/` cobrindo o feedback visual
+- [x] 3.4 Executar a validação completa do projeto (`pnpm check`) garantindo Prettier, ESLint, TypeScript e 100% dos testes unitários passando

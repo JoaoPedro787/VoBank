@@ -9,6 +9,7 @@ import { Button } from "@/shared/components/Button";
 import { Badge } from "@/shared/components/Badge";
 import { AnimatedScaleFade } from "@/shared/components/AnimatedScaleFade";
 import { DeleteConfirmationDialog } from "@/shared/components/DeleteConfirmationDialog";
+import { showToast } from "@/shared/utils/toast";
 
 export default function CardsScreen() {
   const insets = useSafeAreaInsets();
@@ -42,7 +43,10 @@ export default function CardsScreen() {
     try {
       setIsDeleting(true);
       await deleteCard(cardToDelete.id);
+      showToast.success("Cartão excluído com sucesso!");
       setCardToDelete(null);
+    } catch (err: unknown) {
+      showToast.error("Erro ao excluir cartão", err instanceof Error ? err.message : undefined);
     } finally {
       setIsDeleting(false);
     }

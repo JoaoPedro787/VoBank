@@ -4,6 +4,7 @@ import { ModalSheet } from "@/shared/components/ModalSheet";
 import { usePeople } from "@/people/hooks/use-people";
 import { PersonForm } from "@/people/components/PersonForm";
 import { CreatePersonData } from "@/people/types/people.types";
+import { showToast } from "@/shared/utils/toast";
 
 export default function PersonModalScreen() {
   const { id } = useLocalSearchParams<{ id?: string }>();
@@ -15,12 +16,21 @@ export default function PersonModalScreen() {
   }, [id, people]);
 
   const handleSave = async (data: CreatePersonData) => {
-    if (personToEdit) {
-      await updatePerson(personToEdit.id, data);
-    } else {
-      await createPerson(data);
+    try {
+      if (personToEdit) {
+        await updatePerson(personToEdit.id, data);
+        showToast.success("Pessoa atualizada com sucesso!");
+      } else {
+        await createPerson(data);
+        showToast.success("Pessoa cadastrada com sucesso!");
+      }
+      router.back();
+    } catch (err: unknown) {
+      showToast.error(
+        personToEdit ? "Erro ao atualizar pessoa" : "Erro ao cadastrar pessoa",
+        err instanceof Error ? err.message : undefined,
+      );
     }
-    router.back();
   };
 
   return (

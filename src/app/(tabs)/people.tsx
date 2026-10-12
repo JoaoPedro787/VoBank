@@ -9,6 +9,7 @@ import { Button } from "@/shared/components/Button";
 import { Card } from "@/shared/components/Card";
 import { Badge } from "@/shared/components/Badge";
 import { DeleteConfirmationDialog } from "@/shared/components/DeleteConfirmationDialog";
+import { showToast } from "@/shared/utils/toast";
 
 export default function PeopleScreen() {
   const insets = useSafeAreaInsets();
@@ -42,7 +43,10 @@ export default function PeopleScreen() {
     try {
       setIsDeleting(true);
       await deletePerson(personToDelete.id);
+      showToast.success("Pessoa excluída com sucesso!");
       setPersonToDelete(null);
+    } catch (err: unknown) {
+      showToast.error("Erro ao excluir pessoa", err instanceof Error ? err.message : undefined);
     } finally {
       setIsDeleting(false);
     }
