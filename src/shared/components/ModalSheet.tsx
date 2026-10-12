@@ -1,11 +1,8 @@
 import * as React from "react";
-import { View, Text, ScrollView, Pressable, KeyboardAvoidingView, Platform } from "react-native";
+import { View, Text, ScrollView, KeyboardAvoidingView, Platform } from "react-native";
 import { Host, BottomSheet as ExpoUIBottomSheet } from "@expo/ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { router } from "expo-router";
-import { X } from "lucide-react-native";
 import { cn } from "@/shared/lib/utils";
-import { hapticFeedback } from "@/shared/utils/haptics";
 import { ModalGrabHandle } from "./ModalGrabHandle";
 
 export interface ModalSheetHeaderProps extends React.ComponentPropsWithoutRef<typeof View> {
@@ -19,52 +16,28 @@ export interface ModalSheetHeaderProps extends React.ComponentPropsWithoutRef<ty
 export function ModalSheetHeader({
   title,
   subtitle,
-  onClose,
-  showCloseButton = true,
+  onClose: _onClose,
+  showCloseButton: _showCloseButton,
   children,
   className,
   ...props
 }: ModalSheetHeaderProps) {
-  const handleClose = () => {
-    void hapticFeedback.impactLight();
-    if (onClose) {
-      onClose();
-    } else {
-      router.back();
-    }
-  };
-
   return (
     <View className={cn("border-b border-border/60 px-5 pb-3 pt-3", className)} {...props}>
-      <View className="flex-row items-center justify-between gap-3">
-        <View className="flex-1">
-          {title ? (
-            <Text
-              className="text-xl font-bold tracking-tight text-foreground"
-              numberOfLines={1}
-              accessibilityRole="header"
-            >
-              {title}
-            </Text>
-          ) : null}
-          {subtitle ? (
-            <Text className="mt-0.5 text-xs text-muted-foreground" numberOfLines={2}>
-              {subtitle}
-            </Text>
-          ) : null}
-        </View>
-
-        {showCloseButton ? (
-          <Pressable
-            accessibilityLabel="Fechar modal"
-            accessibilityRole="button"
-            className="h-8 w-8 items-center justify-center rounded-full bg-muted/60 active:bg-muted"
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-            onPress={handleClose}
-            testID="modal-sheet-close-button"
+      <View>
+        {title ? (
+          <Text
+            className="text-xl font-bold tracking-tight text-foreground"
+            numberOfLines={1}
+            accessibilityRole="header"
           >
-            <X size={16} className="text-muted-foreground" color="#8E8E93" />
-          </Pressable>
+            {title}
+          </Text>
+        ) : null}
+        {subtitle ? (
+          <Text className="mt-0.5 text-xs text-muted-foreground" numberOfLines={2}>
+            {subtitle}
+          </Text>
         ) : null}
       </View>
       {children}
@@ -169,7 +142,7 @@ export function ModalSheetRoot({
         behavior={Platform.OS === "ios" ? "padding" : undefined}
         className="flex-1"
       >
-        {showGrabHandle ? <ModalGrabHandle className="py-2" /> : null}
+        {Platform.OS === "android" && showGrabHandle ? <ModalGrabHandle className="py-2" /> : null}
         {children}
       </KeyboardAvoidingView>
     </View>
