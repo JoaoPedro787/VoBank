@@ -7,8 +7,14 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 import { Toaster } from "sonner-native";
 import { AuthProvider } from "@/auth/hooks/use-auth";
 import { notificationService } from "@/notifications/services/notification.service";
+import { configureReanimatedLogger, ReanimatedLogLevel } from "react-native-reanimated";
 import { DarkNavTheme, LightNavTheme } from "@/shared/constants/theme";
 import { useTheme } from "@/shared/hooks/useTheme";
+
+configureReanimatedLogger({
+  level: ReanimatedLogLevel.warn,
+  strict: false,
+});
 
 export default function RootLayout() {
   const { isDark, initTheme } = useTheme();

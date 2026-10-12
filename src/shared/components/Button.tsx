@@ -5,7 +5,7 @@ import { cn } from "@/shared/lib/utils";
 import { hapticFeedback } from "@/shared/utils/haptics";
 
 const buttonVariants = cva(
-  "relative flex-row items-center justify-center rounded-[14px] font-medium transition-all active:scale-[0.97] active:opacity-90",
+  "relative flex-row items-center justify-center rounded-[14px] font-medium active:scale-[0.97] active:opacity-90",
   {
     variants: {
       variant: {
