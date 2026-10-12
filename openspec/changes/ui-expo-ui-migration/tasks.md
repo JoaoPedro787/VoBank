@@ -29,5 +29,5 @@
 
 ## 5. Validação Integrada e Qualidade de Código
 
-- [ ] 5.1 Executar a suíte de validação unificada (`pnpm check`: Prettier, ESLint, TypeScript e Jest) corrigindo qualquer inconsistência
-- [ ] 5.2 Validar conformidade visual, contraste e ergonomia dos componentes em modo claro e escuro
+- [x] 5.1 Executar a suíte de validação unificada (`pnpm check`: Prettier, ESLint, TypeScript e Jest) corrigindo qualquer inconsistência
+- [x] 5.2 Validar conformidade visual, contraste e ergonomia dos componentes em modo claro e escuro
