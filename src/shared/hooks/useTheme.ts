@@ -38,6 +38,10 @@ export const themeStorage = {
       memoryFallbackPreference = preference;
     }
   },
+
+  _resetMemoryFallback(): void {
+    memoryFallbackPreference = null;
+  },
 };
 
 export async function loadSavedThemePreference(

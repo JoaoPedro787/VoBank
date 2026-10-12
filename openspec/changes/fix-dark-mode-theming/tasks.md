@@ -12,5 +12,5 @@
 
 ## 3. Testes Automatizados & Validação de Qualidade
 
-- [ ] 3.1 Atualizar a suíte de testes unitários em `src/shared/tests/useTheme.test.ts` mockando `expo-secure-store` em memória e validando o ciclo de vida de persistência e alternância de temas
-- [ ] 3.2 Executar o script unificado de validação `pnpm check` (prettier, eslint, tsc e jest) garantindo 100% de sucesso sem pendências
+- [x] 3.1 Atualizar a suíte de testes unitários em `src/shared/tests/useTheme.test.ts` mockando `expo-secure-store` em memória e validando o ciclo de vida de persistência e alternância de temas
+- [x] 3.2 Executar o script unificado de validação `pnpm check` (prettier, eslint, tsc e jest) garantindo 100% de sucesso sem pendências
