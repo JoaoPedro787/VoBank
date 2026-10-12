@@ -46,6 +46,18 @@ describe("ModalSheet Compound Component (TDD & Unit)", () => {
       expect(element).toBeDefined();
       expect(element.props.showGrabHandle).toBe(false);
     });
+
+    it("should support controlled BottomSheet with isPresented and snapPoints", () => {
+      const handleDismiss = jest.fn();
+      const element = (
+        <ModalSheet isPresented={true} onDismiss={handleDismiss} snapPoints={["half", "full"]}>
+          <Text>Controlled Sheet</Text>
+        </ModalSheet>
+      );
+      expect(element).toBeDefined();
+      expect(element.props.isPresented).toBe(true);
+      expect(element.props.snapPoints).toEqual(["half", "full"]);
+    });
   });
 
   describe("ModalSheet.Header Subcomponent", () => {

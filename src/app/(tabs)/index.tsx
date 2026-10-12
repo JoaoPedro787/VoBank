@@ -47,6 +47,7 @@ export default function HomeScreen() {
     fetchDashboard,
     nextMonth,
     prevMonth,
+    setMonthYear,
     toggleSplitPaid,
   } = useDashboard();
 
@@ -189,6 +190,7 @@ export default function HomeScreen() {
                 year={year}
                 onPrevMonth={prevMonth}
                 onNextMonth={nextMonth}
+                onSelectMonthYear={setMonthYear}
               />
 
               {/* Métricas Gerais Consolidadas */}

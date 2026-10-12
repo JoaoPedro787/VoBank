@@ -5,3 +5,6 @@ export * from "./Badge";
 export * from "./AnimatedScaleFade";
 export * from "./ModalGrabHandle";
 export * from "./ModalSheet";
+export * from "./Switch";
+export * from "./DatePicker";
+export * from "./DeleteConfirmationDialog";

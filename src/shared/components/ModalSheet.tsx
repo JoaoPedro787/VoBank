@@ -1,5 +1,6 @@
 import * as React from "react";
 import { View, Text, ScrollView, Pressable, KeyboardAvoidingView, Platform } from "react-native";
+import { Host, BottomSheet as ExpoUIBottomSheet } from "@expo/ui";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router } from "expo-router";
 import { X } from "lucide-react-native";
@@ -121,17 +122,47 @@ export function ModalSheetFooter({ children, className, style, ...props }: Modal
   );
 }
 
+export type ModalSheetSnapPoint = "half" | "full" | { fraction: number } | { height: number };
+
 export interface ModalSheetProps extends React.ComponentPropsWithoutRef<typeof View> {
   children?: React.ReactNode;
   showGrabHandle?: boolean;
+  isPresented?: boolean;
+  onDismiss?: () => void;
+  snapPoints?: ModalSheetSnapPoint[];
 }
 
 export function ModalSheetRoot({
   children,
   showGrabHandle = true,
+  isPresented,
+  onDismiss,
+  snapPoints,
   className,
   ...props
 }: ModalSheetProps) {
+  if (isPresented !== undefined) {
+    return (
+      <Host matchContents={false}>
+        <ExpoUIBottomSheet
+          isPresented={isPresented}
+          onDismiss={onDismiss ?? (() => {})}
+          snapPoints={snapPoints}
+          showDragIndicator={showGrabHandle}
+        >
+          <View className={cn("flex-1 bg-background", className)} {...props}>
+            <KeyboardAvoidingView
+              behavior={Platform.OS === "ios" ? "padding" : undefined}
+              className="flex-1"
+            >
+              {children}
+            </KeyboardAvoidingView>
+          </View>
+        </ExpoUIBottomSheet>
+      </Host>
+    );
+  }
+
   return (
     <View className={cn("flex-1 bg-background", className)} {...props}>
       <KeyboardAvoidingView

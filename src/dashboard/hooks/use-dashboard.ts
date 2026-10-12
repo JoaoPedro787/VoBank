@@ -77,6 +77,11 @@ export function useDashboard() {
     }
   };
 
+  const setMonthYear = React.useCallback((newMonth: number, newYear: number) => {
+    setMonth(newMonth);
+    setYear(newYear);
+  }, []);
+
   return {
     month,
     year,
@@ -88,6 +93,7 @@ export function useDashboard() {
     fetchDashboard,
     nextMonth,
     prevMonth,
+    setMonthYear,
     toggleSplitPaid,
   };
 }

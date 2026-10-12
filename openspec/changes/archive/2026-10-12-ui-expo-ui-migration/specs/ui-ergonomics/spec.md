@@ -27,8 +27,8 @@ Todos os modais de ação (criação e edição de pessoas, cartões e compras) 
 ## ADDED Requirements
 
 ### Requirement: Diálogo de Confirmação de Exclusão Padronizado
-O sistema SHALL fornecer um componente reutilizável de confirmação de exclusão em formato de Bottom Sheet (`DeleteConfirmationSheet`), exibindo ícone de alerta destrutivo, título descritivo da ação, aviso explicativo das entidades afetadas e dois botões de ação: botão secundário para cancelar e botão destrutivo (`destructive`) para confirmar a remoção com estado de carregamento.
+O sistema SHALL fornecer um componente reutilizável de confirmação de exclusão nativo (`DeleteConfirmationDialog`), utilizando componentes nativos do `@expo/ui` com divisão por plataforma: `AlertDialog` (`@expo/ui/jetpack-compose`) no Android e `Alert` (`@expo/ui/swift-ui`) no iOS, encapsulados por `<Host>` do `@expo/ui`. O diálogo exibirá título descritivo da ação, aviso explicativo das entidades afetadas e opções de cancelar e confirmar a exclusão com estilo destrutivo.
 
-#### Scenario: Exibição do diálogo de exclusão
+#### Scenario: Exibição do diálogo de exclusão nativo
 - **WHEN** o usuário toca no ícone de lixeira ou botão de exclusão de qualquer entidade (cartão, pessoa ou compra)
-- **THEN** o sistema exibe o Bottom Sheet de confirmação com detalhes claros dos dados que serão excluídos e botões de Cancelar e Confirmar Exclusão
+- **THEN** o sistema exibe o diálogo nativo do sistema operacional (`AlertDialog` no Android e `Alert` no iOS) com título, mensagem descritiva e opções de Cancelar e Confirmar Exclusão

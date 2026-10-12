@@ -1,13 +1,5 @@
 import * as React from "react";
-import {
-  View,
-  Text,
-  FlatList,
-  Pressable,
-  RefreshControl,
-  Alert,
-  ActivityIndicator,
-} from "react-native";
+import { View, Text, FlatList, Pressable, RefreshControl, ActivityIndicator } from "react-native";
 import { Users, Plus, Pencil, Trash2 } from "lucide-react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { router, useFocusEffect } from "expo-router";
@@ -16,10 +8,13 @@ import { Person } from "@/people/types/people.types";
 import { Button } from "@/shared/components/Button";
 import { Card } from "@/shared/components/Card";
 import { Badge } from "@/shared/components/Badge";
+import { DeleteConfirmationDialog } from "@/shared/components/DeleteConfirmationDialog";
 
 export default function PeopleScreen() {
   const insets = useSafeAreaInsets();
   const { people, isLoading, error, fetchPeople, deletePerson } = usePeople();
+  const [personToDelete, setPersonToDelete] = React.useState<Person | null>(null);
+  const [isDeleting, setIsDeleting] = React.useState(false);
 
   useFocusEffect(
     React.useCallback(() => {
@@ -39,16 +34,18 @@ export default function PeopleScreen() {
   };
 
   const handleDelete = (person: Person) => {
-    Alert.alert("Excluir Pessoa", `Tem certeza que deseja remover ${person.name}?`, [
-      { text: "Cancelar", style: "cancel" },
-      {
-        text: "Excluir",
-        style: "destructive",
-        onPress: async () => {
-          await deletePerson(person.id);
-        },
-      },
-    ]);
+    setPersonToDelete(person);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!personToDelete) return;
+    try {
+      setIsDeleting(true);
+      await deletePerson(personToDelete.id);
+      setPersonToDelete(null);
+    } finally {
+      setIsDeleting(false);
+    }
   };
 
   return (
@@ -171,6 +168,17 @@ export default function PeopleScreen() {
           )}
         />
       )}
+
+      <DeleteConfirmationDialog
+        isOpen={!!personToDelete}
+        onClose={() => setPersonToDelete(null)}
+        onConfirm={handleConfirmDelete}
+        isLoading={isDeleting}
+        title="Excluir Pessoa"
+        itemName={personToDelete?.name}
+        description={`Tem certeza que deseja remover ${personToDelete?.name ?? ""}? Esta ação não pode ser desfeita e removerá os vínculos associados.`}
+        confirmLabel="Excluir"
+      />
     </View>
   );
 }

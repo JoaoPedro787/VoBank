@@ -1,11 +1,14 @@
 import * as React from "react";
 import { View, Text, Pressable } from "react-native";
-import { Users, Calendar, Lock, Trash2, AlertTriangle, Info } from "lucide-react-native";
+import { Users, Calendar, Lock, Trash2, Info } from "lucide-react-native";
 import { Input } from "@/shared/components/Input";
 import { Button } from "@/shared/components/Button";
 import { Badge } from "@/shared/components/Badge";
+import { Switch } from "@/shared/components/Switch";
 import { Card } from "@/shared/components/Card";
 import { ModalSheet } from "@/shared/components/ModalSheet";
+import { DatePicker } from "@/shared/components/DatePicker";
+import { DeleteConfirmationDialog } from "@/shared/components/DeleteConfirmationDialog";
 import { Person } from "@/people/types/people.types";
 import { CreditCard } from "@/credit-cards/types/credit-cards.types";
 import { PurchaseClient, UpdatePurchaseData, CreateSplitData } from "../types/purchases.types";
@@ -36,6 +39,7 @@ export function EditPurchaseForm({
 }: EditPurchaseFormProps) {
   const [description, setDescription] = React.useState(purchase.description);
   const [purchaseDateStr, setPurchaseDateStr] = React.useState(formatDateBR(purchase.purchaseDate));
+  const [isDatePickerOpen, setIsDatePickerOpen] = React.useState(false);
 
   // Rachar compras
   const [isSplitting, setIsSplitting] = React.useState(false);
@@ -90,6 +94,12 @@ export function EditPurchaseForm({
     setSplitMode(detectedMode);
     setPersonSplits(splitsMap);
   }, [purchase]);
+
+  const effectivePurchaseDate = React.useMemo(() => {
+    if (!purchaseDateStr.trim()) return new Date();
+    const parsed = parseDateBR(purchaseDateStr);
+    return parsed ?? new Date();
+  }, [purchaseDateStr]);
 
   const numericTotalAmount = Number(purchase.totalAmount) || 0;
 
@@ -266,10 +276,15 @@ export function EditPurchaseForm({
         {/* Data da Compra (Editável) */}
         <View className="gap-1.5">
           <View className="flex-row items-center justify-between">
-            <View className="flex-row items-center gap-1.5">
-              <Calendar size={14} color="#71717a" />
+            <Pressable
+              onPress={() => setIsDatePickerOpen(true)}
+              className="flex-row items-center gap-1.5 active:opacity-70"
+              accessibilityRole="button"
+              accessibilityLabel="Selecionar data da compra no calendário"
+            >
+              <Calendar size={14} color="#007AFF" />
               <Text className="text-sm font-medium text-foreground">Data da Compra</Text>
-            </View>
+            </Pressable>
             <View className="flex-row gap-1.5">
               <Pressable
                 onPress={() => setPurchaseDateStr(getTodayBR())}
@@ -291,8 +306,28 @@ export function EditPurchaseForm({
             maxLength={10}
             value={purchaseDateStr}
             onChangeText={(val) => setPurchaseDateStr(maskDateBR(val))}
+            rightIcon={
+              <Pressable
+                onPress={() => setIsDatePickerOpen(true)}
+                className="p-1 items-center justify-center active:opacity-70"
+                accessibilityRole="button"
+                accessibilityLabel="Abrir calendário"
+                testID="open-edit-purchase-date-picker-button"
+              >
+                <Calendar size={18} color="#007AFF" />
+              </Pressable>
+            }
           />
         </View>
+
+        <DatePicker
+          visible={isDatePickerOpen}
+          value={effectivePurchaseDate}
+          onChange={(selected) => setPurchaseDateStr(formatDateBR(selected))}
+          onClose={() => setIsDatePickerOpen(false)}
+          title="Data da Compra"
+          testID="edit-purchase-date-picker"
+        />
 
         {/* Rachar Compras (Editável) */}
         <View className="gap-3 rounded-2xl bg-muted/20 p-3.5 border border-border">
@@ -303,18 +338,11 @@ export function EditPurchaseForm({
                 Rachar com Outras Pessoas
               </Text>
             </View>
-            <Pressable
-              onPress={() => setIsSplitting(!isSplitting)}
-              className={`px-3 py-1 rounded-full ${isSplitting ? "bg-primary" : "bg-muted"}`}
-            >
-              <Text
-                className={`text-xs font-bold ${
-                  isSplitting ? "text-primary-foreground" : "text-muted-foreground"
-                }`}
-              >
-                {isSplitting ? "Ativo" : "Não dividir"}
-              </Text>
-            </Pressable>
+            <Switch
+              value={isSplitting}
+              onValueChange={setIsSplitting}
+              testID="edit-split-purchase-switch"
+            />
           </View>
 
           {isSplitting ? (
@@ -389,45 +417,15 @@ export function EditPurchaseForm({
         {/* Zona de Exclusão */}
         {onDelete ? (
           <View className="pt-2">
-            {showDeleteConfirm ? (
-              <Card className="gap-3 border-destructive/40 bg-destructive/5 p-3.5">
-                <View className="flex-row items-center gap-2">
-                  <AlertTriangle size={16} color="#ef4444" />
-                  <Text className="text-xs font-bold text-destructive">
-                    Confirmar Exclusão da Compra
-                  </Text>
-                </View>
-                <Text className="text-xs text-muted-foreground">
-                  Esta ação excluirá permanentemente a compra e todas as suas parcelas geradas.
-                </Text>
-                <View className="flex-row gap-2 pt-1">
-                  <Button
-                    variant="secondary"
-                    label="Cancelar"
-                    size="sm"
-                    className="flex-1"
-                    onPress={() => setShowDeleteConfirm(false)}
-                    disabled={isDeleting}
-                  />
-                  <Button
-                    variant="destructive"
-                    label={isDeleting ? "Excluindo..." : "Excluir Definitivamente"}
-                    size="sm"
-                    className="flex-1"
-                    onPress={handleDelete}
-                    disabled={isDeleting}
-                  />
-                </View>
-              </Card>
-            ) : (
-              <Pressable
-                onPress={() => setShowDeleteConfirm(true)}
-                className="flex-row items-center justify-center gap-2 py-3 rounded-xl border border-destructive/30 bg-destructive/5 active:opacity-70"
-              >
-                <Trash2 size={16} color="#ef4444" />
-                <Text className="text-xs font-semibold text-destructive">Excluir esta Compra</Text>
-              </Pressable>
-            )}
+            <Pressable
+              onPress={() => setShowDeleteConfirm(true)}
+              className="flex-row items-center justify-center gap-2 py-3 rounded-xl border border-destructive/30 bg-destructive/5 active:opacity-70"
+              accessibilityRole="button"
+              accessibilityLabel="Excluir esta compra"
+            >
+              <Trash2 size={16} color="#ef4444" />
+              <Text className="text-xs font-semibold text-destructive">Excluir esta Compra</Text>
+            </Pressable>
           </View>
         ) : null}
       </ModalSheet.Body>
@@ -449,6 +447,19 @@ export function EditPurchaseForm({
           disabled={isSubmitting || isDeleting}
         />
       </ModalSheet.Footer>
+
+      {onDelete ? (
+        <DeleteConfirmationDialog
+          isOpen={showDeleteConfirm}
+          onClose={() => setShowDeleteConfirm(false)}
+          onConfirm={handleDelete}
+          isLoading={isDeleting}
+          title="Excluir Compra"
+          itemName={purchase.description}
+          description="Esta ação excluirá permanentemente a compra e todas as suas parcelas geradas."
+          confirmLabel="Excluir Definitivamente"
+        />
+      ) : null}
     </>
   );
 }

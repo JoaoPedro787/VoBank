@@ -95,6 +95,22 @@ describe("Purchase Forms (TDD & Unit)", () => {
     expect(element.props.onDelete).toBeDefined();
   });
 
+  it("should support EditPurchaseForm without onDelete callback", () => {
+    const handleSave = jest.fn();
+
+    const element = (
+      <EditPurchaseForm
+        purchase={mockPurchase}
+        cards={mockCards}
+        people={mockPeople}
+        onSave={handleSave}
+      />
+    );
+
+    expect(element).toBeDefined();
+    expect(element.props.onDelete).toBeUndefined();
+  });
+
   it("should instantiate PurchaseForm routing to creation when purchaseToEdit is undefined", () => {
     const handleSaveNew = jest.fn();
 

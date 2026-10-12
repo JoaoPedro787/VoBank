@@ -88,6 +88,8 @@ export function Button({
 
   return (
     <Pressable
+      accessibilityRole="button"
+      accessibilityState={{ disabled: isDisabled, busy: loading }}
       className={cn(buttonVariants({ variant, size }), isDisabled && "opacity-50", className)}
       disabled={isDisabled}
       onPress={(e) => {
