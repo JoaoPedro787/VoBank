@@ -169,3 +169,28 @@ jest.mock("@expo/ui/jetpack-compose", () => {
     Text,
   };
 });
+
+// Mock sonner-native
+jest.mock("sonner-native", () => {
+  const ReactMod = require("react");
+  const { View } = require("react-native");
+
+  const Toaster = (props: any) =>
+    ReactMod.createElement(View, { testID: "sonner-native-toaster", ...props });
+
+  const toastMock = jest.fn((_message?: string, _options?: any) => "toast-id-default");
+  (toastMock as any).success = jest.fn((_message?: string, _options?: any) => "toast-id-success");
+  (toastMock as any).error = jest.fn((_message?: string, _options?: any) => "toast-id-error");
+  (toastMock as any).info = jest.fn((_message?: string, _options?: any) => "toast-id-info");
+  (toastMock as any).warning = jest.fn((_message?: string, _options?: any) => "toast-id-warning");
+  (toastMock as any).dismiss = jest.fn((id?: string | number) => id);
+  (toastMock as any).custom = jest.fn(() => "toast-id-custom");
+  (toastMock as any).promise = jest.fn(() => "toast-id-promise");
+  (toastMock as any).loading = jest.fn(() => "toast-id-loading");
+  (toastMock as any).wiggle = jest.fn();
+
+  return {
+    Toaster,
+    toast: toastMock,
+  };
+});

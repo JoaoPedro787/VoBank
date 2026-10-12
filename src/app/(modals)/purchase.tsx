@@ -6,6 +6,7 @@ import { useCreditCards } from "@/credit-cards/hooks/use-credit-cards";
 import { usePeople } from "@/people/hooks/use-people";
 import { PurchaseForm } from "@/purchases/components/PurchaseForm";
 import { CreatePurchaseData, UpdatePurchaseData } from "@/purchases/types/purchases.types";
+import { showToast } from "@/shared/utils/toast";
 
 export default function PurchaseModalScreen() {
   const { id } = useLocalSearchParams<{ id?: string }>();
@@ -19,18 +20,33 @@ export default function PurchaseModalScreen() {
   }, [id, purchases]);
 
   const handleSaveNew = async (data: CreatePurchaseData) => {
-    await createPurchase(data);
-    router.back();
+    try {
+      await createPurchase(data);
+      showToast.success("Compra registrada com sucesso!");
+      router.back();
+    } catch (err: unknown) {
+      showToast.error("Erro ao registrar compra", err instanceof Error ? err.message : undefined);
+    }
   };
 
   const handleSaveEdit = async (purchaseId: string, data: UpdatePurchaseData) => {
-    await updatePurchase(purchaseId, data);
-    router.back();
+    try {
+      await updatePurchase(purchaseId, data);
+      showToast.success("Compra atualizada com sucesso!");
+      router.back();
+    } catch (err: unknown) {
+      showToast.error("Erro ao atualizar compra", err instanceof Error ? err.message : undefined);
+    }
   };
 
   const handleDelete = async (purchaseId: string) => {
-    await deletePurchase(purchaseId);
-    router.back();
+    try {
+      await deletePurchase(purchaseId);
+      showToast.success("Compra excluída com sucesso!");
+      router.back();
+    } catch (err: unknown) {
+      showToast.error("Erro ao excluir compra", err instanceof Error ? err.message : undefined);
+    }
   };
 
   return (

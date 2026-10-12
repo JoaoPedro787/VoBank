@@ -4,6 +4,7 @@ import { ModalSheet } from "@/shared/components/ModalSheet";
 import { useCreditCards } from "@/credit-cards/hooks/use-credit-cards";
 import { CreditCardForm } from "@/credit-cards/components/CreditCardForm";
 import { CreateCreditCardData } from "@/credit-cards/types/credit-cards.types";
+import { showToast } from "@/shared/utils/toast";
 
 export default function CardModalScreen() {
   const { id } = useLocalSearchParams<{ id?: string }>();
@@ -15,12 +16,21 @@ export default function CardModalScreen() {
   }, [id, cards]);
 
   const handleSave = async (data: CreateCreditCardData) => {
-    if (cardToEdit) {
-      await updateCard(cardToEdit.id, data);
-    } else {
-      await createCard(data);
+    try {
+      if (cardToEdit) {
+        await updateCard(cardToEdit.id, data);
+        showToast.success("Cartão atualizado com sucesso!");
+      } else {
+        await createCard(data);
+        showToast.success("Cartão cadastrado com sucesso!");
+      }
+      router.back();
+    } catch (err: unknown) {
+      showToast.error(
+        cardToEdit ? "Erro ao atualizar cartão" : "Erro ao cadastrar cartão",
+        err instanceof Error ? err.message : undefined,
+      );
     }
-    router.back();
   };
 
   return (

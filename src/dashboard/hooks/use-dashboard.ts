@@ -61,7 +61,7 @@ export function useDashboard() {
   };
 
   const toggleSplitPaid = async (splitId: string, currentPaid: boolean) => {
-    if (!token) return;
+    if (!token) throw new Error("Usuário não autenticado");
     try {
       const willBePaid = !currentPaid;
       await purchasesApiService.toggleSplitPaid(token, splitId, willBePaid);
@@ -72,8 +72,11 @@ export function useDashboard() {
 
       // Recarregar dados consolidados
       await fetchDashboard(month, year);
+      return willBePaid;
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Erro ao atualizar pagamento da parcela");
+      const message = err instanceof Error ? err.message : "Erro ao atualizar pagamento da parcela";
+      setError(message);
+      throw err;
     }
   };
 

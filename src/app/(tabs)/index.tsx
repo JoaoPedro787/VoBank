@@ -31,6 +31,7 @@ import { PersonSummaryCard } from "@/dashboard/components/PersonSummaryCard";
 import { Button } from "@/shared/components/Button";
 import { Badge } from "@/shared/components/Badge";
 import { AnimatedScaleFade } from "@/shared/components/AnimatedScaleFade";
+import { showToast } from "@/shared/utils/toast";
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
@@ -60,6 +61,23 @@ export default function HomeScreen() {
   const handleLogout = async () => {
     await logout();
     router.replace("/(auth)/login");
+  };
+
+  const handleToggleSplitPaid = async (splitId: string, currentPaid: boolean) => {
+    try {
+      const willBePaid = !currentPaid;
+      await toggleSplitPaid(splitId, currentPaid);
+      if (willBePaid) {
+        showToast.success("Parcela marcada como paga!");
+      } else {
+        showToast.success("Parcela marcada como pendente!");
+      }
+    } catch (err: unknown) {
+      showToast.error(
+        "Erro ao atualizar status da parcela",
+        err instanceof Error ? err.message : undefined,
+      );
+    }
   };
 
   // Coleta as parcelas filtradas com base na pessoa selecionada
@@ -346,7 +364,7 @@ export default function HomeScreen() {
                     </Text>
 
                     <Pressable
-                      onPress={() => toggleSplitPaid(item.id, item.isPaid)}
+                      onPress={() => handleToggleSplitPaid(item.id, item.isPaid)}
                       className="active:scale-95 active:opacity-70"
                     >
                       {item.isPaid ? (
