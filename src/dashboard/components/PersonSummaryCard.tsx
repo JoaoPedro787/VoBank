@@ -18,7 +18,7 @@ export function PersonSummaryCard({ person, isSelected, onPress }: PersonSummary
       onPress={onPress}
       className={cn(
         "w-56 rounded-2xl border bg-card p-3.5 shadow-sm active:scale-[0.98] active:opacity-80 gap-2.5",
-        isSelected ? "border-primary bg-primary/10 shadow-md" : "border-border/70",
+        isSelected ? "border-primary shadow-md" : "border-border/70",
       )}
     >
       {/* Header: Cor e Nome */}

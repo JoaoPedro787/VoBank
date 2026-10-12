@@ -237,10 +237,8 @@ export default function HomeScreen() {
                     {/* Botão "Todos" */}
                     <Pressable
                       onPress={() => setSelectedPersonId("all")}
-                      className={`h-auto w-32 justify-between rounded-2xl border p-3.5 shadow-sm active:scale-[0.98] active:opacity-80 ${
-                        selectedPersonId === "all"
-                          ? "border-primary bg-primary/10 shadow-md"
-                          : "border-border/70 bg-card"
+                      className={`h-auto w-32 justify-between rounded-2xl border bg-card p-3.5 shadow-sm active:scale-[0.98] active:opacity-80 ${
+                        selectedPersonId === "all" ? "border-primary shadow-md" : "border-border/70"
                       }`}
                     >
                       <View className="flex-row items-center gap-1.5">
