@@ -9,20 +9,9 @@ import {
   ScrollView,
 } from "react-native";
 import { router, useFocusEffect } from "expo-router";
-import {
-  Plus,
-  ShoppingBag,
-  CheckCircle2,
-  Clock,
-  LogOut,
-  AlertTriangle,
-  Users,
-  Sun,
-  Moon,
-} from "lucide-react-native";
+import { Plus, ShoppingBag, CheckCircle2, Clock, AlertTriangle, Users } from "lucide-react-native";
 import { useAuth } from "@/auth/hooks/use-auth";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import { useTheme } from "@/shared/hooks/useTheme";
 import { useDashboard } from "@/dashboard/hooks/use-dashboard";
 import { DashboardSplitItemClient } from "@/dashboard/types/dashboard.types";
 import { MonthSelector } from "@/dashboard/components/MonthSelector";
@@ -31,12 +20,12 @@ import { PersonSummaryCard } from "@/dashboard/components/PersonSummaryCard";
 import { Button } from "@/shared/components/Button";
 import { Badge } from "@/shared/components/Badge";
 import { AnimatedScaleFade } from "@/shared/components/AnimatedScaleFade";
+import { HeaderSettingsMenu } from "@/shared/components/HeaderSettingsMenu";
 import { showToast } from "@/shared/utils/toast";
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
-  const { user, logout } = useAuth();
-  const { isDark, toggleColorScheme } = useTheme();
+  const { user } = useAuth();
   const {
     month,
     year,
@@ -57,11 +46,6 @@ export default function HomeScreen() {
       fetchDashboard(month, year);
     }, [fetchDashboard, month, year]),
   );
-
-  const handleLogout = async () => {
-    await logout();
-    router.replace("/(auth)/login");
-  };
 
   const handleToggleSplitPaid = async (splitId: string, currentPaid: boolean) => {
     try {
@@ -129,15 +113,15 @@ export default function HomeScreen() {
         className="border-b border-border bg-card px-6 pb-4"
         style={{ paddingTop: Math.max(insets.top, 16) }}
       >
-        <View className="flex-row items-center justify-between">
-          <View>
-            <Text className="text-sm font-medium text-muted-foreground">
+        <View className="flex-row items-center justify-between gap-2">
+          <View className="flex-1 min-w-0 pr-2">
+            <Text className="text-sm font-medium text-muted-foreground" numberOfLines={1}>
               Olá, {user?.name || "Usuário"}
             </Text>
             <Text className="text-2xl font-bold tracking-tight text-foreground">Dashboard</Text>
           </View>
 
-          <View className="flex-row items-center gap-2">
+          <View className="flex-row items-center gap-2 shrink-0">
             <Button
               size="sm"
               className="flex-row items-center gap-1.5"
@@ -147,21 +131,7 @@ export default function HomeScreen() {
               <Text className="text-sm font-semibold text-primary-foreground">Nova Compra</Text>
             </Button>
 
-            <Pressable
-              onPress={toggleColorScheme}
-              className="h-9 w-9 items-center justify-center rounded-xl bg-muted active:scale-95 active:opacity-70"
-              accessibilityLabel={isDark ? "Mudar para modo claro" : "Mudar para modo escuro"}
-            >
-              {isDark ? <Sun size={16} color="#FF9500" /> : <Moon size={16} color="#71717a" />}
-            </Pressable>
-
-            <Pressable
-              onPress={handleLogout}
-              className="h-9 w-9 items-center justify-center rounded-xl bg-muted active:scale-95 active:opacity-70"
-              accessibilityLabel="Sair"
-            >
-              <LogOut size={16} color="#71717a" />
-            </Pressable>
+            <HeaderSettingsMenu testID="home-header-settings" />
           </View>
         </View>
       </View>

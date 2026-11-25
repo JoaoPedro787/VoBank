@@ -33,6 +33,7 @@ import { groupPurchasesByDay } from "@/purchases/utils/purchases-group";
 import { Button } from "@/shared/components/Button";
 import { Badge } from "@/shared/components/Badge";
 import { DatePicker } from "@/shared/components/DatePicker";
+import { HeaderSettingsMenu } from "@/shared/components/HeaderSettingsMenu";
 
 const MONTH_NAMES = [
   "Janeiro",
@@ -151,19 +152,24 @@ export default function PurchasesScreen() {
         className="border-b border-border bg-card px-6 pb-4"
         style={{ paddingTop: Math.max(insets.top, 16) }}
       >
-        <View className="flex-row items-center justify-between">
-          <View>
+        <View className="flex-row items-center justify-between gap-2">
+          <View className="flex-1 min-w-0 pr-2">
             <View className="flex-row items-center gap-2">
               <Text className="text-2xl font-bold tracking-tight text-foreground">Compras</Text>
               <Badge variant="secondary" label={String(filteredPurchases.length)} />
             </View>
-            <Text className="text-sm text-muted-foreground mt-0.5">Compras - Agrupado por Dia</Text>
+            <Text className="text-sm text-muted-foreground mt-0.5" numberOfLines={1}>
+              Compras - Agrupado por Dia
+            </Text>
           </View>
 
-          <Button size="sm" className="flex-row items-center gap-1.5" onPress={handleOpenCreate}>
-            <Plus size={16} color="#ffffff" />
-            <Text className="text-sm font-semibold text-primary-foreground">Nova</Text>
-          </Button>
+          <View className="flex-row items-center gap-2 shrink-0">
+            <Button size="sm" className="flex-row items-center gap-1.5" onPress={handleOpenCreate}>
+              <Plus size={16} color="#ffffff" />
+              <Text className="text-sm font-semibold text-primary-foreground">Nova</Text>
+            </Button>
+            <HeaderSettingsMenu testID="purchases-header-settings" />
+          </View>
         </View>
       </View>
 
