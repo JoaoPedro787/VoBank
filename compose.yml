@@ -35,6 +35,7 @@ services:
       DATABASE_URL: postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:-root}@db:5432/${POSTGRES_DB:-finances}
       JWT_SECRET: ${JWT_SECRET:-supersecretjwtkeythatissufficientlylongandsecure12345}
       EXPO_PUBLIC_API_URL: ${EXPO_PUBLIC_API_URL:-http://localhost:8081}
+      EXPO_TOKEN: ${EXPO_TOKEN:-}
     ports:
       - "8081:8081"
     volumes:
