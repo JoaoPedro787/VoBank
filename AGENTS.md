@@ -34,7 +34,7 @@ O projeto segue estritamente uma arquitetura baseada em features tanto no client
 - **Componentes:** Estilo Shadcn UI adaptado para React Native (NativeWind v4 + React Native Reusables).
 - **Tema:** Suporte completo a Modo Claro e Escuro, detectando as preferências do sistema (`useColorScheme()`) com opção de toggle.
 - **Transições & Animações:** Micro-animações suaves (fade, scale-up, feedback tátil via haptics).
-- **Boas Práticas de UI/UX:** Alinhadas com os padrões das skills de design e `ui-ux-pro-max`.
+- **Boas Práticas de UI/UX & Roteamento de Skills:** Alinhadas com os padrões das skills de design, utilizando a skill `expo-overview` como ponto de entrada para identificar e selecionar a skill mais adequada conforme a solicitação do usuário.
 
 ### Regras de Negócio Fundamentais
 
@@ -46,22 +46,3 @@ O projeto segue estritamente uma arquitetura baseada em features tanto no client
    - Status de parcela por pessoa: controle de quais parcelas foram pagas ou estão pendentes em cada mês.
 4. **Notificações:** Alertas de vencimento de parcelas/faturas locais via `expo-notifications` (1 dia antes e no dia do vencimento).
 
----
-
-## 2. Sugestão Obrigatória de Commits
-
-Deve ser **sempre 1 commit único por grupo principal de tasks** (agrupando todas as alterações e arquivos pertencentes àquele grupo finalizado), formatado no padrão **Conventional Commits**:
-
-- `feat(...)`: Novas funcionalidades.
-- `fix(...)`: Correção de bugs.
-- `refactor(...)`: Refatoração sem mudança de comportamento.
-- `chore(...)`: Configurações de ambiente, dependências ou infra.
-- `docs(...)`: Alterações de documentação e planejamento.
-
----
-
-## 3. Fluxo de Execução de Tarefas (Tasks)
-
-- **Execução por Grupo Principal:** O assistente deve implementar as tarefas agrupadas pelo seu número principal (ex: concluir todas as subtasks do grupo `1` como `1.1`, `1.2`, `1.3`, etc.).
-- **Pausa Obrigatória:** Sempre **parar e aguardar confirmação/validação do usuário** imediatamente após finalizar um grupo completo de tasks (ex: terminou todas as do bloco `1`, pare antes de iniciar o bloco `2`).
-- **Relatório e Commits:** Ao parar no final de cada grupo, apresentar um resumo do que foi entregue, o status das tarefas e a sugestão de **1 commit único que englobe todas as alterações do grupo finalizado**.
