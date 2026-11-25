@@ -45,4 +45,3 @@ O projeto segue estritamente uma arquitetura baseada em features tanto no client
    - O cálculo das parcelas deve considerar se a data da compra foi antes ou depois do fechamento para atribuir a fatura correta.
    - Status de parcela por pessoa: controle de quais parcelas foram pagas ou estão pendentes em cada mês.
 4. **Notificações:** Alertas de vencimento de parcelas/faturas locais via `expo-notifications` (1 dia antes e no dia do vencimento).
-
