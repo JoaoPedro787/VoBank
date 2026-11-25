@@ -20,7 +20,7 @@ export default function TabsLayout() {
       screenOptions={{
         headerShown: false,
         tabBarButton: ({ ref: _ref, ...props }) => (
-          <Pressable {...props} android_ripple={null} style={props.style}>
+          <Pressable {...props} android_ripple={undefined} style={props.style}>
             {props.children}
           </Pressable>
         ),
